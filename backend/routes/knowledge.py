@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from backend.database.database import SessionLocal
+from backend.security import require_admin
 from backend.models.knowledge import KnowledgeBase
 from backend.schemas.knowledge import KnowledgeCreate
 
@@ -21,7 +22,8 @@ def get_db():
 @router.post("/knowledge")
 def add_knowledge(
     knowledge: KnowledgeCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: str = Depends(require_admin),
 ):
 
     new_knowledge = KnowledgeBase(

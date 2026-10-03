@@ -30,3 +30,17 @@ def test_test_database_is_isolated(app, settings, tmp_path):
 def test_empty_security_settings_are_rejected(settings, field):
     with pytest.raises(ValueError, match=field):
         replace(settings, **{field: ""})
+
+
+def test_each_database_dependency_call_gets_a_distinct_session(app):
+    from backend.database.database import SessionLocal
+
+    first = SessionLocal()
+    second = SessionLocal()
+    try:
+        assert first is not second
+    finally:
+        first.close()
+        second.close()
+        if hasattr(SessionLocal, "remove"):
+            SessionLocal.remove()

@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import Settings
@@ -51,6 +52,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.exception_handler(RequestValidationError)
+    async def bounded_validation_error(
+        _request: Request,
+        exc: RequestValidationError,
+    ):
+        details = [
+            {
+                "type": error.get("type", "validation_error"),
+                "loc": list(error.get("loc", ())),
+                "msg": error.get("msg", "Invalid request."),
+            }
+            for error in exc.errors()
+        ]
+        return JSONResponse(status_code=422, content={"detail": details})
 
     app.include_router(chat.router)
     app.include_router(knowledge.router)

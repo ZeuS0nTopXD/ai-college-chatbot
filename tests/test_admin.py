@@ -124,6 +124,21 @@ def test_deleting_unknown_admin_record_returns_404(client):
     assert response.status_code == 404
 
 
+def test_legacy_knowledge_write_requires_admin_token(client):
+    payload = {
+        "category": "VSIT",
+        "topic": "security",
+        "question": "Can anyone add an answer?",
+        "answer": "Only an administrator can add verified knowledge.",
+    }
+
+    unauthorized = client.post("/knowledge", json=payload)
+    authorized = client.post("/knowledge", json=payload, headers=admin_headers(client))
+
+    assert unauthorized.status_code == 401
+    assert authorized.status_code == 200
+
+
 @pytest.mark.parametrize(
     "resource,payload",
     [

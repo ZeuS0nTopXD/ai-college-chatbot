@@ -3,11 +3,11 @@ from pathlib import Path
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import make_url
-from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 
 Base = declarative_base()
-SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False))
+SessionLocal = sessionmaker(autocommit=False, autoflush=False)
 engine = None
 
 
@@ -24,7 +24,6 @@ def configure_database(database_url: str):
                 exist_ok=True,
             )
 
-    SessionLocal.remove()
     if engine is not None:
         engine.dispose()
     engine = create_engine(database_url, connect_args=connect_args)

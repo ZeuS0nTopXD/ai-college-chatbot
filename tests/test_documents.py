@@ -4,6 +4,7 @@ import pytest
 
 from backend.database.database import SessionLocal
 from backend.models.document import Document, DocumentChunk
+from backend.models.knowledge import KnowledgeBase
 
 
 FIXTURE = Path(__file__).parent / "fixtures" / "vsit_notice.txt"
@@ -105,6 +106,51 @@ def test_chat_uses_cited_document_when_it_has_a_reliable_match(client):
     assert "15 February 2027" in body["bot_response"]
     assert body["sources"][0]["title"] == "Semester Examination Notice"
     assert body["sources"][0]["page"] == 1
+
+
+def test_verified_knowledge_beats_a_weak_document_match(client):
+    db = SessionLocal()
+    try:
+        db.add(
+            KnowledgeBase(
+                category="VSIT",
+                topic="attendance",
+                question="What is the attendance requirement?",
+                answer="The verified attendance requirement is 75 percent.",
+            )
+        )
+        document = Document(
+            title="General Student Guide",
+            category="general",
+            filename="guide.txt",
+            stored_filename="guide.txt",
+            page_count=1,
+            status="ready",
+        )
+        db.add(document)
+        db.flush()
+        db.add(
+            DocumentChunk(
+                document_id=document.id,
+                page_number=1,
+                chunk_index=0,
+                content="Students should review the attendance guide regularly.",
+            )
+        )
+        db.commit()
+    finally:
+        db.close()
+
+    response = client.post(
+        "/chat",
+        json={"message": "What is the attendance requirement?"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["category"] == "VSIT"
+    assert response.json()["bot_response"] == (
+        "The verified attendance requirement is 75 percent."
+    )
 
 
 def test_deleting_document_removes_chunks_and_file(client, settings):

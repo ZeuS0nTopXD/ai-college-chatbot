@@ -82,7 +82,10 @@ async function sendMessage(message) {
         if (!response.ok) throw new Error(readApiError(data));
         const answer = data.bot_response || data.answer || "No answer was returned.";
         state.latestAnswer = answer;
-        appendMessage("assistant", answer, data.sources || []);
+        const links = [];
+        if (data.result_url) links.push({ label: "Open result", url: data.result_url });
+        if (data.resource_url) links.push({ label: "Open resource", url: data.resource_url });
+        appendMessage("assistant", answer, data.sources || [], links);
         chatStatus.textContent = `Answered from ${formatCategory(data.category)}.`;
     } catch (error) {
         appendMessage("assistant", "I could not reach the assistant. Please check that the server is running and try again.");
@@ -93,7 +96,7 @@ async function sendMessage(message) {
     }
 }
 
-function appendMessage(role, text, sources = []) {
+function appendMessage(role, text, sources = [], links = []) {
     const article = document.createElement("article");
     article.className = `message ${role === "user" ? "user-message" : "assistant-message"}`;
 
@@ -126,6 +129,22 @@ function appendMessage(role, text, sources = []) {
         });
         bubble.appendChild(sourceList);
     }
+
+    links.forEach((link) => {
+        try {
+            const resolved = new URL(link.url, window.location.origin);
+            if (!["http:", "https:"].includes(resolved.protocol)) return;
+            const anchor = document.createElement("a");
+            anchor.className = "resource-link";
+            anchor.href = resolved.href;
+            anchor.target = "_blank";
+            anchor.rel = "noopener noreferrer";
+            anchor.textContent = link.label;
+            bubble.appendChild(anchor);
+        } catch (_error) {
+            // Ignore invalid links supplied by data records.
+        }
+    });
 
     content.append(author, bubble);
     article.append(avatar, content);

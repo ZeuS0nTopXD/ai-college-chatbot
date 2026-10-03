@@ -33,7 +33,12 @@ def list_published_events(
             )
         )
     if from_date:
-        query = query.filter(AcademicEvent.starts_at >= from_date)
+        query = query.filter(
+            or_(
+                AcademicEvent.starts_at >= from_date,
+                AcademicEvent.ends_at >= from_date,
+            )
+        )
 
     return query.order_by(AcademicEvent.starts_at.asc(), AcademicEvent.id.asc()).all()
 
@@ -42,13 +47,54 @@ def _tokens(value: str) -> set[str]:
     return set(re.findall(r"[a-z0-9]+", value.lower()))
 
 
+COURSE_ALIASES = {
+    "bsc it": ("bsc it", "b.sc it", "b.sc. it", "information technology"),
+    "bsc cs": ("bsc cs", "b.sc cs", "b.sc. cs", "computer science"),
+    "data science": ("data science", "bsc ds", "b.sc ds", "b.sc. ds"),
+}
+
+
+def _canonical_course(value: str) -> str:
+    normalized = " ".join(re.sub(r"[^a-z0-9]+", " ", value.lower()).split())
+    for canonical, aliases in COURSE_ALIASES.items():
+        if any(
+            " ".join(re.sub(r"[^a-z0-9]+", " ", alias).split()) in normalized
+            for alias in aliases
+        ):
+            return canonical
+    return normalized
+
+
+def _requested_course(message: str) -> str | None:
+    canonical_message = _canonical_course(message)
+    for course in COURSE_ALIASES:
+        if course in canonical_message:
+            return course
+    return None
+
+
 def answer_academic_question(db: Session, message: str) -> dict | None:
     query_text = " ".join(message.lower().split())
     query_tokens = _tokens(query_text)
+    requested_course = _requested_course(query_text)
+    semester_match = re.search(r"\b(?:semester|sem)\s*([1-9][0-9]*)\b", query_text)
+    requested_semester = semester_match.group(1) if semester_match else None
     events = list_published_events(db, from_date=datetime.now())
     ranked = []
 
     for event in events:
+        if (
+            requested_course
+            and event.course
+            and _canonical_course(event.course) != requested_course
+        ):
+            continue
+        if (
+            requested_semester
+            and event.semester
+            and event.semester.strip().lower() != requested_semester
+        ):
+            continue
         score = len(
             query_tokens
             & _tokens(

@@ -340,6 +340,11 @@ def is_academic_question(message: str) -> bool:
         r"\bsemester dates\b",
         r"\bacademic dates\b",
         r"\bterm dates\b",
+        r"\bdeadline\b",
+        r"\bdeadlines\b",
+        r"\bapplication deadline\b",
+        r"\bnotice\b",
+        r"\bnotices\b",
 
         # Internal assessment
         r"\binternal assessment\b",

@@ -13,7 +13,8 @@ const resources = {
 
 document.getElementById("admin-login-form").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const password = new FormData(event.currentTarget).get("password");
+    const form = event.currentTarget;
+    const password = new FormData(form).get("password");
     const status = document.getElementById("login-status");
     status.textContent = "Signing in…";
     try {
@@ -26,7 +27,7 @@ document.getElementById("admin-login-form").addEventListener("submit", async (ev
         if (!response.ok) throw new Error(data.detail || "Login failed.");
         token = data.access_token;
         sessionStorage.setItem(tokenKey, token);
-        event.currentTarget.reset();
+        form.reset();
         showWorkspace();
     } catch (error) {
         status.textContent = error.message;
@@ -47,14 +48,15 @@ Object.entries(resources).forEach(([name, config]) => {
 
 document.getElementById("document-form").addEventListener("submit", async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     setStatus("Uploading document…");
     try {
         const response = await adminFetch("/api/admin/documents", {
             method: "POST",
-            body: new FormData(event.currentTarget),
+            body: new FormData(form),
         });
         if (!response.ok) throw new Error(await responseMessage(response));
-        event.currentTarget.reset();
+        form.reset();
         setStatus("Document uploaded.");
         await loadDocuments();
     } catch (error) {

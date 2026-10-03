@@ -2150,7 +2150,50 @@ def chat(
         )
 
     # ========================================================
-    # 6. COLLEGE DOCUMENTS
+    # 6. VERIFIED ACADEMIC EVENTS
+    # ========================================================
+
+    if category == "ACADEMIC":
+        academic_answer = answer_academic_question(db, user_message)
+
+        if academic_answer:
+            return make_response(
+                user_message,
+                category,
+                academic_answer.pop("bot_response"),
+                **academic_answer,
+            )
+
+    # ========================================================
+    # 7. VERIFIED KNOWLEDGE BASE
+    # ========================================================
+
+    if category in [
+        "VSIT",
+        "NGO",
+    ]:
+        knowledge_list = (
+            db.query(KnowledgeBase)
+            .filter(
+                KnowledgeBase.category == category
+            )
+            .all()
+        )
+
+        best_match = search_knowledge(
+            user_message,
+            knowledge_list,
+        )
+
+        if best_match:
+            return make_response(
+                user_message,
+                category,
+                best_match.answer,
+            )
+
+    # ========================================================
+    # 8. COLLEGE DOCUMENTS
     # ========================================================
 
     document_hits = search_documents(db, user_message)
@@ -2172,47 +2215,29 @@ def chat(
             ],
         )
 
-    # ========================================================
-    # 7. KNOWLEDGE BASE
-    # ========================================================
-
-    if category in [
-        "VSIT",
-        "NGO",
-    ]:
-        knowledge_list = (
-            db.query(KnowledgeBase)
-            .filter(
-                KnowledgeBase.category == category
-            )
-            .all()
-        )
-
-        best_match = search_knowledge(
-            user_message,
-            knowledge_list,
-        )
-
-        if best_match:
-            response = (
-                best_match.answer
-            )
-        else:
-            response = (
-                get_missing_info_response(
-                    user_message=user_message,
-                    category=category,
-                )
-            )
-
+    if category == "ACADEMIC":
         return make_response(
             user_message,
             category,
-            response,
+            (
+                "I could not find a verified academic date or notice in the "
+                "available VSIT data. Please check an official VSIT notice or "
+                "contact the concerned department."
+            ),
+        )
+
+    if category in ["VSIT", "NGO"]:
+        return make_response(
+            user_message,
+            category,
+            get_missing_info_response(
+                user_message=user_message,
+                category=category,
+            ),
         )
 
     # ========================================================
-    # 8. FACULTY FALLBACK
+    # 9. FACULTY FALLBACK
     # ========================================================
 
     if category == "FACULTY":
@@ -2221,30 +2246,6 @@ def chat(
             db,
         )
 
-    # ========================================================
-    # 9. ACADEMIC
-    # ========================================================
-
-    if category == "ACADEMIC":
-        academic_answer = answer_academic_question(db, user_message)
-
-        if academic_answer:
-            return make_response(
-                user_message,
-                category,
-                academic_answer.pop("bot_response"),
-                **academic_answer,
-            )
-
-        response = get_ai_response(user_message, category)
-
-        return make_response(
-            user_message,
-            category,
-            response,
-        )
-
-    # ========================================================
     # 10. CAREER
     # ========================================================
 

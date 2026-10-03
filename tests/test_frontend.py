@@ -24,6 +24,8 @@ def test_student_frontend_uses_relative_api_urls_and_progressive_voice(client):
     assert 'fetch("/api/documents"' in script
     assert "SpeechRecognition" in script
     assert "speechSynthesis" in script
+    assert "result_url" in script
+    assert "resource_url" in script
 
 
 def test_admin_frontend_contains_login_management_and_upload_controls(client):
@@ -46,3 +48,9 @@ def test_frontend_styles_include_keyboard_focus_and_mobile_layout(client):
     assert response.status_code == 200
     assert ":focus-visible" in response.text
     assert "@media (max-width:" in response.text
+
+
+def test_admin_async_forms_capture_the_form_before_awaiting(client):
+    script = client.get("/admin.js").text
+
+    assert script.count("const form = event.currentTarget;") >= 3
