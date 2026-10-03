@@ -1,6 +1,19 @@
+from datetime import datetime, time
+
 from backend.database.database import SessionLocal
 from backend.models.timetable import Timetable
 from backend.data.timetable_data import TIMETABLE_DATA
+
+
+def _parse_time(value: str | time) -> time:
+    if isinstance(value, time):
+        return value
+    for pattern in ("%I:%M %p", "%H:%M"):
+        try:
+            return datetime.strptime(value.strip(), pattern).time()
+        except ValueError:
+            continue
+    raise ValueError(f"Unsupported timetable time: {value}")
 
 
 def seed_timetable():
@@ -32,12 +45,13 @@ def seed_timetable():
                 course=item["course"],
                 division=item["division"],
                 day=item["day"],
-                start_time=item["start_time"],
-                end_time=item["end_time"],
-                subject=item["subject"],
-                teacher=item["teacher"],
+                start_time=_parse_time(item["start_time"]),
+                end_time=_parse_time(item["end_time"]),
+                subject_code=item.get("subject_code", item["subject"]),
+                subject_name=item["subject"],
+                teacher_names=item["teacher"],
                 room=item["room"],
-                lecture_type=item["lecture_type"]
+                session_type=item["lecture_type"]
             )
 
             db.add(timetable_entry)
