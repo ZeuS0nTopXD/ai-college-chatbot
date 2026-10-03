@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VSIT Assistant Administration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+    <main class="admin-shell">
+        <header class="admin-header">
+            <div><p class="eyebrow">VSIT ASSISTANT</p><h1>Administration</h1></div>
+            <a href="/">Return to student assistant</a>
+        </header>
+
+        <section class="auth-card" id="login-panel">
+            <h2>Administrator login</h2>
+            <p>Use the password configured on the server.</p>
+            <form class="stack-form" id="admin-login-form">
+                <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+                <button class="primary-button" type="submit">Sign in</button>
+            </form>
+            <p class="status-message" id="login-status" aria-live="polite"></p>
+        </section>
+
+        <section id="admin-workspace" hidden>
+            <div class="admin-nav" role="tablist" aria-label="Administration areas">
+                <button class="active" data-admin-view="academics">Academics</button>
+                <button data-admin-view="knowledge">Knowledge</button>
+                <button data-admin-view="faculty">Faculty</button>
+                <button data-admin-view="offices">Offices</button>
+                <button data-admin-view="documents">Documents</button>
+                <button id="logout-button">Log out</button>
+            </div>
+
+            <section class="admin-panel" data-admin-panel="academics">
+                <div class="admin-card"><h2>Academic event</h2>
+                    <form class="stack-form" id="academic-form">
+                        <input type="hidden" name="id">
+                        <label>Title<input name="title" maxlength="200" required></label>
+                        <label>Type<select name="event_type" required><option value="examination">Examination</option><option value="deadline">Deadline</option><option value="holiday">Holiday</option><option value="notice">Notice</option><option value="activity">Activity</option></select></label>
+                        <label>Description<textarea name="description"></textarea></label>
+                        <label>Course<input name="course"></label>
+                        <label>Semester<input name="semester"></label>
+                        <label>Starts at<input name="starts_at" type="datetime-local" required></label>
+                        <label>Ends at<input name="ends_at" type="datetime-local"></label>
+                        <label>Location<input name="location"></label>
+                        <label>Resource URL<input name="resource_url" type="url"></label>
+                        <label><input name="is_published" type="checkbox"> Published</label>
+                        <div class="form-actions"><button class="primary-button" type="submit">Save event</button><button class="secondary-button" type="reset">Clear</button></div>
+                    </form>
+                </div>
+                <div class="admin-card"><h2>Academic events</h2><div class="record-list" id="academics-list"></div></div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="knowledge" hidden>
+                <div class="admin-card"><h2>Knowledge entry</h2>
+                    <form class="stack-form" id="knowledge-form">
+                        <input type="hidden" name="id">
+                        <label>Category<input name="category" required></label>
+                        <label>Topic<input name="topic" required></label>
+                        <label>Question<textarea name="question" required></textarea></label>
+                        <label>Answer<textarea name="answer" rows="5" required></textarea></label>
+                        <div class="form-actions"><button class="primary-button" type="submit">Save entry</button><button class="secondary-button" type="reset">Clear</button></div>
+                    </form>
+                </div>
+                <div class="admin-card"><h2>Knowledge entries</h2><div class="record-list" id="knowledge-list"></div></div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="faculty" hidden>
+                <div class="admin-card"><h2>Faculty member</h2>
+                    <form class="stack-form" id="faculty-form">
+                        <input type="hidden" name="id">
+                        <label>Name<input name="name" required></label>
+                        <label>Department<input name="department" required></label>
+                        <label>Designation<input name="designation"></label>
+                        <label>Subjects<input name="subjects"></label>
+                        <label>Email<input name="email" type="email"></label>
+                        <label>Phone<input name="phone"></label>
+                        <label>Office hours<input name="office_hours"></label>
+                        <label>Office location<input name="office_location"></label>
+                        <label><input name="is_hod" type="checkbox"> Head of department</label>
+                        <div class="form-actions"><button class="primary-button" type="submit">Save faculty</button><button class="secondary-button" type="reset">Clear</button></div>
+                    </form>
+                </div>
+                <div class="admin-card"><h2>Faculty</h2><div class="record-list" id="faculty-list"></div></div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="offices" hidden>
+                <div class="admin-card"><h2>Office</h2>
+                    <form class="stack-form" id="office-form">
+                        <input type="hidden" name="id">
+                        <label>Office name<input name="office_name" required></label>
+                        <label>Department<input name="department"></label>
+                        <label>Purpose<textarea name="purpose"></textarea></label>
+                        <label>Timings<input name="timings"></label>
+                        <label>Location<input name="location"></label>
+                        <label>Contact person<input name="contact_person"></label>
+                        <label>Contact email<input name="contact_email" type="email"></label>
+                        <label>Contact phone<input name="contact_phone"></label>
+                        <label>Procedure<textarea name="procedure_details"></textarea></label>
+                        <label><input name="is_active" type="checkbox" checked> Active</label>
+                        <div class="form-actions"><button class="primary-button" type="submit">Save office</button><button class="secondary-button" type="reset">Clear</button></div>
+                    </form>
+                </div>
+                <div class="admin-card"><h2>Offices</h2><div class="record-list" id="offices-list"></div></div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="documents" hidden>
+                <div class="admin-card"><h2>Upload document</h2>
+                    <form class="stack-form" id="document-form">
+                        <label>Title<input name="title" required></label>
+                        <label>Category<input name="category" required placeholder="examination, policy, notice…"></label>
+                        <label>PDF or text file<input name="file" type="file" accept=".pdf,.txt" required></label>
+                        <button class="primary-button" type="submit">Upload document</button>
+                    </form>
+                </div>
+                <div class="admin-card"><h2>Documents</h2><div class="record-list" id="documents-list"></div></div>
+            </section>
+            <p class="status-message" id="admin-status" aria-live="polite"></p>
+        </section>
+    </main>
+    <script src="admin.js"></script>
+</body>
+</html>

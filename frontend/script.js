@@ -1,517 +1,292 @@
-// ============================================================
-// VSIT STUDENT ASSISTANT - FRONTEND CHAT SCRIPT
-// ============================================================
+const state = {
+    latestAnswer: "",
+    speechEnabled: true,
+};
 
-// FastAPI backend URL
-const API_URL = "http://127.0.0.1:8000/chat";
+const views = {
+    assistant: document.getElementById("assistant-view"),
+    academics: document.getElementById("academics-view"),
+    resources: document.getElementById("resources-view"),
+};
 
+const titles = {
+    assistant: "Ask the VSIT Assistant",
+    academics: "Academic calendar",
+    resources: "College resources",
+};
 
-// ============================================================
-// SEND MESSAGE
-// ============================================================
+document.querySelectorAll(".nav-item").forEach((button) => {
+    button.addEventListener("click", () => showView(button.dataset.view));
+});
 
-async function sendMessage() {
+function showView(name) {
+    Object.entries(views).forEach(([viewName, element]) => {
+        const active = viewName === name;
+        element.hidden = !active;
+        element.classList.toggle("active", active);
+    });
+    document.querySelectorAll(".nav-item").forEach((button) => {
+        const active = button.dataset.view === name;
+        button.classList.toggle("active", active);
+        if (active) button.setAttribute("aria-current", "page");
+        else button.removeAttribute("aria-current");
+    });
+    document.getElementById("page-title").textContent = titles[name];
+    if (name === "academics") loadAcademicEvents();
+    if (name === "resources") loadDocuments();
+}
 
-    const userInput = document.getElementById("user-input");
-    const chatBox = document.getElementById("chat-box");
-    const sendButton = document.getElementById("send-button");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("user-input");
+const chatMessages = document.getElementById("chat-messages");
+const chatStatus = document.getElementById("chat-status");
+const sendButton = document.getElementById("send-button");
 
-    const message = userInput.value.trim();
+chatInput.addEventListener("input", () => {
+    chatInput.style.height = "auto";
+    chatInput.style.height = `${Math.min(chatInput.scrollHeight, 120)}px`;
+});
 
-    // Do not send empty messages
-    if (message === "") {
-        return;
+chatInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        chatForm.requestSubmit();
     }
+});
 
+chatForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
+    await sendMessage(message);
+});
 
-    // ========================================================
-    // ADD USER MESSAGE
-    // ========================================================
+document.querySelectorAll("[data-question]").forEach((button) => {
+    button.addEventListener("click", () => sendMessage(button.dataset.question));
+});
 
-    const userMessageHTML = `
-        <div class="message user-message">
-
-            <div class="message-label">
-                👤 You
-            </div>
-
-            <div class="message-text">
-                ${escapeHTML(message)}
-            </div>
-
-        </div>
-    `;
-
-    chatBox.insertAdjacentHTML(
-        "beforeend",
-        userMessageHTML
-    );
-
-
-    // Clear input
-    userInput.value = "";
-
-
-    // Scroll to latest message
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-
-    // Disable send button
+async function sendMessage(message) {
+    appendMessage("user", message);
+    chatInput.value = "";
+    chatInput.style.height = "auto";
     sendButton.disabled = true;
-    sendButton.innerText = "Sending...";
-
-
-    // ========================================================
-    // LOADING MESSAGE
-    // ========================================================
-
-    const loadingId = "loading-message";
-
-    const loadingMessageHTML = `
-        <div class="message bot-message" id="${loadingId}">
-
-            <div class="message-label">
-                🤖 Assistant
-            </div>
-
-            <div class="message-text thinking-message">
-
-                <span></span>
-                <span></span>
-                <span></span>
-
-            </div>
-
-        </div>
-    `;
-
-    chatBox.insertAdjacentHTML(
-        "beforeend",
-        loadingMessageHTML
-    );
-
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-
-    // ========================================================
-    // SEND REQUEST TO FASTAPI
-    // ========================================================
+    chatStatus.textContent = "Checking VSIT information…";
 
     try {
-
-        const response = await fetch(API_URL, {
-
+        const response = await fetch("/chat", {
             method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                message: message
-            })
-
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
         });
-
-
-        // ====================================================
-        // CHECK SERVER RESPONSE
-        // ====================================================
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Unable to connect to the chatbot server."
-            );
-
-        }
-
-
-        // Get JSON response
         const data = await response.json();
-
-
-        // ====================================================
-        // REMOVE LOADING MESSAGE
-        // ====================================================
-
-        const loadingMessage =
-            document.getElementById(loadingId);
-
-        if (loadingMessage) {
-            loadingMessage.remove();
-        }
-
-
-        // ====================================================
-        // GET BOT RESPONSE
-        // ====================================================
-
-        let botResponse = "";
-
-
-        if (data.bot_response) {
-
-            botResponse = data.bot_response;
-
-        }
-
-        else if (data.response) {
-
-            botResponse = data.response;
-
-        }
-
-        else if (data.answer) {
-
-            botResponse = data.answer;
-
-        }
-
-        else {
-
-            botResponse =
-                "Sorry, I could not understand the response from the server.";
-
-        }
-
-
-        // ====================================================
-        // ADD BOT RESPONSE
-        // ====================================================
-
-        const botMessageHTML = `
-
-            <div class="message bot-message">
-
-                <div class="message-label">
-                    🤖 Assistant
-                </div>
-
-                <div class="message-text">
-
-                    ${formatResponse(botResponse)}
-
-                </div>
-
-            </div>
-
-        `;
-
-        chatBox.insertAdjacentHTML(
-            "beforeend",
-            botMessageHTML
-        );
-
-
-        // ====================================================
-        // HANDLE RESULT LINK IF BACKEND SENDS ONE
-        // ====================================================
-
-        if (data.result_url) {
-
-            addResultLink(
-                chatBox,
-                data.result_url
-            );
-
-        }
-
-        else if (data.result_link) {
-
-            addResultLink(
-                chatBox,
-                data.result_link
-            );
-
-        }
-
-        else if (data.url) {
-
-            addResultLink(
-                chatBox,
-                data.url
-            );
-
-        }
-
-
-    }
-
-
-    // ========================================================
-    // ERROR HANDLING
-    // ========================================================
-
-    catch (error) {
-
-        // Remove loading message
-        const loadingMessage =
-            document.getElementById(loadingId);
-
-        if (loadingMessage) {
-
-            loadingMessage.remove();
-
-        }
-
-
-        // Error message
-        const errorMessageHTML = `
-
-            <div class="message bot-message">
-
-                <div class="message-label">
-                    ⚠️ Error
-                </div>
-
-                <div class="message-text">
-
-                    Unable to connect to the chatbot.
-
-                    <br><br>
-
-                    Please make sure the FastAPI server is running.
-
-                </div>
-
-            </div>
-
-        `;
-
-        chatBox.insertAdjacentHTML(
-            "beforeend",
-            errorMessageHTML
-        );
-
-
-        console.error(
-            "Chatbot Error:",
-            error
-        );
-
-    }
-
-
-    // ========================================================
-    // FINALLY
-    // ========================================================
-
-    finally {
-
-        // Enable button
+        if (!response.ok) throw new Error(readApiError(data));
+        const answer = data.bot_response || data.answer || "No answer was returned.";
+        state.latestAnswer = answer;
+        appendMessage("assistant", answer, data.sources || []);
+        chatStatus.textContent = `Answered from ${formatCategory(data.category)}.`;
+    } catch (error) {
+        appendMessage("assistant", "I could not reach the assistant. Please check that the server is running and try again.");
+        chatStatus.textContent = error.message;
+    } finally {
         sendButton.disabled = false;
-
-        sendButton.innerText = "Send ➤";
-
-
-        // Scroll to latest message
-        chatBox.scrollTop =
-            chatBox.scrollHeight;
-
-
-        // Focus input
-        userInput.focus();
-
+        chatInput.focus();
     }
-
 }
 
+function appendMessage(role, text, sources = []) {
+    const article = document.createElement("article");
+    article.className = `message ${role === "user" ? "user-message" : "assistant-message"}`;
 
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    avatar.textContent = role === "user" ? "Y" : "V";
 
-// ============================================================
-// ADD RESULT LINK
-// ============================================================
+    const content = document.createElement("div");
+    const author = document.createElement("p");
+    author.className = "message-author";
+    author.textContent = role === "user" ? "You" : "VSIT Assistant";
 
-function addResultLink(chatBox, url) {
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble";
+    text.split("\n").filter(Boolean).forEach((line) => {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = line;
+        bubble.appendChild(paragraph);
+    });
 
-    if (!url) {
+    if (sources.length) {
+        const sourceList = document.createElement("div");
+        sourceList.className = "source-list";
+        sources.forEach((source) => {
+            const chip = document.createElement("span");
+            chip.className = "source-chip";
+            chip.textContent = `${source.title} · page ${source.page}`;
+            sourceList.appendChild(chip);
+        });
+        bubble.appendChild(sourceList);
+    }
+
+    content.append(author, bubble);
+    article.append(avatar, content);
+    chatMessages.appendChild(article);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function formatCategory(category) {
+    return String(category || "available college data").toLowerCase();
+}
+
+function readApiError(data) {
+    if (typeof data.detail === "string") return data.detail;
+    return "The request could not be completed.";
+}
+
+const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const voiceButton = document.getElementById("voice-button");
+
+if (Recognition) {
+    const recognition = new Recognition();
+    recognition.lang = "en-IN";
+    recognition.interimResults = false;
+    recognition.addEventListener("start", () => {
+        voiceButton.classList.add("active");
+        chatStatus.textContent = "Listening…";
+    });
+    recognition.addEventListener("result", (event) => {
+        chatInput.value = event.results[0][0].transcript;
+        chatInput.focus();
+        chatStatus.textContent = "Voice input ready. Review it, then send.";
+    });
+    recognition.addEventListener("end", () => voiceButton.classList.remove("active"));
+    recognition.addEventListener("error", () => {
+        chatStatus.textContent = "Voice input was unavailable. You can continue typing.";
+    });
+    voiceButton.addEventListener("click", () => recognition.start());
+} else {
+    voiceButton.disabled = true;
+    voiceButton.title = "Voice input is not supported in this browser";
+}
+
+document.getElementById("speech-toggle").addEventListener("click", () => {
+    if (!("speechSynthesis" in window)) {
+        chatStatus.textContent = "Answer playback is not supported in this browser.";
         return;
     }
-
-
-    const resultHTML = `
-
-        <div class="message bot-message">
-
-            <div class="message-label">
-                🔗 Result Page
-            </div>
-
-            <div class="message-text">
-
-                <a
-                    href="${escapeAttribute(url)}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="result-link"
-                >
-
-                    📄 Open Result Page
-
-                </a>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    chatBox.insertAdjacentHTML(
-        "beforeend",
-        resultHTML
-    );
-
-
-    chatBox.scrollTop =
-        chatBox.scrollHeight;
-
-}
-
-
-
-// ============================================================
-// ENTER KEY SUPPORT
-// ============================================================
-
-document
-    .getElementById("user-input")
-    .addEventListener(
-        "keydown",
-        function (event) {
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                sendMessage();
-
-            }
-
-        }
-    );
-
-
-
-// ============================================================
-// ESCAPE HTML
-// ============================================================
-
-function escapeHTML(text) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        text;
-
-    return div.innerHTML;
-
-}
-
-
-
-// ============================================================
-// ESCAPE ATTRIBUTE
-// ============================================================
-
-function escapeAttribute(text) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        text;
-
-    return div.innerHTML;
-
-}
-
-
-
-// ============================================================
-// FORMAT BOT RESPONSE
-// ============================================================
-function formatResponse(text) {
-
-    if (!text) {
-        return "";
+    window.speechSynthesis.cancel();
+    if (!state.latestAnswer) {
+        chatStatus.textContent = "Ask a question first, then play the latest answer.";
+        return;
     }
+    const utterance = new SpeechSynthesisUtterance(state.latestAnswer);
+    utterance.lang = "en-IN";
+    window.speechSynthesis.speak(utterance);
+});
 
-    let formattedText = String(text);
+document.getElementById("academic-filters").addEventListener("submit", (event) => {
+    event.preventDefault();
+    loadAcademicEvents(new FormData(event.currentTarget));
+});
+document.getElementById("refresh-academics").addEventListener("click", () => loadAcademicEvents());
 
-    // Detect HTML anchor tags
-    if (formattedText.includes("<a ")) {
-        return formattedText;
+async function loadAcademicEvents(formData = null) {
+    const list = document.getElementById("academic-list");
+    list.replaceChildren(emptyState("Loading academic events…"));
+    const params = new URLSearchParams();
+    if (formData) {
+        formData.forEach((value, key) => {
+            if (String(value).trim()) params.set(key, String(value).trim());
+        });
     }
-
-    // Escape everything else
-    formattedText = escapeHTML(formattedText);
-
-    // Markdown bold
-    formattedText = formattedText.replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong>$1</strong>"
-    );
-
-    // Markdown links
-    formattedText = formattedText.replace(
-        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-        (match, text, url) => `
-            <a href="${escapeAttribute(url)}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="result-link">
-                ${text}
-            </a>
-        `
-    );
-
-    // Plain URLs
-    formattedText = formattedText.replace(
-        /(https?:\/\/[^\s<]+)/g,
-        (url) => `
-            <a href="${escapeAttribute(url)}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="result-link">
-                🔗 Open Link
-            </a>
-        `
-    );
-
-    // Bullets
-    formattedText = formattedText.replace(
-        /^\s*[\*\-]\s+/gm,
-        "• "
-    );
-
-    // New lines
-    formattedText = formattedText.replace(
-        /\n/g,
-        "<br>"
-    );
-
-    return formattedText;
+    try {
+        const response = await fetch("/api/academics" + (params.size ? `?${params}` : ""));
+        if (!response.ok) throw new Error("Could not load academic events.");
+        const events = await response.json();
+        list.replaceChildren();
+        if (!events.length) list.append(emptyState("No published events match these filters."));
+        events.forEach((event) => list.append(academicCard(event)));
+    } catch (error) {
+        list.replaceChildren(emptyState(error.message));
+    }
 }
 
+function academicCard(event) {
+    const card = document.createElement("article");
+    card.className = "info-card";
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = event.event_type;
+    const title = document.createElement("h3");
+    title.textContent = event.title;
+    const date = document.createElement("p");
+    date.className = "meta";
+    date.textContent = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(event.starts_at));
+    const description = document.createElement("p");
+    description.textContent = event.description || "No additional details provided.";
+    card.append(tag, title, date, description);
+    return card;
+}
 
+async function loadDocuments() {
+    const list = document.getElementById("document-list");
+    list.replaceChildren(emptyState("Loading documents…"));
+    try {
+        const response = await fetch("/api/documents");
+        if (!response.ok) throw new Error("Could not load documents.");
+        const documents = await response.json();
+        list.replaceChildren();
+        if (!documents.length) list.append(emptyState("No college documents have been published yet."));
+        documents.forEach((documentItem) => {
+            const card = document.createElement("article");
+            card.className = "info-card";
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = documentItem.category;
+            const title = document.createElement("h3");
+            title.textContent = documentItem.title;
+            const detail = document.createElement("p");
+            detail.textContent = `${documentItem.filename} · ${documentItem.page_count} page${documentItem.page_count === 1 ? "" : "s"}`;
+            card.append(tag, title, detail);
+            list.append(card);
+        });
+    } catch (error) {
+        list.replaceChildren(emptyState(error.message));
+    }
+}
 
-// ============================================================
-// QUICK QUESTIONS
-// ============================================================
+document.getElementById("resource-search-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const query = document.getElementById("resource-query").value.trim();
+    const results = document.getElementById("resource-results");
+    results.replaceChildren(emptyState("Searching documents…"));
+    try {
+        const response = await fetch("/api/documents/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query }),
+        });
+        if (!response.ok) throw new Error("Document search failed.");
+        const data = await response.json();
+        results.replaceChildren();
+        if (!data.hits.length) results.append(emptyState("No reliable document match was found."));
+        data.hits.forEach((hit) => {
+            const card = document.createElement("article");
+            card.className = "search-hit";
+            const heading = document.createElement("strong");
+            heading.textContent = `${hit.title} · page ${hit.page}`;
+            const excerpt = document.createElement("p");
+            excerpt.textContent = hit.excerpt;
+            card.append(heading, excerpt);
+            results.append(card);
+        });
+    } catch (error) {
+        results.replaceChildren(emptyState(error.message));
+    }
+});
 
-function askQuickQuestion(question) {
-
-    const userInput =
-        document.getElementById("user-input");
-
-
-    userInput.value =
-        question;
-
-
-    sendMessage();
-
+function emptyState(message) {
+    const element = document.createElement("div");
+    element.className = "empty-state";
+    element.textContent = message;
+    return element;
 }

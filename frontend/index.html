@@ -1,118 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>VSIT Student Assistance Chatbot</title>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="VSIT Student Assistant for timetables, academics, faculty, offices and college documents.">
+    <title>VSIT Student Assistant</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-    <div class="chat-container">
-
-        <!-- Header -->
-
-        <div class="chat-header">
-
-            <div class="header-icon">
-                🎓
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="/" aria-label="VSIT Student Assistant home">
+                <span class="brand-mark" aria-hidden="true">V</span>
+                <span><strong>VSIT Assistant</strong><small>Student support hub</small></span>
+            </a>
+            <nav aria-label="Primary navigation">
+                <button class="nav-item active" data-view="assistant" aria-current="page"><span>✦</span> Assistant</button>
+                <button class="nav-item" data-view="academics"><span>▣</span> Academics</button>
+                <button class="nav-item" data-view="resources"><span>◫</span> Resources</button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Vidyalankar School of Information Technology</p>
+                <a href="/admin">Administrator login</a>
             </div>
+        </aside>
 
-            <div>
-                <h1>VSIT Student Assistant</h1>
-
-                <p>AI-Powered Student Assistance Chatbot</p>
-            </div>
-
-        </div>
-
-
-        <!-- Chat Messages -->
-
-        <div class="chat-box" id="chat-box">
-
-            <!-- Welcome Message -->
-
-            <div class="message bot-message">
-
-                <div class="message-label">
-                    🤖 Assistant
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">STUDENT SERVICES</p>
+                    <h1 id="page-title">Ask the VSIT Assistant</h1>
                 </div>
+                <div class="system-status"><span></span> College information online</div>
+            </header>
 
-                <div class="message-text">
-                    Hello! 👋<br><br>
+            <section class="view active" id="assistant-view" aria-labelledby="page-title">
+                <div class="chat-panel">
+                    <div class="chat-messages" id="chat-messages" aria-live="polite" aria-label="Conversation">
+                        <article class="message assistant-message">
+                            <div class="avatar" aria-hidden="true">V</div>
+                            <div>
+                                <p class="message-author">VSIT Assistant</p>
+                                <div class="message-bubble">
+                                    <p>Hello! I can help with class timetables, examinations, faculty, offices, results and uploaded college notices.</p>
+                                    <p>Ask a question below or choose a quick prompt.</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
 
-                    I am your VSIT Student Assistance Chatbot.
-                    I can help you with:
-                    <br><br>
+                    <div class="quick-prompts" aria-label="Suggested questions">
+                        <button data-question="What is the timetable for TYIT A on Monday?">Monday timetable</button>
+                        <button data-question="When is the next semester examination?">Exam dates</button>
+                        <button data-question="Where is the student section?">Student section</button>
+                        <button data-question="Who teaches IOT?">Faculty</button>
+                    </div>
 
-                    🎓 VSIT Information<br>
-                    📚 Academic Guidance<br>
-                    💼 Career Guidance<br>
-                    🤝 NGO Information<br>
-                    💬 General Questions
-                    <br><br>
-
-                    How can I help you today?
+                    <form class="composer" id="chat-form">
+                        <label class="sr-only" for="user-input">Ask the VSIT assistant</label>
+                        <textarea id="user-input" aria-label="Ask the VSIT assistant" maxlength="4000" rows="1" placeholder="Ask about timetable, exams, faculty, offices…" required></textarea>
+                        <button type="button" class="icon-button" id="voice-button" aria-label="Start voice input" title="Voice input">🎙</button>
+                        <button type="button" class="icon-button" id="speech-toggle" aria-label="Read the latest answer aloud" title="Read answer aloud">🔊</button>
+                        <button type="submit" class="send-button" id="send-button">Send <span aria-hidden="true">↑</span></button>
+                    </form>
+                    <p class="composer-note" id="chat-status" aria-live="polite">Answers use available VSIT data. Confirm important dates with an official notice.</p>
                 </div>
+            </section>
 
-            </div>
+            <section class="view" id="academics-view" aria-labelledby="academics-heading" hidden>
+                <div class="section-heading">
+                    <div><p class="eyebrow">ACADEMIC CALENDAR</p><h2 id="academics-heading">Upcoming events</h2></div>
+                    <button class="secondary-button" id="refresh-academics">Refresh</button>
+                </div>
+                <form class="filter-bar" id="academic-filters">
+                    <label>Course<input name="course" placeholder="e.g. BSc IT"></label>
+                    <label>Semester<input name="semester" placeholder="e.g. 4"></label>
+                    <label>Type<select name="event_type"><option value="">All events</option><option value="examination">Examinations</option><option value="deadline">Deadlines</option><option value="holiday">Holidays</option><option value="notice">Notices</option></select></label>
+                    <button class="primary-button" type="submit">Apply filters</button>
+                </form>
+                <div class="card-grid" id="academic-list" aria-live="polite"></div>
+            </section>
 
-        </div>
-
-        <!-- Quick Questions -->
-
-<div class="quick-questions">
-
-    <button onclick="askQuickQuestion('What is the attendance requirement at VSIT?')">
-        🎓 VSIT Attendance
-    </button>
-
-    <button onclick="askQuickQuestion('How should I study for my semester exams?')">
-        📚 Exam Preparation
-    </button>
-
-    <button onclick="askQuickQuestion('How can I prepare for a Java developer interview?')">
-        💼 Career Guidance
-    </button>
-
-    <button onclick="askQuickQuestion('How can I volunteer for an NGO?')">
-        🤝 NGO Volunteer
-    </button>
-
-</div>
-
-
-        <!-- Input Area -->
-
-        <div class="chat-input-area">
-
-            <input
-                type="text"
-                id="user-input"
-                placeholder="Type your question here..."
-            >
-
-            <button
-                id="send-button"
-                onclick="sendMessage()"
-            >
-                Send ➤
-            </button>
-
-        </div>
-
+            <section class="view" id="resources-view" aria-labelledby="resources-heading" hidden>
+                <div class="section-heading">
+                    <div><p class="eyebrow">COLLEGE KNOWLEDGE</p><h2 id="resources-heading">Notices and documents</h2></div>
+                </div>
+                <form class="resource-search" id="resource-search-form">
+                    <label class="sr-only" for="resource-query">Search college documents</label>
+                    <input id="resource-query" placeholder="Search uploaded notices and documents" required>
+                    <button class="primary-button" type="submit">Search</button>
+                </form>
+                <div id="resource-results" class="search-results" aria-live="polite"></div>
+                <h3 class="subheading">Available documents</h3>
+                <div class="card-grid" id="document-list"></div>
+            </section>
+        </main>
     </div>
-
-
     <script src="script.js"></script>
-
 </body>
-
 </html>

@@ -2,6 +2,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import Settings
@@ -64,6 +65,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/health")
     def health():
         return {"status": "ok"}
+
+    @app.get("/admin", include_in_schema=False)
+    def admin_frontend():
+        return FileResponse(FRONTEND_DIR / "admin.html")
 
     app.mount(
         "/",
