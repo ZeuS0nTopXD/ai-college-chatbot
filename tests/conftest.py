@@ -11,7 +11,7 @@ def settings(tmp_path: Path):
     return Settings(
         database_url=f"sqlite:///{tmp_path / 'test.db'}",
         admin_password="test-admin-password",
-        token_secret="test-signing-secret",
+        token_secret="test-signing-secret-at-least-32-bytes",
         token_ttl_minutes=30,
         max_upload_bytes=1024 * 1024,
         document_storage_path=tmp_path / "documents",

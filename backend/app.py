@@ -25,7 +25,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     Base.metadata.create_all(bind=engine)
 
-    from backend.routes import academic, chat, knowledge, result, timetable
+    from backend.routes import academic, auth, chat, knowledge, result, timetable
 
     app = FastAPI(
         title="VSIT Student Assistant API",
@@ -46,6 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(timetable.router)
     app.include_router(result.router)
     app.include_router(academic.router)
+    app.include_router(auth.router)
 
     @app.get("/health")
     def health():
