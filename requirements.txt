@@ -17,3 +17,8 @@ typing_extensions==4.16.0
 uvicorn==0.52.4
 requests==2.32.3
 python-dotenv==1.0.1
+httpx==0.28.1
+PyJWT==2.15.1
+pypdf==6.19.0
+pytest==9.1.1
+python-multipart==0.0.32
