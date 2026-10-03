@@ -16,7 +16,7 @@ import re
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from backend.database.database import SessionLocal
@@ -33,6 +33,8 @@ from backend.services.ai_service import (
     get_ai_response,
     get_missing_info_response,
 )
+
+from backend.services.academic_service import answer_academic_question
 
 from backend.services.result_service import (
     is_result_question,
@@ -69,7 +71,7 @@ router = APIRouter()
 # ============================================================
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(max_length=4000)
 
 
 # ============================================================
@@ -1071,10 +1073,8 @@ def is_office_question(message):
         r"\baccounts\b",
         r"\bfees\b",
         r"\bfee office\b",
-        r"\bexam\b",
-        r"\bexams\b",
-        r"\bexamination\b",
-        r"\bexaminations\b",
+        r"\bexam(?:ination)?\s+(?:cell|office|section)\b",
+        r"\b(?:contact|office|cell)\b.*\b(?:exam|exams|examination|examinations)\b",
         r"\bstudent section\b",
         r"\bstudent services\b",
         r"\bbonafide\b",
@@ -1402,6 +1402,7 @@ def is_obviously_non_timetable_question(
         r"\bwho is hod\b",
         r"\bhead of department\b",
         r"\bacademic calendar\b",
+        r"\bexam(?:s|ination|inations)?\b",
         r"\bsemester exams\b",
         r"\bexam schedule\b",
         r"\bholiday list\b",
@@ -2210,10 +2211,17 @@ def chat(
     # ========================================================
 
     if category == "ACADEMIC":
-        response = get_ai_response(
-            user_message,
-            category,
-        )
+        academic_answer = answer_academic_question(db, user_message)
+
+        if academic_answer:
+            return make_response(
+                user_message,
+                category,
+                academic_answer.pop("bot_response"),
+                **academic_answer,
+            )
+
+        response = get_ai_response(user_message, category)
 
         return make_response(
             user_message,
