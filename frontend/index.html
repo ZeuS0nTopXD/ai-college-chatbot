@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>VSIT Student Assistance Chatbot</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <!-- Header -->
+
+        <div class="chat-header">
+
+            <div class="header-icon">
+                🎓
+            </div>
+
+            <div>
+                <h1>VSIT Student Assistant</h1>
+
+                <p>AI-Powered Student Assistance Chatbot</p>
+            </div>
+
+        </div>
+
+
+        <!-- Chat Messages -->
+
+        <div class="chat-box" id="chat-box">
+
+            <!-- Welcome Message -->
+
+            <div class="message bot-message">
+
+                <div class="message-label">
+                    🤖 Assistant
+                </div>
+
+                <div class="message-text">
+                    Hello! 👋<br><br>
+
+                    I am your VSIT Student Assistance Chatbot.
+                    I can help you with:
+                    <br><br>
+
+                    🎓 VSIT Information<br>
+                    📚 Academic Guidance<br>
+                    💼 Career Guidance<br>
+                    🤝 NGO Information<br>
+                    💬 General Questions
+                    <br><br>
+
+                    How can I help you today?
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Quick Questions -->
+
+<div class="quick-questions">
+
+    <button onclick="askQuickQuestion('What is the attendance requirement at VSIT?')">
+        🎓 VSIT Attendance
+    </button>
+
+    <button onclick="askQuickQuestion('How should I study for my semester exams?')">
+        📚 Exam Preparation
+    </button>
+
+    <button onclick="askQuickQuestion('How can I prepare for a Java developer interview?')">
+        💼 Career Guidance
+    </button>
+
+    <button onclick="askQuickQuestion('How can I volunteer for an NGO?')">
+        🤝 NGO Volunteer
+    </button>
+
+</div>
+
+
+        <!-- Input Area -->
+
+        <div class="chat-input-area">
+
+            <input
+                type="text"
+                id="user-input"
+                placeholder="Type your question here..."
+            >
+
+            <button
+                id="send-button"
+                onclick="sendMessage()"
+            >
+                Send ➤
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
