@@ -1,102 +1,131 @@
 # VSIT Student Assistant
 
-AI-powered college information chatbot for Vidyalankar School of Information
-Technology (VSIT). Answers questions about timetables, results, and general
-college information (admissions, courses, facilities, placements, etc.), and
-falls back to a local LLM (via [Ollama](https://ollama.com)) for open-ended
-academic/career/general questions.
+A deployable student-support MVP for Vidyalankar School of Information Technology (VSIT), Mumbai. It combines deterministic college information, academic events, searchable college documents, a protected admin workspace, and optional local AI assistance.
 
-## Architecture
+## Included features
 
-- **Backend**: FastAPI + SQLAlchemy + MySQL
-- **AI**: Local LLM via Ollama (`llama3.2:3b` by default) — no external API
-  key required, runs entirely on your machine
-- **Frontend**: Static HTML/CSS/JS chat widget
+- Timetable questions by course, division, day, subject, teacher, room, and session type.
+- Faculty and office queries, including HOD, subjects, locations, timings, and contacts.
+- Academic and examination events with course, semester, publication, date, and link filters.
+- Result links and structured VSIT knowledge entries.
+- PDF/TXT uploads with local page-aware search and source citations.
+- Password-protected admin CRUD for academics, knowledge, faculty, offices, and documents.
+- Responsive student dashboard and administration workspace.
+- Browser speech-to-text and answer playback when the browser supports Web Speech APIs.
+- SQLite by default, with configurable SQLAlchemy database URLs.
+- Optional Ollama responses for general, academic, and career questions when deterministic information is unavailable.
+- Automated tests, health check, Docker packaging, and persistent document storage.
 
-```
-backend/
-  main.py              FastAPI app, CORS, router registration
-  database/            SQLAlchemy engine/session setup
-  models/               ORM models: Timetable, KnowledgeBase, Result
-  schemas/              Pydantic request/response schemas
-  routes/               /chat, /knowledge, /timetable, /result endpoints
-  services/
-    classifier.py        Classifies a question into a category + does
-                          scored knowledge-base matching
-    timetable_service.py Parses timetable questions (course/division/day/
-                          subject/teacher/intent)
-    result_service.py    Parses result questions (semester/batch/course)
-    ai_service.py        Calls the local Ollama LLM, with graceful
-                          fallback messages if it's unreachable
-  data/                 Seed data (timetable, results, VSIT knowledge)
-  scripts/               Seeder scripts to load data/ into MySQL
-frontend/
-  index.html, style.css, script.js   Chat UI
+## Quick start on Windows
+
+Requirements: Python 3.10 or newer. Ollama is optional.
+
+```powershell
+py -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
+uvicorn backend.main:app --reload --port 8000
 ```
 
-## Setup
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). The administration workspace is at [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin), and API documentation is at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
-1. **Install MySQL** and create a database, e.g. `vsit_student_assistant`.
+The default `.env.example` values are intended only for local development. Set strong `ADMIN_PASSWORD` and `TOKEN_SECRET` values before sharing or deploying the app.
 
-2. **Install [Ollama](https://ollama.com)** and pull the model:
-   ```
-   ollama pull llama3.2:3b
-   ```
-   Ollama must be running (`ollama serve`, or it runs automatically after
-   install) for ACADEMIC/CAREER/GENERAL questions and for VSIT/NGO answers
-   not already in the knowledge base.
+## Configuration
 
-3. **Configure environment**: copy `.env.example` to `.env` and fill in your
-   MySQL credentials:
-   ```
-   cp .env.example .env
-   ```
+| Variable | Purpose | Local default |
+| --- | --- | --- |
+| `DATABASE_URL` | SQLAlchemy database URL | `sqlite:///./data/vsit_student_assistant.db` |
+| `ADMIN_PASSWORD` | Password for the admin workspace | `change-me` |
+| `TOKEN_SECRET` | Secret used to sign admin access tokens | Development-only value |
+| `TOKEN_TTL_MINUTES` | Admin session duration | `60` |
+| `MAX_UPLOAD_BYTES` | Maximum PDF/TXT upload size | `10485760` (10 MiB) |
+| `DOCUMENT_STORAGE_PATH` | Stored document directory | `./data/documents` |
+| `CORS_ORIGINS` | Comma-separated allowed browser origins | Local port 8000 origins |
+| `OLLAMA_URL` | Optional Ollama generation endpoint | `http://localhost:11434/api/generate` |
+| `OLLAMA_MODEL` | Optional local model | `llama3.2:3b` |
 
-4. **Create a virtual environment and install dependencies**:
-   ```
-   python -m venv venv
-   venv\Scripts\activate        # Windows
-   source venv/bin/activate     # macOS/Linux
-   pip install -r requirements.txt
-   ```
+MySQL remains supported, for example:
 
-5. **Seed the database** (tables are created automatically on first run of
-   `main.py`, then populate them):
-   ```
-   python -m backend.scripts.seed_timetable
-   python -m backend.scripts.seed_knowledge
-   python -m backend.seed_result
-   ```
+```env
+DATABASE_URL=mysql+pymysql://user:password@127.0.0.1:3306/vsit_student_assistant
+```
 
-6. **Run the API**:
-   ```
-   uvicorn backend.main:app --reload --port 8000
-   ```
-   Visit `http://127.0.0.1:8000` — you should see
-   `{"message": "VSIT Student Assistant API is running"}`.
-   Interactive API docs: `http://127.0.0.1:8000/docs`.
+## Add college information
 
-7. **Run the frontend**: open `frontend/index.html` with a live server on
-   port 5500 (e.g. the VS Code "Live Server" extension), or update
-   `CORS_ORIGINS` in `.env` to match whatever origin you serve it from.
+Start the application, visit `/admin`, and sign in with `ADMIN_PASSWORD`. The workspace can manage:
+
+- Academic events and examination dates.
+- Knowledge questions and verified answers.
+- Faculty members and subject information.
+- College offices and procedures.
+- PDF or UTF-8 text notices for document search.
+
+Only published academic events appear to students. Uploaded documents are split into page-aware passages and searched locally. When no passage meets the relevance threshold, the assistant returns no document match instead of inventing an answer.
+
+The existing data scripts can seed timetable, knowledge, and result records:
+
+```powershell
+python -m backend.scripts.seed_timetable
+python -m backend.scripts.seed_knowledge
+python -m backend.seed_result
+```
+
+Review seeded content before a demonstration. Treat any unverified example as sample data and replace it with an official VSIT notice or administrator-approved entry.
+
+## Optional Ollama setup
+
+The core college features run without Ollama. For general and career questions, install Ollama separately and run:
+
+```powershell
+ollama pull llama3.2:3b
+```
+
+If Ollama is unavailable, the API returns a clear fallback response while timetable, academic, office, faculty, result, knowledge, and document features continue working.
+
+## Run the tests
+
+```powershell
+python -m pytest -q
+python -m compileall backend
+```
+
+The tests use isolated temporary SQLite databases and do not modify local application data.
+
+## Docker
+
+Set deployment secrets in the current shell or in a local `.env` file, then build and run:
+
+```powershell
+$env:ADMIN_PASSWORD = "replace-with-a-strong-password"
+$env:TOKEN_SECRET = "replace-with-a-long-random-signing-secret"
+docker compose up --build
+```
+
+Open [http://localhost:8000](http://localhost:8000). The named `vsit_data` volume preserves the SQLite database and uploaded documents across container restarts.
+
+## Small cloud deployment
+
+Render, Railway, and a small VPS can run the included Dockerfile. Configure these items in the platform dashboard:
+
+1. Set `ADMIN_PASSWORD` and a random `TOKEN_SECRET` of at least 32 characters.
+2. Set `DATABASE_URL=sqlite:////app/data/vsit_student_assistant.db` for a single persistent instance, or use the provider's managed database URL.
+3. Set `DOCUMENT_STORAGE_PATH=/app/data/documents`.
+4. Attach a persistent disk at `/app/data` when using SQLite and local document storage.
+5. Set `CORS_ORIGINS` to the deployed HTTPS origin.
+6. Configure the health check path as `/health`.
+
+SQLite plus local files are appropriate for one project instance. Multiple replicas require a shared SQL database and shared object storage, which are outside this MVP.
 
 ## API overview
 
-- `POST /chat` — main chatbot endpoint. Body: `{"message": "..."}`
-- `GET /timetable/{course}/{division}/{day}` — raw timetable lookup
-- `GET /result/{course}` — all results for a course
-- `GET /result/{course}/{semester}` — result for a specific semester
-- `POST /knowledge` — add a knowledge-base entry (category/topic/question/answer)
+- `POST /chat` — answer a student question.
+- `GET /api/academics` — list published academic events.
+- `GET /api/documents` — list searchable college documents.
+- `POST /api/documents/search` — retrieve cited document passages.
+- `POST /api/auth/login` — create an administrator session.
+- `/api/admin/*` — protected management routes.
+- `GET /health` — deployment health check.
 
-## Current scope
-
-Implemented: timetable Q&A (day/subject/teacher/room queries), result
-lookup, VSIT/NGO knowledge-base Q&A, and general/academic/career Q&A via a
-local LLM, with a web chat frontend.
-
-Not yet implemented (see project vision doc): PDF/RAG ingestion of official
-notices and circulars, multi-language support (Hindi/Marathi), voice
-assistant, WhatsApp integration, campus navigation, and a placement/resume
-assistant. These are larger efforts each requiring their own design
-decisions (e.g. which translation/speech APIs, which vector store for RAG,
-WhatsApp Business API setup) — see the project's next steps.
+FastAPI exposes the complete interactive schema at `/docs`.

@@ -1,3 +1,8 @@
+from dataclasses import replace
+
+import pytest
+
+
 def test_health_endpoint_reports_ready(client):
     response = client.get("/health")
 
@@ -19,3 +24,9 @@ def test_test_database_is_isolated(app, settings, tmp_path):
     assert app.state.settings is settings
     assert settings.database_url == f"sqlite:///{database_path}"
     assert database_path.exists()
+
+
+@pytest.mark.parametrize("field", ["admin_password", "token_secret"])
+def test_empty_security_settings_are_rejected(settings, field):
+    with pytest.raises(ValueError, match=field):
+        replace(settings, **{field: ""})

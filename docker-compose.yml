@@ -1,0 +1,21 @@
+services:
+  vsit-assistant:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:////app/data/vsit_student_assistant.db
+      DOCUMENT_STORAGE_PATH: /app/data/documents
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      TOKEN_SECRET: ${TOKEN_SECRET:-development-secret-change-me-before-deploying}
+      TOKEN_TTL_MINUTES: ${TOKEN_TTL_MINUTES:-60}
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-10485760}
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434/api/generate}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:3b}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
+    volumes:
+      - vsit_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  vsit_data:

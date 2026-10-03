@@ -20,6 +20,11 @@ class Settings:
     ollama_url: str
     ollama_model: str
 
+    def __post_init__(self) -> None:
+        for field_name in ("admin_password", "token_secret"):
+            if not getattr(self, field_name).strip():
+                raise ValueError(f"{field_name} must not be empty")
+
     @classmethod
     def from_env(cls) -> "Settings":
         origins = tuple(
@@ -36,7 +41,10 @@ class Settings:
                 "sqlite:///./data/vsit_student_assistant.db",
             ),
             admin_password=os.getenv("ADMIN_PASSWORD", "change-me"),
-            token_secret=os.getenv("TOKEN_SECRET", "development-secret-change-me"),
+            token_secret=os.getenv(
+                "TOKEN_SECRET",
+                "development-secret-change-me-before-deploying",
+            ),
             token_ttl_minutes=int(os.getenv("TOKEN_TTL_MINUTES", "60")),
             max_upload_bytes=int(os.getenv("MAX_UPLOAD_BYTES", str(10 * 1024 * 1024))),
             document_storage_path=Path(
