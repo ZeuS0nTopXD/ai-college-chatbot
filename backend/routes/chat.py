@@ -35,6 +35,7 @@ from backend.services.ai_service import (
 )
 
 from backend.services.academic_service import answer_academic_question
+from backend.services.document_service import search_documents
 
 from backend.services.result_service import (
     is_result_question,
@@ -2158,7 +2159,30 @@ def chat(
         )
 
     # ========================================================
-    # 6. KNOWLEDGE BASE
+    # 6. COLLEGE DOCUMENTS
+    # ========================================================
+
+    document_hits = search_documents(db, user_message)
+
+    if document_hits:
+        best_hit = document_hits[0]
+        return make_response(
+            user_message,
+            "DOCUMENT",
+            best_hit.excerpt,
+            sources=[
+                {
+                    "document_id": hit.document_id,
+                    "title": hit.title,
+                    "page": hit.page,
+                    "score": hit.score,
+                }
+                for hit in document_hits
+            ],
+        )
+
+    # ========================================================
+    # 7. KNOWLEDGE BASE
     # ========================================================
 
     if category in [
@@ -2197,7 +2221,7 @@ def chat(
         )
 
     # ========================================================
-    # 7. FACULTY FALLBACK
+    # 8. FACULTY FALLBACK
     # ========================================================
 
     if category == "FACULTY":
@@ -2207,7 +2231,7 @@ def chat(
         )
 
     # ========================================================
-    # 8. ACADEMIC
+    # 9. ACADEMIC
     # ========================================================
 
     if category == "ACADEMIC":
@@ -2230,7 +2254,7 @@ def chat(
         )
 
     # ========================================================
-    # 9. CAREER
+    # 10. CAREER
     # ========================================================
 
     if category == "CAREER":
@@ -2246,7 +2270,7 @@ def chat(
         )
 
     # ========================================================
-    # 10. GENERAL
+    # 11. GENERAL
     # ========================================================
 
     response = get_ai_response(

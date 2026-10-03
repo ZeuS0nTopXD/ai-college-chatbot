@@ -18,6 +18,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     from backend.models.faculty import Faculty  # noqa: F401
     from backend.models.academic import AcademicEvent  # noqa: F401
+    from backend.models.document import Document, DocumentChunk  # noqa: F401
     from backend.models.knowledge import KnowledgeBase  # noqa: F401
     from backend.models.office import Office  # noqa: F401
     from backend.models.result import Result  # noqa: F401
@@ -25,7 +26,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     Base.metadata.create_all(bind=engine)
 
-    from backend.routes import academic, admin, auth, chat, knowledge, result, timetable
+    from backend.routes import (
+        academic,
+        admin,
+        auth,
+        chat,
+        documents,
+        knowledge,
+        result,
+        timetable,
+    )
 
     app = FastAPI(
         title="VSIT Student Assistant API",
@@ -48,6 +58,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(academic.router)
     app.include_router(auth.router)
     app.include_router(admin.router)
+    app.include_router(documents.public_router)
+    app.include_router(documents.admin_router)
 
     @app.get("/health")
     def health():
