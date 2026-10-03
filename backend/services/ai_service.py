@@ -64,8 +64,8 @@ def _call_ollama(prompt):
     except requests.exceptions.RequestException:
 
         return (
-            "Something went wrong while generating a response. "
-            "Please try again."
+            "The AI engine is temporarily unavailable. "
+            "Please try again in a moment."
         )
 
 

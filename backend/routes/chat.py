@@ -437,27 +437,18 @@ def find_teacher_from_timetable(
     matching = []
 
     for row in rows:
-        row_subject = value(
-            row,
-            "subject_name",
-            "subject_code",
-            "subject",
+        row_subjects = unique_values(
+            [
+                value(row, "subject_name", "subject"),
+                value(row, "subject_code"),
+            ]
         )
+        normalized_subjects = [normalize_text(item) for item in row_subjects]
 
-        if not row_subject:
-            continue
-
-        row_subject_q = normalize_text(
-            row_subject
-        )
-
-        # Exact subject match first.
-        if row_subject_q == subject_q:
-            matching.append(row)
-            continue
-
-        # Alias/code match.
-        if subject_q in row_subject_q:
+        if any(
+            row_subject == subject_q or subject_q in row_subject
+            for row_subject in normalized_subjects
+        ):
             matching.append(row)
 
     teachers = []
