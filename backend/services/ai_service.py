@@ -48,10 +48,10 @@ def _call_ollama(prompt):
     except requests.exceptions.ConnectionError:
 
         return (
-            "I'm unable to reach the AI engine right now "
-            "(it looks like the local AI service is not running). "
-            "Please try again in a moment, or contact the "
-            "concerned department for urgent queries."
+            "I could not find a verified answer in the available VSIT data, "
+            "and the optional AI assistant is currently unavailable. "
+            "Please check the official college website or contact the "
+            "concerned department for help."
         )
 
     except requests.exceptions.Timeout:

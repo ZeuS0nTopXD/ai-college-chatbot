@@ -177,3 +177,4 @@ def test_chat_works_when_ollama_is_unavailable(client, monkeypatch):
     assert response.status_code == 200
     assert response.json()["bot_response"]
     assert "unavailable" in response.json()["bot_response"].lower()
+    assert "local ai service is not running" not in response.json()["bot_response"].lower()
