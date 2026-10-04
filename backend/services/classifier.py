@@ -162,6 +162,8 @@ def is_faculty_question(message: str) -> bool:
         r"\bwho is the hod\b",
         r"\bwho is hod\b",
         r"\bwho heads the department\b",
+        r"\bwho (?:runs|leads|heads) (?:the )?[a-z0-9& ]+\b",
+        r"\bin charge of (?:the )?[a-z0-9& ]+\b",
 
         # Faculty
         r"\bfaculty\b",

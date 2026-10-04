@@ -178,6 +178,8 @@ def is_faculty_question(message: str) -> bool:
         r"\bhead of the department\b",
         r"\bdepartment head\b",
         r"\bhead of (?:the )?[a-z0-9& ]+\b",
+        r"\bwho (?:runs|leads|heads) (?:the )?[a-z0-9& ]+\b",
+        r"\bin charge of (?:the )?[a-z0-9& ]+\b",
         r"\bwho teaches\b",
         r"\bwho teach\b",
         r"\bwho is teaching\b",
@@ -496,6 +498,8 @@ def handle_faculty_question(
         or "department head" in text
         or re.search(r"\bhead of (?:the )?.*department\b", text)
         or re.search(r"\bhead of (?:the )?[a-z0-9& ]+\b", text)
+        or re.search(r"\bwho (?:runs|leads|heads) (?:the )?[a-z0-9& ]+\b", text)
+        or re.search(r"\bin charge of (?:the )?[a-z0-9& ]+\b", text)
     ):
         department = extract_faculty_department(
             message,

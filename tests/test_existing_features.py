@@ -6,6 +6,7 @@ from backend.models.office import Office
 from backend.models.result import Result
 from backend.models.timetable import Timetable
 from backend.models.faculty import Faculty
+import pytest
 
 
 def seed(record):
@@ -90,6 +91,32 @@ def test_chat_answers_short_head_of_department_variant(client):
         "/chat",
         json={"message": "who is the head of computing"},
     )
+
+    assert response.status_code == 200
+    assert response.json()["category"] == "FACULTY"
+    assert "Dr. Asif Rampurawala" in response.json()["bot_response"]
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "who runs computing",
+        "who is in charge of the computing department",
+        "tell me who leads computing",
+    ],
+)
+def test_chat_understands_natural_head_of_department_phrasing(client, question):
+    seed(
+        Faculty(
+            name="Dr. Asif Rampurawala",
+            department="Computing",
+            designation="Vice Principal and Head, Department of Computing",
+            email="asif.rampurawala@vsit.edu.in",
+            is_hod=True,
+        )
+    )
+
+    response = client.post("/chat", json={"message": question})
 
     assert response.status_code == 200
     assert response.json()["category"] == "FACULTY"
