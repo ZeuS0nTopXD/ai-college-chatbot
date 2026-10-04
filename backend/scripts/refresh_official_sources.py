@@ -35,6 +35,13 @@ SOURCE_PAGES = {
     "VSIT MSc Data Science Syllabus": ("ACADEMIC", "https://vsit.edu.in/syllabus-m-sc-ds-ai/"),
     "VSIT AQAR 2023-24": ("ACADEMIC", "https://vsit.edu.in/aqar-2023-24-data/"),
     "VSIT Examination Notices": ("ACADEMIC", "https://vsit.edu.in/examinations-2024-winter-session/"),
+    "VSIT About Us": ("VSIT", "https://vsit.edu.in/about-us/"),
+    "VSIT Student Committee": ("STUDENT_SUPPORT", "https://vsit.edu.in/student-committee/"),
+    "VSIT Alumni": ("STUDENT_LIFE", "https://vsit.edu.in/alumni/"),
+    "VSIT Verve Festival": ("STUDENT_LIFE", "https://vsit.edu.in/verve/"),
+    "VSIT Enactus": ("STUDENT_LIFE", "https://vsit.edu.in/enactus/"),
+    "VSIT IQAC": ("ACADEMIC", "https://vsit.edu.in/internal-quality-assurance-committee-iqac/"),
+    "VSIT College Development Committee": ("ACADEMIC", "https://vsit.edu.in/college-development-committee/"),
 }
 
 
