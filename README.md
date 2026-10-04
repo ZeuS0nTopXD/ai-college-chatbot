@@ -36,6 +36,7 @@ The default `.env.example` values are intended only for local development. Set s
 
 | Variable | Purpose | Local default |
 | --- | --- | --- |
+| `APP_ENV` | Runtime environment; production/staging enforce deployment secrets | `development` |
 | `DATABASE_URL` | SQLAlchemy database URL | `sqlite:///./data/vsit_student_assistant.db` |
 | `ADMIN_PASSWORD` | Password for the admin workspace | `change-me` |
 | `TOKEN_SECRET` | Secret used to sign admin access tokens | Development-only value |
@@ -107,7 +108,7 @@ Open [http://localhost:8000](http://localhost:8000). The named `vsit_data` volum
 
 Render, Railway, and a small VPS can run the included Dockerfile. Configure these items in the platform dashboard:
 
-1. Set `ADMIN_PASSWORD` and a random `TOKEN_SECRET` of at least 32 characters.
+1. Set `APP_ENV=production`, `ADMIN_PASSWORD` to a strong password of at least 12 characters, and a random `TOKEN_SECRET` of at least 32 characters. The app refuses the development defaults in production.
 2. Set `DATABASE_URL=sqlite:////app/data/vsit_student_assistant.db` for a single persistent instance, or use the provider's managed database URL.
 3. Set `DOCUMENT_STORAGE_PATH=/app/data/documents`.
 4. Attach a persistent disk at `/app/data` when using SQLite and local document storage.

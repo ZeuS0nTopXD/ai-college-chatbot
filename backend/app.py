@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from sqlalchemy import text
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import Settings
@@ -68,6 +69,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ]
         return JSONResponse(status_code=422, content={"detail": details})
 
+    @app.middleware("http")
+    async def security_headers(request: Request, call_next):
+        response = await call_next(request)
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault("Permissions-Policy", "camera=(), geolocation=(), payment=()")
+        if settings.app_env in {"production", "staging"}:
+            response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+        return response
+
     app.include_router(chat.router)
     app.include_router(knowledge.router)
     app.include_router(timetable.router)
@@ -80,6 +92,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/health")
     def health():
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
         return {"status": "ok"}
 
     @app.get("/admin", include_in_schema=False)

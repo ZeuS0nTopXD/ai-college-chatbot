@@ -4,6 +4,7 @@ services:
     ports:
       - "8000:8000"
     environment:
+      APP_ENV: ${APP_ENV:-development}
       DATABASE_URL: sqlite:////app/data/vsit_student_assistant.db
       DOCUMENT_STORAGE_PATH: /app/data/documents
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}

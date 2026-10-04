@@ -8,6 +8,8 @@ def test_health_endpoint_reports_ready(client):
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert response.headers["x-frame-options"] == "DENY"
 
 
 def test_root_serves_frontend(client):
@@ -30,6 +32,16 @@ def test_test_database_is_isolated(app, settings, tmp_path):
 def test_empty_security_settings_are_rejected(settings, field):
     with pytest.raises(ValueError, match=field):
         replace(settings, **{field: ""})
+
+
+def test_production_environment_rejects_development_secrets(monkeypatch):
+    from backend.config import Settings
+
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("ADMIN_PASSWORD", "change-me")
+    monkeypatch.setenv("TOKEN_SECRET", "development-secret-change-me-before-deploying")
+    with pytest.raises(ValueError, match="ADMIN_PASSWORD"):
+        Settings.from_env()
 
 
 def test_each_database_dependency_call_gets_a_distinct_session(app):
