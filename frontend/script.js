@@ -8,12 +8,18 @@ const views = {
     assistant: document.getElementById("assistant-view"),
     academics: document.getElementById("academics-view"),
     resources: document.getElementById("resources-view"),
+    notices: document.getElementById("notices-view"),
+    syllabus: document.getElementById("syllabus-view"),
+    services: document.getElementById("services-view"),
 };
 
 const titles = {
     assistant: "Ask the VSIT Assistant",
     academics: "Academic calendar",
     resources: "College resources",
+    notices: "Notices and circulars",
+    syllabus: "Syllabus and courses",
+    services: "Student services",
 };
 
 document.querySelectorAll(".nav-item").forEach((button) => {
@@ -35,6 +41,7 @@ function showView(name) {
     document.getElementById("page-title").textContent = titles[name];
     if (name === "academics") loadAcademicEvents();
     if (name === "resources") loadDocuments();
+    if (["notices", "syllabus", "services"].includes(name)) loadTopicPage(name);
 }
 
 const chatForm = document.getElementById("chat-form");
@@ -349,6 +356,27 @@ async function loadDocuments() {
     } catch (error) {
         list.replaceChildren(emptyState(error.message));
     }
+}
+
+async function loadTopicPage(name) {
+    const list = document.querySelector(`#${name}-view .topic-list`);
+    list.replaceChildren(emptyState("Loading official VSIT sources…"));
+    try {
+        const response = await fetch("/api/documents");
+        if (!response.ok) throw new Error("Could not load official sources.");
+        const documents = await response.json();
+        const terms = { notices: ["news", "notice", "examination"], syllabus: ["syllabus", "academic", "programme"], services: ["contact", "student", "library", "placement", "admission"] }[name];
+        const filtered = documents.filter((item) => terms.some((term) => `${item.title} ${item.category}`.toLowerCase().includes(term)));
+        list.replaceChildren();
+        if (!filtered.length) list.append(emptyState("No indexed official sources are available yet."));
+        filtered.forEach((item) => {
+            const card = document.createElement("article"); card.className = "info-card";
+            const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = item.category;
+            const title = document.createElement("h3"); title.textContent = item.title;
+            const detail = document.createElement("p"); detail.textContent = `${item.page_count} page${item.page_count === 1 ? "" : "s"} · indexed official source`;
+            card.append(tag, title, detail); list.append(card);
+        });
+    } catch (error) { list.replaceChildren(emptyState(error.message)); }
 }
 
 document.getElementById("resource-search-form").addEventListener("submit", async (event) => {

@@ -25,6 +25,9 @@
                 <button class="nav-item active" data-view="assistant" aria-current="page"><span>✦</span> Assistant</button>
                 <button class="nav-item" data-view="academics"><span>▣</span> Academics</button>
                 <button class="nav-item" data-view="resources"><span>◫</span> Resources</button>
+                <button class="nav-item" data-view="notices"><span>▤</span> Notices</button>
+                <button class="nav-item" data-view="syllabus"><span>≡</span> Syllabus</button>
+                <button class="nav-item" data-view="services"><span>◎</span> Services</button>
             </nav>
             <div class="sidebar-footer">
                 <p>Vidyalankar School of Information Technology</p>
@@ -94,6 +97,21 @@
                 <div id="resource-results" class="search-results" aria-live="polite"></div>
                 <h3 class="subheading">Available documents</h3>
                 <div class="card-grid" id="document-list"></div>
+            </section>
+
+            <section class="view" id="notices-view" aria-labelledby="notices-heading" hidden>
+                <div class="section-heading"><div><p class="eyebrow">OFFICIAL UPDATES</p><h2 id="notices-heading">Notices and circulars</h2></div></div>
+                <div class="card-grid topic-list" data-topic="notice"></div>
+            </section>
+
+            <section class="view" id="syllabus-view" aria-labelledby="syllabus-heading" hidden>
+                <div class="section-heading"><div><p class="eyebrow">ACADEMIC PROGRAMMES</p><h2 id="syllabus-heading">Syllabus and courses</h2></div></div>
+                <div class="card-grid topic-list" data-topic="syllabus"></div>
+            </section>
+
+            <section class="view" id="services-view" aria-labelledby="services-heading" hidden>
+                <div class="section-heading"><div><p class="eyebrow">STUDENT SUPPORT</p><h2 id="services-heading">Student services</h2></div></div>
+                <div class="card-grid topic-list" data-topic="service"></div>
             </section>
         </main>
     </div>
