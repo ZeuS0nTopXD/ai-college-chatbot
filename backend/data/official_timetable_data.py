@@ -22,7 +22,10 @@ OFFICIAL_TIMETABLE_DATA = [
         "subject_name": row["subject"],
         "teacher_names": row.get("teacher"),
         "room": row["room"],
-        "session_type": row["lecture_type"],
+        # The timetable marks classroom practical periods by the X-103 room
+        # annotation; preserve that source convention even when the legacy
+        # row label was incomplete.
+        "session_type": "Practical" if "X103" in row["room"].replace("-", "") else row["lecture_type"],
     }
     for row in TIMETABLE_DATA
 ]

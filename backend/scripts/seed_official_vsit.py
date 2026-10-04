@@ -71,6 +71,20 @@ def ensure_official_records():
                    item["subject_code"], item["room"])
             if key not in existing_timetable:
                 db.add(Timetable(**values))
+            else:
+                existing = db.query(Timetable).filter(
+                    Timetable.academic_year == values["academic_year"],
+                    Timetable.semester == values["semester"],
+                    Timetable.course == values["course"],
+                    Timetable.division == values["division"],
+                    Timetable.day == values["day"],
+                    Timetable.start_time == values["start_time"],
+                    Timetable.end_time == values["end_time"],
+                    Timetable.subject_code == values["subject_code"],
+                    Timetable.room == values["room"],
+                ).first()
+                if existing and existing.session_type != values["session_type"]:
+                    existing.session_type = values["session_type"]
         db.commit()
     except Exception:
         db.rollback()
