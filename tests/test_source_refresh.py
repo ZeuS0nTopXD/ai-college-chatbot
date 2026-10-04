@@ -8,6 +8,8 @@ def test_source_refresh_strips_non_content_markup():
 
 
 def test_source_refresh_covers_core_programme_and_student_pages():
-    assert len(SOURCE_PAGES) >= 12
+    assert len(SOURCE_PAGES) >= 17
     assert "VSIT BMS Admissions" in SOURCE_PAGES
     assert "VSIT Student Grievance Committee" in SOURCE_PAGES
+    assert "VSIT Academics" in SOURCE_PAGES
+    assert "VSIT BSc IT Syllabus" in SOURCE_PAGES

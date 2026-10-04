@@ -30,6 +30,11 @@ SOURCE_PAGES = {
     "VSIT BSc Computer Science": ("ACADEMIC", "https://vsit.edu.in/bsc-cs-se/"),
     "VSIT MCom Business Management": ("ACADEMIC", "https://vsit.edu.in/m-com-bm/"),
     "VSIT Student Grievance Committee": ("ACADEMIC", "https://vsit.edu.in/student-grievance-redressal-committee/"),
+    "VSIT Academics": ("ACADEMIC", "https://vsit.edu.in/academic/"),
+    "VSIT BSc IT Syllabus": ("ACADEMIC", "https://vsit.edu.in/syllabus-b-sc-it/"),
+    "VSIT MSc Data Science Syllabus": ("ACADEMIC", "https://vsit.edu.in/syllabus-m-sc-ds-ai/"),
+    "VSIT AQAR 2023-24": ("ACADEMIC", "https://vsit.edu.in/aqar-2023-24-data/"),
+    "VSIT Examination Notices": ("ACADEMIC", "https://vsit.edu.in/examinations-2024-winter-session/"),
 }
 
 
