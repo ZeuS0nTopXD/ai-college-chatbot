@@ -1276,6 +1276,21 @@ def handle_office_question(
             ),
         )
 
+    # A generic office question should use the verified main contact record.
+    # Keep unknown named offices on the explicit unavailable-data path above.
+    record = (
+        db.query(Office)
+        .filter(Office.is_active.is_(True))
+        .order_by(Office.id)
+        .first()
+    )
+    if record:
+        return make_response(
+            message,
+            "OFFICE",
+            format_office_record(record, message),
+        )
+
     return make_response(
         message,
         "OFFICE",
