@@ -32,6 +32,7 @@
 import re
 
 from backend.services.query_understanding import normalize_query
+from backend.services.local_retrieval import rank_candidates
 
 
 # ============================================================
@@ -1464,5 +1465,21 @@ def search_knowledge(user_message, knowledge_list):
         and highest_score >= 30
     ):
         return best_match
+
+    ranked = rank_candidates(
+        user_message,
+        [
+            {
+                "record": item,
+                "category": getattr(item, "category", ""),
+                "topic": getattr(item, "topic", ""),
+                "question": getattr(item, "question", ""),
+                "answer": getattr(item, "answer", ""),
+            }
+            for item in knowledge_list
+        ],
+    )
+    if ranked:
+        return ranked[0]["record"]
 
     return None
