@@ -1,6 +1,7 @@
 const state = {
     latestAnswer: "",
     speechEnabled: true,
+    profile: JSON.parse(localStorage.getItem("vsitStudentProfile") || "{}"),
 };
 
 const views = {
@@ -66,6 +67,12 @@ document.querySelectorAll("[data-question]").forEach((button) => {
 });
 
 async function sendMessage(message) {
+    const profileMatch = message.match(/\b(?:fy|sy|ty)\s*it\s*[- ]?([a-e])\b/i);
+    if (profileMatch) {
+        state.profile.course = `${profileMatch[0].toUpperCase().replace(/[- ]?[A-E]$/, "")}`;
+        state.profile.division = profileMatch[1].toUpperCase();
+        localStorage.setItem("vsitStudentProfile", JSON.stringify(state.profile));
+    }
     appendMessage("user", message);
     chatInput.value = "";
     chatInput.style.height = "auto";
@@ -76,7 +83,7 @@ async function sendMessage(message) {
         const response = await fetch("/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message }),
+            body: JSON.stringify({ message, course: state.profile.course || null, division: state.profile.division || null }),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(readApiError(data));

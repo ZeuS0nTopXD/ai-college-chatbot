@@ -26,6 +26,24 @@ TYPO_CORRECTIONS = {
     "placemnt": "placement",
 }
 
+HINGLISH_REPLACEMENTS = {
+    "kaun": "who",
+    "koun": "who",
+    "kya": "what",
+    "kahan": "where",
+    "kaha": "where",
+    "kab": "when",
+    "kitne": "how many",
+    "kitna": "how much",
+    "batao": "tell me",
+    "chahiye": "need",
+    "mere classes": "my classes",
+    "meri class": "my class",
+    "padhai": "academic",
+    "pariksha": "exam",
+    "parikshaen": "exams",
+}
+
 
 def normalize_query(text: str) -> str:
     normalized = unicodedata.normalize("NFKC", str(text or "")).lower()
@@ -34,7 +52,10 @@ def normalize_query(text: str) -> str:
         for char in normalized
     )
     normalized = re.sub(r"\s+", " ", normalized).strip()
-    return " ".join(TYPO_CORRECTIONS.get(token, token) for token in normalized.split())
+    normalized = " ".join(TYPO_CORRECTIONS.get(token, token) for token in normalized.split())
+    for source, target in HINGLISH_REPLACEMENTS.items():
+        normalized = normalized.replace(source, target)
+    return normalized
 
 
 def expand_query(text: str) -> set[str]:

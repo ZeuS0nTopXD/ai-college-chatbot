@@ -88,6 +88,8 @@ def _private_student_data_response(message: str):
 
 class ChatRequest(BaseModel):
     message: str = Field(max_length=4000)
+    course: str | None = Field(default=None, max_length=120)
+    division: str | None = Field(default=None, pattern=r"^[A-Ea-e]$")
 
 
 # ============================================================
@@ -2079,6 +2081,13 @@ def chat(
     user_message = (
         request.message or ""
     ).strip()
+
+    # Allow the UI to persist a student's selected course/division without
+    # exposing private records or requiring an account.
+    if request.course:
+        user_message = f"{user_message} {request.course}"
+    if request.division:
+        user_message = f"{user_message} division {request.division}"
 
     # ========================================================
     # EMPTY MESSAGE
