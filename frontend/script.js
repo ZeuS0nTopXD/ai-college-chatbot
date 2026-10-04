@@ -92,7 +92,7 @@ async function sendMessage(message) {
         const links = [];
         if (data.result_url) links.push({ label: "Open result", url: data.result_url });
         if (data.resource_url) links.push({ label: "Open resource", url: data.resource_url });
-        appendMessage("assistant", answer, data.sources || [], links);
+        appendMessage("assistant", answer, data.sources || [], links, data.category);
         chatStatus.textContent = `Answered from ${formatCategory(data.category)}.`;
     } catch (error) {
         appendMessage("assistant", "I could not reach the assistant. Please check that the server is running and try again.");
@@ -103,7 +103,7 @@ async function sendMessage(message) {
     }
 }
 
-function appendMessage(role, text, sources = [], links = []) {
+function appendMessage(role, text, sources = [], links = [], category = "") {
     const article = document.createElement("article");
     article.className = `message ${role === "user" ? "user-message" : "assistant-message"}`;
 
@@ -119,11 +119,15 @@ function appendMessage(role, text, sources = [], links = []) {
 
     const bubble = document.createElement("div");
     bubble.className = "message-bubble";
-    text.split("\n").filter(Boolean).forEach((line) => {
-        const paragraph = document.createElement("p");
-        paragraph.textContent = line;
-        bubble.appendChild(paragraph);
-    });
+    if (role === "assistant" && category === "TIMETABLE" && /🕒/.test(text)) {
+        renderTimetable(bubble, text);
+    } else {
+        text.split("\n").filter(Boolean).forEach((line) => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = line;
+            bubble.appendChild(paragraph);
+        });
+    }
 
     if (sources.length) {
         const sourceList = document.createElement("div");
@@ -157,6 +161,42 @@ function appendMessage(role, text, sources = [], links = []) {
     article.append(avatar, content);
     chatMessages.appendChild(article);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function renderTimetable(container, text) {
+    const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+    const heading = document.createElement("p");
+    heading.className = "timetable-heading";
+    heading.textContent = lines.shift() || "Timetable";
+    container.appendChild(heading);
+    const table = document.createElement("div");
+    table.className = "timetable-grid";
+    let current = null;
+    const addRow = () => {
+        if (!current) return;
+        const row = document.createElement("div");
+        row.className = "timetable-row";
+        [current.time, current.subject, current.teacher, current.room, current.type].forEach((value) => {
+            const cell = document.createElement("span");
+            cell.textContent = value || "—";
+            row.appendChild(cell);
+        });
+        table.appendChild(row);
+    };
+    lines.forEach((line) => {
+        if (line.startsWith("🕒")) { addRow(); current = { time: line.replace("🕒", "").trim() }; }
+        else if (line.startsWith("📚")) current.subject = line.replace("📚 Subject:", "").trim();
+        else if (line.startsWith("👨‍🏫")) current.teacher = line.replace("👨‍🏫 Teacher:", "").trim();
+        else if (line.startsWith("🏫")) current.room = line.replace("🏫 Room:", "").trim();
+        else if (line.startsWith("📝")) current.type = line.replace("📝 Type:", "").trim();
+    });
+    addRow();
+    const labels = ["Time", "Subject", "Teacher", "Room", "Type"];
+    const header = document.createElement("div");
+    header.className = "timetable-row timetable-header";
+    labels.forEach((label) => { const cell = document.createElement("span"); cell.textContent = label; header.appendChild(cell); });
+    table.prepend(header);
+    container.appendChild(table);
 }
 
 function formatCategory(category) {
