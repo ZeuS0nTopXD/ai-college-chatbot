@@ -763,6 +763,11 @@ def is_vsit_question(message: str) -> bool:
 
         "degree offered",
         "degrees offered",
+        "b.sc",
+        "bsc it",
+        "information technology programme",
+        "information technology program",
+        "computing department",
 
         # Departments
         "department",
@@ -1082,6 +1087,29 @@ def search_knowledge(user_message, knowledge_list):
             "programs offered",
             "degree offered",
             "degrees offered",
+            "b.sc",
+            "bsc it",
+            "information technology programme",
+            "information technology program",
+        ],
+
+        "B.Sc. Information Technology": [
+            "b.sc information technology",
+            "bsc information technology",
+            "information technology programme",
+            "information technology program",
+        ],
+
+        "Computing department": [
+            "computing department",
+            "department of computing",
+            "computing facilities",
+        ],
+
+        "B.Sc. IT coordination": [
+            "who coordinates b.sc",
+            "b.sc coordinator",
+            "bsc coordinator",
         ],
 
         "Departments": [
@@ -1223,7 +1251,16 @@ def search_knowledge(user_message, knowledge_list):
 
     detected_topic = None
 
+    # Prefer the specific coordination intent over the broader B.Sc. topic.
+    if "coordinat" in user_message_lower and (
+        "b.sc" in user_message_lower
+        or "bsc" in user_message_lower
+    ):
+        detected_topic = "B.Sc. IT coordination"
+
     for topic, keywords in keyword_groups.items():
+        if detected_topic:
+            break
 
         if contains_keyword(
             user_message_lower,
