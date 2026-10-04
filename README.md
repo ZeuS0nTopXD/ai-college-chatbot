@@ -119,12 +119,12 @@ SQLite plus local files are appropriate for one project instance. Multiple repli
 
 ### Render deployment
 
-The repository includes `render.yaml` for a single-instance Render deployment. In Render, choose **New > Blueprint**, connect this repository, and apply the blueprint. Set the two prompted values:
+The repository includes `render.yaml` for a free Render Web Service deployment. In Render, choose **New > Blueprint**, connect this repository, and apply the blueprint. Set the two prompted values:
 
 1. `ADMIN_PASSWORD`: a strong administrator password of at least 12 characters.
 2. `CORS_ORIGINS`: the final HTTPS origin, such as `https://vsit-student-assistant.onrender.com`.
 
-The blueprint uses a persistent 1 GB disk at `/app/data` for the SQLite database and uploaded documents. The starter plan is required for the persistent disk. After the first deploy, verify `/health`, sign in at `/admin`, and run the official VSIT data refresh before adding any approved notices or academic records.
+The free service stores SQLite data and uploaded documents on ephemeral container storage, so those files can be reset when Render redeploys or restarts the service. For durable records later, switch to managed PostgreSQL and object storage. After the first deploy, verify `/health`, sign in at `/admin`, and run the official VSIT data refresh before adding any approved notices or academic records.
 
 ## API overview
 

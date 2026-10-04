@@ -2,7 +2,7 @@ services:
   - type: web
     name: vsit-student-assistant
     runtime: docker
-    plan: starter
+    plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health
@@ -28,7 +28,3 @@ services:
         value: http://127.0.0.1:11434/api/generate
       - key: OLLAMA_MODEL
         value: llama3.2:3b
-    disk:
-      name: vsit-data
-      mountPath: /app/data
-      sizeGB: 1
