@@ -492,6 +492,7 @@ def handle_faculty_question(
         or "head of department" in text
         or "head of the department" in text
         or "department head" in text
+        or re.search(r"\bhead of (?:the )?.*department\b", text)
     ):
         department = extract_faculty_department(
             message,
@@ -949,6 +950,21 @@ def get_office_intent(message):
     if any(
         term in text
         for term in [
+            "contact",
+            "phone",
+            "mobile",
+            "telephone",
+            "email",
+            "call",
+            "whom should i contact",
+            "who should i contact",
+        ]
+    ):
+        return "contact"
+
+    if any(
+        term in text
+        for term in [
             "procedure",
             "process",
             "how do i",
@@ -963,21 +979,6 @@ def get_office_intent(message):
         ]
     ):
         return "procedure"
-
-    if any(
-        term in text
-        for term in [
-            "contact",
-            "phone",
-            "mobile",
-            "telephone",
-            "email",
-            "call",
-            "whom should i contact",
-            "who should i contact",
-        ]
-    ):
-        return "contact"
 
     if any(
         term in text
