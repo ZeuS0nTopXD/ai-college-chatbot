@@ -8,6 +8,7 @@ from pypdf import PdfReader
 from sqlalchemy.orm import Session
 
 from backend.models.document import Document, DocumentChunk
+from backend.services.query_understanding import expand_query
 
 
 STOP_WORDS = {
@@ -138,7 +139,9 @@ def search_documents(
     limit: int = 4,
     min_score: float = 0.12,
 ) -> list[SearchHit]:
-    query_tokens = _tokens(query)
+    # Search normalized and aliased variants so common student shorthand and
+    # spelling mistakes still find the right uploaded notice.
+    query_tokens = _tokens(" ".join(expand_query(query)))
     if not query_tokens:
         return []
     query_terms = set(query_tokens)

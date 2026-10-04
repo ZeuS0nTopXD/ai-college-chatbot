@@ -69,6 +69,19 @@ from backend.services.timetable_service import (
 router = APIRouter()
 
 
+def _private_student_data_response(message: str):
+    normalized = normalize_text(message)
+    if not re.search(r"\b(my|our|student)\b", normalized):
+        return None
+    if re.search(r"\b(mark|marks|result|score|grade|attendance|fee|fees|payment|backlog|kt|personal timetable)\b", normalized):
+        return make_response(
+            message,
+            "PRIVATE_DATA",
+            "I cannot access private student records from this public assistant. Please use the official student portal or contact the concerned VSIT office; I can guide you to the relevant public page.",
+        )
+    return None
+
+
 # ============================================================
 # REQUEST MODEL
 # ============================================================
@@ -2077,6 +2090,10 @@ def chat(
             "GENERAL",
             "Please enter a question.",
         )
+
+    private_response = _private_student_data_response(user_message)
+    if private_response:
+        return private_response
 
     # ========================================================
     # 1. OFFICE

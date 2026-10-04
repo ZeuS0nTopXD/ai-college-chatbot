@@ -253,3 +253,11 @@ def test_chat_answers_greeting_without_ai_fallback(client):
     assert response.json()["category"] == "GREETING"
     assert "help" in response.json()["bot_response"].lower()
     assert "verified answer" not in response.json()["bot_response"].lower()
+
+
+def test_chat_explains_private_data_boundary(client):
+    response = client.post("/chat", json={"message": "What are my attendance marks?"})
+
+    assert response.status_code == 200
+    assert response.json()["category"] == "PRIVATE_DATA"
+    assert "private student records" in response.json()["bot_response"].lower()
