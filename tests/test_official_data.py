@@ -13,6 +13,7 @@ def test_official_sync_loads_published_records_and_clears_samples(client):
     db = SessionLocal()
     try:
         assert db.query(Faculty).filter(Faculty.name == "Dr. Asif Rampurawala").count() == 1
+        assert db.query(Faculty).count() >= 70
         assert db.query(Office).filter(Office.contact_email == "principal@vsit.edu.in").count() == 1
         assert db.query(Timetable).count() == 0
         assert db.query(Result).count() == 0

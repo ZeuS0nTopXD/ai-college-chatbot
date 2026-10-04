@@ -7,6 +7,7 @@ sample rows.
 
 from backend.data.official_vsit_data import (
     OFFICIAL_FACULTY_DATA,
+    OFFICIAL_HISTORICAL_FACULTY_DATA,
     OFFICIAL_KNOWLEDGE_DATA,
     OFFICIAL_OFFICE_DATA,
 )
@@ -33,7 +34,7 @@ def ensure_official_records():
         )
         db.add_all(
             Faculty(**item)
-            for item in OFFICIAL_FACULTY_DATA
+            for item in [*OFFICIAL_FACULTY_DATA, *OFFICIAL_HISTORICAL_FACULTY_DATA]
             if item["name"] not in existing_faculty
         )
         db.add_all(
@@ -57,7 +58,7 @@ def sync_official_vsit():
         db.query(Office).delete(synchronize_session=False)
         db.query(Timetable).delete(synchronize_session=False)
         db.query(Result).delete(synchronize_session=False)
-        db.add_all(Faculty(**item) for item in OFFICIAL_FACULTY_DATA)
+        db.add_all(Faculty(**item) for item in [*OFFICIAL_FACULTY_DATA, *OFFICIAL_HISTORICAL_FACULTY_DATA])
         db.add_all(Office(**item) for item in OFFICIAL_OFFICE_DATA)
         db.commit()
         print("Loaded verified faculty and office records.")

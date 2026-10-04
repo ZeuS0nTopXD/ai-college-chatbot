@@ -25,6 +25,55 @@ OFFICIAL_FACULTY_DATA = [
     {"name": "Rishabh Yadav", "department": "Information Technology", "designation": "Assistant Professor", "subjects": None, "email": "rishabh.yadav@vsit.edu.in", "is_hod": False},
 ]
 
+# Published in the VSIT Annual Report 2021-22 faculty directory. These are
+# retained as historical verified records; current HOD flags come only from
+# the current faculty records above.
+HISTORICAL_FACULTY_DIRECTORY = [
+    ("Dr. Rohini Kelkar", "Commerce"), ("Asif Rampurawala", "Information Technology"),
+    ("Vijay Gawde", "Commerce"), ("Chitra More", "Commerce"),
+    ("Sandip Khandekar", "Commerce"), ("Santosh Kumar Gupta", "Commerce"),
+    ("Amit Kabra", "Commerce"), ("Dr. N. Lakshmi Kavitha", "Commerce"),
+    ("Dr. Poonam Mirwani", "Commerce"), ("Agnus Meledath", "Commerce"),
+    ("Prathma Nemane", "Commerce"), ("Shreyas Bondre", "Commerce"),
+    ("Kavitha Chandramohan", "Commerce"), ("Pooja Jogu", "Commerce"),
+    ("Snehaprabha Katti", "Commerce"), ("Sindhu Krishnan", "Commerce"),
+    ("J Gunasundari", "Commerce"), ("Ajaykumar Poojary", "Commerce"),
+    ("Dr. Swagatika Nanda", "Commerce"), ("Khushboo Julka", "Commerce"),
+    ("Dipti Shirodkar", "Commerce"), ("Rumeli Sharma", "Humanities"),
+    ("Anindita Banerji", "Humanities"), ("Lakshmi Pillai", "Humanities"),
+    ("Dr. Ujwala Sav", "Information Technology"), ("Pushpa Mahapatro", "Information Technology"),
+    ("Dr. Pallavi Tawde", "Information Technology"), ("Umesh Koyande", "Information Technology"),
+    ("Dr. Kimaya Shelar", "Information Technology"), ("Shajil Kumar", "Information Technology"),
+    ("Sanjeela Sagar", "Information Technology"), ("Janhavi Vadke", "Information Technology"),
+    ("Prachi Mahajan", "Information Technology"), ("Leena Jadhav", "Information Technology"),
+    ("Ashwini Koyande", "Information Technology"), ("Geeta Sahu", "Information Technology"),
+    ("Hrishikesh Tendulkar", "Information Technology"), ("Seema Vishwakarma", "Information Technology"),
+    ("Madhavi Amondkar", "Information Technology"), ("Laxmikant Manchekar", "Information Technology"),
+    ("Aasha Chavan", "Information Technology"), ("Rohini Desai", "Information Technology"),
+    ("Mithila Chavan", "Information Technology"), ("Rajendra Patole", "Information Technology"),
+    ("Akshatha Jain", "Information Technology"), ("Amraja Shivkar", "Information Technology"),
+    ("Maitreyi Joglekar", "Information Technology"), ("Spruha More", "Information Technology"),
+    ("Ketaki Ghawali", "Information Technology"), ("Seema Murkar", "Information Technology"),
+    ("Snehal Tandale", "Information Technology"), ("Beena Kapadia", "Information Technology"),
+    ("Sabir Moin Shaikh", "Information Technology"), ("Dr. Amita Jain", "Information Technology"),
+    ("Prabal Deep Das", "Information Technology"), ("Dr. Sarika Chouhan", "Information Technology"),
+    ("Bhavesh Shah", "Information Technology"), ("Dr. Rajendra Patil", "Information Technology"),
+    ("Reshma Ajetrao", "Commerce"), ("Abhijit Raorane", "Management"),
+    ("Mangal Singh Rawat", "Management"), ("Swapna Kadam", "Management"),
+    ("Dr. Harish Noula", "Management"), ("Sagar Gaikwad", "Management"),
+    ("Nisha Dang", "Management"), ("Hetvi Dedhia", "Management"),
+    ("Sidra Usmani", "Management"), ("Ranjit Anand", "Commerce"),
+    ("Corina D'Souza", "Commerce"), ("Yashoda Shetty", "Management"),
+    ("Chetan Mathur", "Humanities"), ("Shridhar Naik", "Humanities"),
+    ("Raju Korti", "Humanities"), ("Dr. Leena Nair", "Commerce"),
+]
+
+OFFICIAL_HISTORICAL_FACULTY_DATA = [
+    {"name": name, "department": department, "designation": "Assistant Professor (Annual Report 2021-22)", "subjects": None, "email": None, "is_hod": False}
+    for name, department in HISTORICAL_FACULTY_DIRECTORY
+    if name not in {item["name"] for item in OFFICIAL_FACULTY_DATA}
+]
+
 OFFICIAL_OFFICE_DATA = [
     {"office_name": "VSIT Main Contact", "department": "Administration", "purpose": "General college enquiries and official contact", "timings": None, "location": "Vidyalankar Campus, Wadala (East), Mumbai 400037", "contact_person": "Principal's office", "contact_email": "principal@vsit.edu.in", "contact_phone": "+91 22 2416 1126 (Ext. 3101)", "procedure_details": "Use the Vidyalankar School of Information Technology Contact Us page for current directions and enquiries.", "is_active": True},
     {"office_name": "Admission Office", "department": "Admissions", "purpose": "Admission enquiries and application guidance", "timings": "10:00 AM to 5:00 PM", "location": "X011 / X116", "contact_person": "Admission Incharge", "contact_email": "admissions@vsit.edu.in", "contact_phone": "+91 22 2410 2321 (Ext. 3101)", "procedure_details": "Check the official Admissions website for current forms, schedules, document lists, and course-specific notices.", "is_active": True},
