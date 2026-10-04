@@ -53,6 +53,14 @@ MySQL remains supported, for example:
 DATABASE_URL=mysql+pymysql://user:password@127.0.0.1:3306/vsit_student_assistant
 ```
 
+Neon PostgreSQL is supported for a free persistent database. Use the connection string from Neon with the SQLAlchemy driver prefix:
+
+```env
+DATABASE_URL=postgresql+psycopg://user:password@host/dbname?sslmode=require
+```
+
+After setting this value, start the application once so the tables are created, then run `python -m backend.scripts.seed_official_vsit`. Do not commit the connection string; set it as a private Render environment variable.
+
 ## Add college information
 
 Start the application, visit `/admin`, and sign in with `ADMIN_PASSWORD`. The workspace can manage:
