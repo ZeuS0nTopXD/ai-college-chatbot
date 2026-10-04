@@ -1,0 +1,22 @@
+import pytest
+
+from backend.services.query_understanding import expand_query, normalize_query
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("  Who’s   the H.O.D.? ", "who s the h o d"),
+        ("What’s the timetable for TY-IT?", "what s the timetable for ty it"),
+    ],
+)
+def test_normalize_query_handles_unicode_punctuation_and_spacing(raw, expected):
+    assert normalize_query(raw) == expected
+
+
+def test_expand_query_adds_student_language_aliases():
+    expanded = expand_query("who runs the IT department")
+
+    assert "information technology" in expanded
+    assert "head of department" in expanded
+

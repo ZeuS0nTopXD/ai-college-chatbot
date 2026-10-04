@@ -30,7 +30,8 @@
 # ============================================================
 
 import re
-import unicodedata
+
+from backend.services.query_understanding import normalize_query
 
 
 # ============================================================
@@ -47,17 +48,7 @@ def normalize_message(message):
         "who teaches iot?"
     """
 
-    if not message:
-        return ""
-
-    text = unicodedata.normalize("NFKC", str(message)).lower()
-    # Treat smart quotes, decorative punctuation, and copied UI punctuation
-    # as separators so quoted questions follow the same intent path.
-    text = "".join(
-        " " if unicodedata.category(char).startswith("P") else char
-        for char in text
-    )
-    return re.sub(r"\s+", " ", text).strip()
+    return normalize_query(message)
 
 
 # ============================================================
