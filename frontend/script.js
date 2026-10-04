@@ -210,6 +210,8 @@ function readApiError(data) {
 
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const voiceButton = document.getElementById("voice-button");
+const speechToggle = document.getElementById("speech-toggle");
+const speechPause = document.getElementById("speech-pause");
 
 if (Recognition) {
     const recognition = new Recognition();
@@ -234,9 +236,19 @@ if (Recognition) {
     voiceButton.title = "Voice input is not supported in this browser";
 }
 
-document.getElementById("speech-toggle").addEventListener("click", () => {
+function cleanSpeech(text) {
+    return text.replace(/[📅🕒📚👨‍🏫🏫📝]/g, "").replace(/\s+/g, " ").trim();
+}
+
+speechToggle.addEventListener("click", () => {
     if (!("speechSynthesis" in window)) {
         chatStatus.textContent = "Answer playback is not supported in this browser.";
+        return;
+    }
+    if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        speechPause.textContent = "⏸";
+        speechPause.setAttribute("aria-label", "Pause answer playback");
         return;
     }
     window.speechSynthesis.cancel();
@@ -244,9 +256,26 @@ document.getElementById("speech-toggle").addEventListener("click", () => {
         chatStatus.textContent = "Ask a question first, then play the latest answer.";
         return;
     }
-    const utterance = new SpeechSynthesisUtterance(state.latestAnswer);
+    const utterance = new SpeechSynthesisUtterance(cleanSpeech(state.latestAnswer));
     utterance.lang = "en-IN";
+    utterance.rate = 0.92;
+    utterance.pitch = 1;
+    utterance.onstart = () => { speechPause.hidden = false; speechToggle.classList.add("speaking"); };
+    utterance.onend = () => { speechPause.hidden = true; speechToggle.classList.remove("speaking"); };
     window.speechSynthesis.speak(utterance);
+});
+
+speechPause.addEventListener("click", () => {
+    if (!("speechSynthesis" in window)) return;
+    if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        speechPause.textContent = "⏸";
+        speechPause.setAttribute("aria-label", "Pause answer playback");
+    } else {
+        window.speechSynthesis.pause();
+        speechPause.textContent = "▶";
+        speechPause.setAttribute("aria-label", "Resume answer playback");
+    }
 });
 
 document.getElementById("academic-filters").addEventListener("submit", (event) => {
