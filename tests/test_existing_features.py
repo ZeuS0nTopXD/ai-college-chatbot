@@ -205,6 +205,17 @@ def test_chat_returns_matching_knowledge(client):
     )
 
 
+def test_chat_answers_official_admission_and_library_questions(client):
+    from backend.scripts.seed_knowledge import seed_knowledge
+
+    seed_knowledge()
+    admission = client.post("/chat", json={"message": "how do I apply for admission"})
+    library = client.post("/chat", json={"message": "what are the library timings"})
+
+    assert "admission" in admission.json()["bot_response"].lower()
+    assert "8:00 am" in library.json()["bot_response"].lower()
+
+
 def test_chat_works_when_ollama_is_unavailable(client, monkeypatch):
     import backend.services.ai_service as ai_service
 

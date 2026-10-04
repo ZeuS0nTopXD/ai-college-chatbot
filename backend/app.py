@@ -29,6 +29,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     Base.metadata.create_all(bind=engine)
 
+    if settings.app_env in {"production", "staging"}:
+        from backend.scripts.seed_official_vsit import ensure_official_records
+        ensure_official_records()
+
     from backend.routes import (
         academic,
         admin,

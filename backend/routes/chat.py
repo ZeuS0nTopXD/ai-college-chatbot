@@ -2195,12 +2195,14 @@ def chat(
     # ========================================================
 
     if category in [
-        "VSIT",
-        "NGO",
+        "VSIT", "NGO", "ADMISSIONS", "PLACEMENTS", "LIBRARY",
+        "RESULT", "ACADEMIC", "CAREER",
     ]:
         categories = [category]
-        if category == "VSIT":
-            categories.append("FACULTY")
+        if category in {"VSIT", "CAREER"}:
+            categories.extend(["FACULTY", "ADMISSIONS", "PLACEMENTS", "LIBRARY"])
+        if category == "ACADEMIC":
+            categories.extend(["ACADEMIC", "RESULT"])
         knowledge_list = (
             db.query(KnowledgeBase)
             .filter(KnowledgeBase.category.in_(categories))
