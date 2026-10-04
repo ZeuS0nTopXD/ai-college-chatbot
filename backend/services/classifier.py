@@ -879,6 +879,12 @@ def classify_question(message):
     if not message:
         return "GENERAL"
 
+    if message in {
+        "hi", "hello", "hey", "hii", "hiii", "good morning",
+        "good afternoon", "good evening", "namaste",
+    }:
+        return "GREETING"
+
     # ========================================================
     # 1. RESULT
     # ========================================================

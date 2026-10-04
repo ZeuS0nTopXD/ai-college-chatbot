@@ -2140,6 +2140,15 @@ def chat(
         user_message
     )
 
+    if category == "GREETING":
+        return make_response(
+            user_message,
+            category,
+            "Hello! I can help with VSIT faculty, offices, timetables, "
+            "exams, results and college information. What would you like "
+            "to know?",
+        )
+
     # ========================================================
     # 5. RESULT
     # ========================================================
