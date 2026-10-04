@@ -152,6 +152,8 @@ def is_faculty_question(message: str) -> bool:
         r"\bh\.o\.d\b",
         r"\bhead of department\b",
         r"\bhead of the department\b",
+        r"\bhead of the [a-z0-9& ]+ department\b",
+        r"\bhead of [a-z0-9& ]+ department\b",
         r"\bdepartment head\b",
         r"\bwho is the hod\b",
         r"\bwho is hod\b",

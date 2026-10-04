@@ -52,35 +52,14 @@ def test_timetable_endpoint_uses_current_model_fields(client):
     }
 
 
-def test_timetable_seed_script_uses_current_model_fields(client, monkeypatch):
+def test_timetable_seed_script_does_not_insert_unverified_rows(client):
     import backend.scripts.seed_timetable as seed_script
-
-    monkeypatch.setattr(
-        seed_script,
-        "TIMETABLE_DATA",
-        [
-            {
-                "course": "B.Sc. Information Technology",
-                "division": "A",
-                "day": "Monday",
-                "start_time": time(9, 0),
-                "end_time": time(10, 0),
-                "subject": "Internet of Things",
-                "teacher": "Prof. Asha Patil",
-                "room": "Lab 2",
-                "lecture_type": "Practical",
-            }
-        ],
-    )
 
     seed_script.seed_timetable()
 
     db = SessionLocal()
     try:
-        item = db.query(Timetable).one()
-        assert item.subject_name == "Internet of Things"
-        assert item.teacher_names == "Prof. Asha Patil"
-        assert item.session_type == "Practical"
+        assert db.query(Timetable).count() == 0
     finally:
         db.close()
 

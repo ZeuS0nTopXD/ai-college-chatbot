@@ -39,7 +39,9 @@ def seed_timetable():
         # INSERT NEW TIMETABLE DATA
         # -----------------------------------------
 
-        for item in TIMETABLE_DATA:
+        # The public VSIT website does not publish a current timetable file.
+        # Keep this legacy command destructive-free and do not load sample rows.
+        for item in ():
 
             timetable_entry = Timetable(
                 course=item["course"],
@@ -59,10 +61,7 @@ def seed_timetable():
         # Save all records
         db.commit()
 
-        print(
-            f"Successfully inserted "
-            f"{len(TIMETABLE_DATA)} timetable records."
-        )
+        print("No timetable rows inserted: no current official public timetable was found.")
 
     except Exception as e:
 

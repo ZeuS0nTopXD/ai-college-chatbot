@@ -64,15 +64,13 @@ Start the application, visit `/admin`, and sign in with `ADMIN_PASSWORD`. The wo
 
 Only published academic events appear to students. Uploaded documents are split into page-aware passages and searched locally. When no passage meets the relevance threshold, the assistant returns no document match instead of inventing an answer.
 
-The existing data scripts can seed timetable, knowledge, and result records:
+Refresh the local database with records verified against the official VSIT website:
 
 ```powershell
-python -m backend.scripts.seed_timetable
-python -m backend.scripts.seed_knowledge
-python -m backend.seed_result
+python -m backend.scripts.seed_official_vsit
 ```
 
-Review seeded content before a demonstration. Treat any unverified example as sample data and replace it with an official VSIT notice or administrator-approved entry.
+The refresh loads official VSIT contact, programme, Computing department, and faculty records. The public site does not publish a current timetable or individual student result records, so those tables are cleared and the assistant reports that verified data is unavailable for those questions.
 
 ## Optional Ollama setup
 
