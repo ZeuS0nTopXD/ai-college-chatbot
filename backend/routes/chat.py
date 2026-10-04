@@ -29,6 +29,7 @@ from backend.services.classifier import (
     classify_question,
     search_knowledge,
 )
+from backend.services.query_understanding import normalize_query
 
 from backend.services.ai_service import (
     get_ai_response,
@@ -132,14 +133,7 @@ def value(item, *names):
 
 
 def normalize_text(text):
-    if not text:
-        return ""
-
-    return re.sub(
-        r"\s+",
-        " ",
-        str(text).lower().strip(),
-    )
+    return normalize_query(text)
 
 
 def unique_values(values):

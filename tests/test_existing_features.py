@@ -97,6 +97,23 @@ def test_chat_answers_short_head_of_department_variant(client):
     assert "Dr. Asif Rampurawala" in response.json()["bot_response"]
 
 
+def test_chat_answers_typo_tolerant_head_question(client):
+    seed(
+        Faculty(
+            name="Dr. Asif Rampurawala",
+            department="Computing",
+            designation="Vice Principal and Head, Department of Computing",
+            email="asif.rampurawala@vsit.edu.in",
+            is_hod=True,
+        )
+    )
+
+    response = client.post("/chat", json={"message": "wht is the hod of computng"})
+
+    assert response.status_code == 200
+    assert "Dr. Asif Rampurawala" in response.json()["bot_response"]
+
+
 @pytest.mark.parametrize(
     "question",
     [
