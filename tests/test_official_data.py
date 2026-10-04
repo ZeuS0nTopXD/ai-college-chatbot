@@ -43,3 +43,4 @@ def test_official_timetable_pdf_dataset_covers_tyit_divisions():
     assert {row["academic_year"] for row in OFFICIAL_TIMETABLE_DATA} == {"2026-27"}
     assert {row["semester"] for row in OFFICIAL_TIMETABLE_DATA} == {"Odd Semester"}
     assert {row["effective_from"] for row in OFFICIAL_TIMETABLE_DATA} == {"2026-07-13"}
+    assert sum(row["session_type"] == "Practical" for row in OFFICIAL_TIMETABLE_DATA) >= 20

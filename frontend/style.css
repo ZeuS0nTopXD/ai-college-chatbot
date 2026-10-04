@@ -72,6 +72,7 @@ nav { display: grid; gap: 8px; }
 .timetable-row { display: grid; grid-template-columns: 1.15fr 1fr 1.1fr .8fr .8fr; gap: 8px; align-items: center; padding: 9px 10px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fbfdfc; font-size: 12px; }
 .timetable-row span { min-width: 0; overflow-wrap: anywhere; }
 .timetable-header { border-color: #a7f3d0; background: #ecfdf5; color: #065f46; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
+.timetable-row.practical-row { border-left: 4px solid #f59e0b; background: #fffbeb; }
 .user-message .message-bubble { border-color: var(--blue); border-radius: 18px 6px 18px 18px; background: var(--blue); color: #fff; }
 .source-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
 .source-chip { padding: 6px 9px; border-radius: 999px; background: var(--blue-soft); color: #225da8; font-size: 11px; font-weight: 700; }

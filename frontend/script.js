@@ -176,6 +176,7 @@ function renderTimetable(container, text) {
         if (!current) return;
         const row = document.createElement("div");
         row.className = "timetable-row";
+        if (current.type && current.type.toLowerCase().includes("practical")) row.classList.add("practical-row");
         [current.time, current.subject, current.teacher, current.room, current.type].forEach((value) => {
             const cell = document.createElement("span");
             cell.textContent = value || "—";
