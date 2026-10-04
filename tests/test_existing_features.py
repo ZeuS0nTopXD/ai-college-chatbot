@@ -216,6 +216,17 @@ def test_chat_answers_official_admission_and_library_questions(client):
     assert "8:00 am" in library.json()["bot_response"].lower()
 
 
+def test_chat_answers_official_student_support_and_course_questions(client):
+    from backend.scripts.seed_knowledge import seed_knowledge
+
+    seed_knowledge()
+    grievance = client.post("/chat", json={"message": "How do I file a student grievance?"})
+    courses = client.post("/chat", json={"message": "Which courses are offered at VSIT?"})
+
+    assert "grievance" in grievance.json()["bot_response"].lower()
+    assert "b.sc. information technology" in courses.json()["bot_response"].lower()
+
+
 def test_chat_works_when_ollama_is_unavailable(client, monkeypatch):
     import backend.services.ai_service as ai_service
 

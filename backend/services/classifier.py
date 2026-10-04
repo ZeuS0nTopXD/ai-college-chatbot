@@ -833,6 +833,12 @@ def is_vsit_question(message: str) -> bool:
         "college telephone",
         "contact vsit",
         "contact the college",
+
+        # Student support
+        "grievance",
+        "student complaint",
+        "mental health support",
+        "medical support",
     ]
 
     return contains_keyword(

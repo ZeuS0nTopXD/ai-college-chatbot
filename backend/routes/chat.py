@@ -2196,11 +2196,12 @@ def chat(
 
     if category in [
         "VSIT", "NGO", "ADMISSIONS", "PLACEMENTS", "LIBRARY",
+        "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS",
         "RESULT", "ACADEMIC", "CAREER",
     ]:
         categories = [category]
         if category in {"VSIT", "CAREER"}:
-            categories.extend(["FACULTY", "ADMISSIONS", "PLACEMENTS", "LIBRARY"])
+            categories.extend(["FACULTY", "ADMISSIONS", "PLACEMENTS", "LIBRARY", "ACADEMIC", "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS"])
         if category == "ACADEMIC":
             categories.extend(["ACADEMIC", "RESULT"])
         knowledge_list = (
