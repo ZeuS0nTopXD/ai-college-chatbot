@@ -1006,6 +1006,15 @@ def search_knowledge(user_message, knowledge_list):
         user_message
     )
 
+    if "coordinat" in user_message_lower and (
+        "b.sc" in user_message_lower
+        or "bsc" in user_message_lower
+    ):
+        for item in knowledge_list:
+            question = normalize_message(getattr(item, "question", "") or "")
+            if "coordinat" in question and ("b.sc" in question or "bsc" in question):
+                return item
+
     # ========================================================
     # KEYWORD GROUPS
     # ========================================================
