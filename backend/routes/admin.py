@@ -22,6 +22,7 @@ from backend.schemas.admin import (
 )
 from backend.schemas.knowledge import KnowledgeCreate, KnowledgeRead, KnowledgeUpdate
 from backend.security import require_admin
+from backend.scripts.refresh_official_sources import refresh_sources
 
 
 router = APIRouter(
@@ -29,6 +30,15 @@ router = APIRouter(
     tags=["administration"],
     dependencies=[Depends(require_admin)],
 )
+
+
+@router.post("/refresh-sources")
+def refresh_public_sources(db: Session = Depends(get_db)):
+    """Refresh searchable public VSIT pages without touching private data."""
+    try:
+        return {"refreshed_documents": refresh_sources(db)}
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="Official source refresh failed.") from exc
 
 
 def _get_or_404(db: Session, model, record_id: int):

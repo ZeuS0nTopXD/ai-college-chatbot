@@ -34,11 +34,13 @@ def _readable_text(html: str) -> str:
     return re.sub(r"\s+", " ", unescape(text)).strip()
 
 
-def refresh_sources() -> int:
-    settings = Settings.from_env()
-    engine = configure_database(settings.database_url)
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
+def refresh_sources(db=None) -> int:
+    owns_session = db is None
+    if owns_session:
+        settings = Settings.from_env()
+        engine = configure_database(settings.database_url)
+        Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
     refreshed = 0
     try:
         for title, (category, url) in SOURCE_PAGES.items():
@@ -65,7 +67,8 @@ def refresh_sources() -> int:
         db.commit()
         return refreshed
     finally:
-        db.close()
+        if owns_session:
+            db.close()
 
 
 if __name__ == "__main__":
