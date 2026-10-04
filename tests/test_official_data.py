@@ -15,7 +15,7 @@ def test_official_sync_loads_published_records_and_clears_samples(client):
         assert db.query(Faculty).filter(Faculty.name == "Dr. Asif Rampurawala").count() == 1
         assert db.query(Faculty).count() >= 70
         assert db.query(Office).filter(Office.contact_email == "principal@vsit.edu.in").count() == 1
-        assert db.query(Timetable).count() == 0
+        assert db.query(Timetable).count() >= 100
         assert db.query(Result).count() == 0
         topics = {row.topic for row in db.query(KnowledgeBase).all()}
         assert "Admissions" in topics
@@ -33,3 +33,13 @@ def test_official_record_refresh_adds_new_records_without_clearing_existing(clie
         assert db.query(Office).filter(Office.office_name == "Library").count() == 1
     finally:
         db.close()
+
+
+def test_official_timetable_pdf_dataset_covers_tyit_divisions():
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    assert OFFICIAL_TIMETABLE_DATA
+    assert {row["division"] for row in OFFICIAL_TIMETABLE_DATA} == {"A", "B", "C", "D", "E"}
+    assert {row["academic_year"] for row in OFFICIAL_TIMETABLE_DATA} == {"2026-27"}
+    assert {row["semester"] for row in OFFICIAL_TIMETABLE_DATA} == {"Odd Semester"}
+    assert {row["effective_from"] for row in OFFICIAL_TIMETABLE_DATA} == {"2026-07-13"}
