@@ -42,6 +42,16 @@ HINGLISH_REPLACEMENTS = {
     "padhai": "academic",
     "pariksha": "exam",
     "parikshaen": "exams",
+    "kon": "who",
+    "kuthe": "where",
+    "kadhi": "when",
+    "kiti": "how many",
+    "sanga": "tell me",
+    "maza timetable": "my timetable",
+    "majha timetable": "my timetable",
+    "mazi class": "my class",
+    "mahiti": "information",
+    "pariksha": "exam",
 }
 
 

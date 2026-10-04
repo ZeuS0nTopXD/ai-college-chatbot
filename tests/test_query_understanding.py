@@ -28,3 +28,4 @@ def test_normalize_query_repairs_common_student_typos():
 def test_normalize_query_understands_common_hinglish_words():
     assert normalize_query("kaun hai computing ka hod") == "who hai computing ka hod"
     assert normalize_query("mere classes kab hain") == "my classes when hain"
+    assert normalize_query("VSIT kuthe aahe") == "vsit where aahe"
