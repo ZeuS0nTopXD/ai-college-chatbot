@@ -912,7 +912,8 @@ def classify_question(message):
             r"|\bh\.o\.d\b"
             r"|\bhead of department\b"
             r"|\bhead of the department\b"
-            r"|\bdepartment head\b",
+            r"|\bdepartment head\b"
+            r"|\bhead of (?:the )?[a-z0-9& ]+\b",
             message
         )
     )

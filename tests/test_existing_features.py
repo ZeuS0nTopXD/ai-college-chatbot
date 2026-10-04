@@ -5,6 +5,7 @@ from backend.models.knowledge import KnowledgeBase
 from backend.models.office import Office
 from backend.models.result import Result
 from backend.models.timetable import Timetable
+from backend.models.faculty import Faculty
 
 
 def seed(record):
@@ -72,6 +73,27 @@ def test_chat_answers_teacher_from_timetable(client):
     assert response.status_code == 200
     assert response.json()["category"] == "FACULTY"
     assert "Prof. Asha Patil" in response.json()["bot_response"]
+
+
+def test_chat_answers_short_head_of_department_variant(client):
+    seed(
+        Faculty(
+            name="Dr. Asif Rampurawala",
+            department="Computing",
+            designation="Vice Principal and Head, Department of Computing",
+            email="asif.rampurawala@vsit.edu.in",
+            is_hod=True,
+        )
+    )
+
+    response = client.post(
+        "/chat",
+        json={"message": "who is the head of computing"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["category"] == "FACULTY"
+    assert "Dr. Asif Rampurawala" in response.json()["bot_response"]
 
 
 def test_chat_answers_office_location(client):
