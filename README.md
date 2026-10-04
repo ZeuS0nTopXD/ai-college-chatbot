@@ -117,6 +117,15 @@ Render, Railway, and a small VPS can run the included Dockerfile. Configure thes
 
 SQLite plus local files are appropriate for one project instance. Multiple replicas require a shared SQL database and shared object storage, which are outside this MVP.
 
+### Render deployment
+
+The repository includes `render.yaml` for a single-instance Render deployment. In Render, choose **New > Blueprint**, connect this repository, and apply the blueprint. Set the two prompted values:
+
+1. `ADMIN_PASSWORD`: a strong administrator password of at least 12 characters.
+2. `CORS_ORIGINS`: the final HTTPS origin, such as `https://vsit-student-assistant.onrender.com`.
+
+The blueprint uses a persistent 1 GB disk at `/app/data` for the SQLite database and uploaded documents. The starter plan is required for the persistent disk. After the first deploy, verify `/health`, sign in at `/admin`, and run the official VSIT data refresh before adding any approved notices or academic records.
+
 ## API overview
 
 - `POST /chat` — answer a student question.
