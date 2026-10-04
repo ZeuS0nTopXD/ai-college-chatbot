@@ -34,6 +34,18 @@ def test_empty_security_settings_are_rejected(settings, field):
         replace(settings, **{field: ""})
 
 
+@pytest.mark.parametrize("question", [
+    "“What is VSIT?”",
+    "‘What is VSIT?’",
+    "  What   is   VSIT?  ",
+])
+def test_classifier_normalizes_copied_question_punctuation(question):
+    from backend.services.classifier import classify_question, normalize_message
+
+    assert normalize_message(question) == "what is vsit"
+    assert classify_question(question) == "VSIT"
+
+
 def test_production_environment_rejects_development_secrets(monkeypatch):
     from backend.config import Settings
 
