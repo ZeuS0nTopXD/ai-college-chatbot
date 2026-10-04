@@ -173,6 +173,17 @@ button, a, .info-card, .search-hit, .nav-item { transition: color .2s ease, back
     .admin-page { padding: 16px; }
 }
 
+/* Lightweight 3D-inspired VSIT header animation. */
+.topbar { position: relative; overflow: hidden; }
+.hero-orbit { position: absolute; right: clamp(32px, 8vw, 140px); top: 50%; width: 120px; height: 120px; transform: translateY(-50%) perspective(500px) rotateX(58deg) rotateZ(-18deg); transform-style: preserve-3d; pointer-events: none; opacity: .8; }
+.orbit-core { position: absolute; inset: 35px; display: grid; place-items: center; border: 1px solid #6ee7b7; border-radius: 50%; color: #064e3b; background: radial-gradient(circle at 35% 28%, #fff, #a7f3d0 38%, #059669 100%); box-shadow: 0 10px 25px rgba(5,150,105,.28), inset -8px -10px 16px rgba(4,78,59,.25); font: 800 22px Cinzel, serif; transform: translateZ(22px); animation: core-float 4s ease-in-out infinite; }
+.orbit-ring { position: absolute; inset: 10px; border: 1px solid rgba(5,150,105,.38); border-radius: 50%; transform-style: preserve-3d; animation: orbit-spin 8s linear infinite; }
+.orbit-ring-two { inset: 22px -8px; border-color: rgba(37,99,235,.28); transform: rotateX(70deg) rotateY(20deg); animation-duration: 6s; animation-direction: reverse; }
+@keyframes orbit-spin { to { transform: rotateZ(360deg) rotateX(8deg); } }
+@keyframes core-float { 0%,100% { transform: translateZ(18px) translateY(0); } 50% { transform: translateZ(34px) translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .hero-orbit, .orbit-ring, .orbit-core { animation: none; } }
+@media (max-width: 700px) { .hero-orbit { right: 18px; width: 82px; height: 82px; opacity: .55; } .orbit-core { inset: 25px; font-size: 16px; } .orbit-ring { inset: 5px; } .orbit-ring-two { inset: 15px -4px; } }
+
 /* Reference theme: Mumbai civic editorial system adapted for VSIT. */
 :root {
     --navy: #171717;
