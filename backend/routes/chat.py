@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from backend.database.database import SessionLocal
@@ -2188,11 +2189,12 @@ def chat(
         "VSIT",
         "NGO",
     ]:
+        categories = [category]
+        if category == "VSIT":
+            categories.append("FACULTY")
         knowledge_list = (
             db.query(KnowledgeBase)
-            .filter(
-                KnowledgeBase.category == category
-            )
+            .filter(KnowledgeBase.category.in_(categories))
             .all()
         )
 
