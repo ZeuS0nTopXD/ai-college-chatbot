@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="campus.css">
 </head>
 <body>
     <div class="app-shell">
@@ -36,13 +37,26 @@
         </aside>
 
         <main class="main-content">
-            <header class="topbar">
-                <div>
-                    <p class="eyebrow">VSIT / STUDENT SERVICES</p>
-                    <h1 id="page-title">Ask the VSIT Assistant</h1>
+            <header class="topbar campus-hero">
+                <div class="hero-copy">
+                    <p class="eyebrow"><span class="live-dot"></span> YOUR CAMPUS. CONNECTED.</p>
+                    <h1 id="page-title">A little clarity.<br>A lot of possibility.</h1>
+                    <p class="hero-description">Your day at Vidyalankar, simplified. Find your next class, explore college resources, and get the answers you need.</p>
+                    <div class="hero-footer"><span>VIDYALANKAR SCHOOL OF IT</span><span>WADALA · MUMBAI</span></div>
                 </div>
-                <div class="system-status"><span></span> College information online</div>
-                <div class="hero-orbit" aria-hidden="true"><div class="orbit-ring orbit-ring-one"></div><div class="orbit-ring orbit-ring-two"></div><div class="orbit-core">V</div></div>
+                <div class="campus-art" aria-hidden="true">
+                    <div class="art-grid"></div>
+                    <div class="sculpture-stage"><div class="sculpture">
+                        <div class="glass-face front"></div><div class="glass-face back"></div>
+                        <div class="glass-face left"></div><div class="glass-face right"></div>
+                        <div class="glass-face top"></div><div class="glass-face bottom"></div>
+                        <div class="sculpture-heart">V</div>
+                    </div></div>
+                    <span class="art-label art-label-top">IDEAS TAKE SHAPE.</span>
+                    <span class="art-label art-label-bottom">LEARN / CONNECT / GROW</span>
+                    <div class="art-shadow"></div>
+                </div>
+                <button type="button" id="motion-toggle" class="motion-toggle" aria-pressed="false">Pause motion</button>
             </header>
 
             <section class="view active" id="assistant-view" aria-labelledby="page-title">
@@ -54,7 +68,7 @@
                                 <p class="message-author">VSIT Assistant</p>
                                 <div class="message-bubble">
                                     <p>Hello! I can help with class timetables, examinations, faculty, offices, results and uploaded college notices.</p>
-                                    <p>Ask a question below or choose a quick prompt.</p>
+                                    <p>Type your question below. I’ll help you find your way.</p>
                                 </div>
                             </div>
                         </article>
@@ -117,5 +131,6 @@
         </main>
     </div>
     <script src="script.js"></script>
+    <script src="campus.js"></script>
 </body>
 </html>

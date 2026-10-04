@@ -1,0 +1,62 @@
+/* Digital campus visual system; scoped to the student shell. */
+body:has(.app-shell) { background:#f3f5f1; }
+.app-shell { --ink:#172b2b; --muted:#697977; --line:#dbe3dc; --blue:#087e68; }
+.app-shell .sidebar { position:relative; background:#102828; border:0; padding:22px 5%; flex-wrap:wrap; gap:18px; }
+.app-shell .brand strong {font-family:inherit;font-weight:700;letter-spacing:-.03em;font-size:16px}
+.app-shell .brand-mark {width:62px}
+.app-shell .sidebar nav {gap:3px; flex-wrap:wrap}
+.app-shell .nav-item {border-radius:30px;font:500 12px 'Plus Jakarta Sans',sans-serif;padding:10px 16px;color:#aebfba;transition:background .2s,color .2s}
+.app-shell .nav-item.active {color:#163b33;background:#d1f4de;box-shadow:none}
+.app-shell .nav-item:hover {background:#294640;color:#fff}
+.app-shell .nav-item span,.app-shell .nav-item::after {display:none}
+.app-shell .campus-hero {display:grid;grid-template-columns:1.1fr 1fr;gap:30px;background:#102828;color:#f1f6ee;padding:58px 7% 76px;min-height:430px;overflow:hidden;position:relative;border:0}
+.hero-copy {z-index:2;max-width:610px}
+.campus-hero .eyebrow {color:#b0d4c6;display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.18em}
+.live-dot {width:6px;height:6px;border-radius:50%;background:#b9eb98;box-shadow:0 0 14px #b9eb9870}
+.app-shell .topbar h1 {font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(34px,4.3vw,65px);line-height:1.12;letter-spacing:-.055em;margin:24px 0;font-weight:500}
+.hero-description {max-width:430px;color:#adc2b9;font-size:14px;line-height:1.85}
+.hero-footer {display:flex;gap:24px;margin-top:34px;font:9px ui-monospace,monospace;letter-spacing:.12em;color:#8fad9e;flex-wrap:wrap}
+.campus-art {position:relative;min-height:290px;perspective:850px;isolation:isolate}
+.art-grid {position:absolute;inset:-40px;background-image:linear-gradient(#8ceab209 1px,transparent 1px),linear-gradient(90deg,#8ceab209 1px,transparent 1px);background-size:38px 38px;mask-image:radial-gradient(ellipse,black,transparent 70%)}
+.sculpture-stage {position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));transform-style:preserve-3d;transition:transform .3s ease-out}
+.sculpture {position:relative;width:170px;height:170px;transform-style:preserve-3d;transform:rotateX(-23deg) rotateY(35deg) rotateZ(-12deg);animation:sculpture-turn 22s linear infinite}
+.glass-face {position:absolute;inset:0;border:1px solid #c5ffe9a0;background:linear-gradient(135deg,#d4ffe754,#51bf9f18 50%,#bdffc937);box-shadow:inset 0 0 30px #bcffe51c;backface-visibility:visible;border-radius:14px}
+.glass-face::after {content:'';position:absolute;inset:14px;border:1px solid #c0ffdf24;border-radius:5px}
+.front {transform:translateZ(85px)}.back {transform:rotateY(180deg) translateZ(85px)}.left {transform:rotateY(-90deg) translateZ(85px)}.right {transform:rotateY(90deg) translateZ(85px)}.top {transform:rotateX(90deg) translateZ(85px)}.bottom {transform:rotateX(-90deg) translateZ(85px)}
+.sculpture-heart {position:absolute;inset:40px;background:#d1ffc7;box-shadow:0 0 60px #aaffb85c;border-radius:24px;display:grid;place-items:center;color:#153e31;font:700 50px Georgia,serif;transform:rotateY(-35deg) rotateX(23deg)}
+.art-shadow {position:absolute;bottom:28px;left:22%;width:56%;height:28px;background:#0007;filter:blur(16px);border-radius:50%}
+.art-label {position:absolute;font:9px ui-monospace,monospace;letter-spacing:.16em;color:#91b3a6}.art-label-top {top:0;right:10px}.art-label-bottom {bottom:0;left:20px}
+.motion-toggle {position:absolute;right:22px;bottom:18px;border:1px solid #49615a;border-radius:20px;padding:7px 12px;color:#c0d5ca;background:transparent;font-size:10px;z-index:3}
+.app-shell .view {max-width:1440px;margin:auto;padding:36px 7% 60px}
+.app-shell .chat-panel {border-radius:22px;box-shadow:0 15px 50px #123b3010;border:1px solid #dbe4dc;min-height:470px}
+.app-shell .chat-messages {min-height:270px;padding:30px;background:radial-gradient(ellipse at top right,#edf7ef,transparent 60%),#fff}
+.app-shell .message>div:last-child {min-width:0;max-width:100%}
+.app-shell .message {max-width:100%}
+.app-shell .message-bubble {border-color:#e0e9e2;border-radius:4px 18px 18px;font-size:14px;box-shadow:0 3px 12px #163a2c04}
+.app-shell .user-message .message-bubble {background:#173e36;border-color:#173e36;color:#f5fff8}
+.app-shell .avatar {background:#163e35;color:#d5f6ca}
+.app-shell .composer {display:flex;align-items:center;padding:18px 22px 10px;gap:9px;background:#fff}
+.app-shell .composer textarea {flex:1;min-width:0;border-radius:13px;background:#f5f8f4;border-color:#dce5dc;font-size:13px}
+.app-shell .icon-button {flex-shrink:0;border-radius:12px;width:40px;height:42px}
+.app-shell .send-button {border-radius:12px;padding:0 20px;min-height:42px;background:#19785f}
+.app-shell #speech-toggle {display:block}
+.app-shell .composer-note {padding:4px 24px 18px;font-size:10px}
+.app-shell .section-heading h2,.app-shell .info-card h3,.app-shell .subheading {font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-.03em}
+.app-shell .filter-bar,.app-shell .info-card,.app-shell .search-hit,.app-shell .empty-state {border-radius:16px;border-color:#dbe5dc;background:#fff}
+.app-shell .info-card {padding:25px;animation:campus-reveal .4s ease both}
+.app-shell .info-card:nth-child(3n+2) {animation-delay:.06s}.app-shell .info-card:nth-child(3n+3) {animation-delay:.12s}
+.app-shell .info-card:hover {transform:translateY(-4px);box-shadow:0 12px 30px #133d3010;border-color:#85bba0}
+.app-shell .info-card .tag {border-radius:7px;padding:6px 9px}
+.app-shell .filter-bar input,.app-shell .filter-bar select,.app-shell .resource-search input {border-radius:9px;background:#f6f8f4}
+.app-shell .primary-button,.app-shell .secondary-button {border-radius:10px}
+.app-shell .view.active {animation:campus-reveal .32s ease both}
+.app-shell .timetable-grid {min-width:580px}.app-shell .timetable-row {font-size:12px}
+.app-shell button:focus-visible,.app-shell a:focus-visible {outline:3px solid #54bb94;outline-offset:4px}
+@keyframes sculpture-turn {from{transform:rotateX(-23deg) rotateY(35deg) rotateZ(-12deg)}to{transform:rotateX(-23deg) rotateY(395deg) rotateZ(-12deg)}}
+@keyframes campus-reveal {from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.motion-paused *, .motion-paused *::before,.motion-paused *::after {animation-play-state:paused!important;transition:none!important}
+@media(max-width:900px){.app-shell .sidebar{padding:18px 5%}.app-shell .sidebar nav{width:100%;flex-wrap:nowrap;overflow:auto;padding-bottom:3px}.app-shell .nav-item{flex-shrink:0}.app-shell .campus-hero{padding:38px 6% 52px;grid-template-columns:1.2fr 1fr}.sculpture-stage{scale:.8}.hero-footer{gap:12px}.app-shell .view{padding:25px 5% 45px}}
+@media(max-width:560px){.app-shell .campus-hero{grid-template-columns:1fr;gap:10px;padding:28px 6% 45px}.app-shell .topbar h1{font-size:38px}.hero-description{font-size:13px}.hero-footer{margin-top:20px}.campus-art{min-height:190px}.sculpture-stage{scale:.65;top:50%}.art-label{font-size:8px}.art-shadow{bottom:0}.app-shell .chat-messages{padding:20px 12px;min-height:230px}.app-shell .composer{flex-wrap:wrap;padding:12px}.app-shell .composer textarea{flex-basis:100%}.app-shell .send-button{margin-left:auto}.app-shell .chat-panel{min-height:0}.app-shell .message{gap:8px}.app-shell .message-bubble{padding:12px}.app-shell .view{padding:20px 12px 35px}.app-shell .brand strong{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.app-shell *,.app-shell *::before,.app-shell *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.app-shell .sidebar nav { scrollbar-width: none; } .app-shell .sidebar nav::-webkit-scrollbar { display: none; }
+.motion-paused .view,.motion-paused .message,.motion-paused .chat-panel,.motion-paused .info-card {animation:none!important;opacity:1!important}
