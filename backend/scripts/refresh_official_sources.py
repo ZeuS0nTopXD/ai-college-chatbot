@@ -25,6 +25,11 @@ SOURCE_PAGES = {
     "VSIT Results": ("RESULT", "https://vsit.edu.in/result/"),
     "VSIT Student Life": ("VSIT", "https://vsit.edu.in/student-life/"),
     "VSIT Contact": ("VSIT", "https://vsit.edu.in/contact-us/"),
+    "VSIT BMS Admissions": ("ADMISSIONS", "https://vsit.edu.in/admission-bms/"),
+    "VSIT BMS Programme": ("ACADEMIC", "https://vsit.edu.in/b-m-s/"),
+    "VSIT BSc Computer Science": ("ACADEMIC", "https://vsit.edu.in/bsc-cs-se/"),
+    "VSIT MCom Business Management": ("ACADEMIC", "https://vsit.edu.in/m-com-bm/"),
+    "VSIT Student Grievance Committee": ("ACADEMIC", "https://vsit.edu.in/student-grievance-redressal-committee/"),
 }
 
 
