@@ -16,6 +16,16 @@ ALIASES = {
     "student desk": "student section",
 }
 
+TYPO_CORRECTIONS = {
+    "wht": "what",
+    "computng": "computing",
+    "computin": "computing",
+    "facult": "faculty",
+    "timetablee": "timetable",
+    "admisson": "admission",
+    "placemnt": "placement",
+}
+
 
 def normalize_query(text: str) -> str:
     normalized = unicodedata.normalize("NFKC", str(text or "")).lower()
@@ -23,7 +33,8 @@ def normalize_query(text: str) -> str:
         " " if unicodedata.category(char).startswith("P") else char
         for char in normalized
     )
-    return re.sub(r"\s+", " ", normalized).strip()
+    normalized = re.sub(r"\s+", " ", normalized).strip()
+    return " ".join(TYPO_CORRECTIONS.get(token, token) for token in normalized.split())
 
 
 def expand_query(text: str) -> set[str]:

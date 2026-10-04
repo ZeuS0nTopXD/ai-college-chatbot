@@ -20,3 +20,6 @@ def test_expand_query_adds_student_language_aliases():
     assert "information technology" in expanded
     assert "head of department" in expanded
 
+
+def test_normalize_query_repairs_common_student_typos():
+    assert normalize_query("wht is the hod of computng") == "what is the hod of computing"
