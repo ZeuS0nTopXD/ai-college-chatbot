@@ -361,9 +361,11 @@ async function loadDocuments() {
         const sources = await sourcesResponse.json();
         const documents = documentsResponse?.ok ? await documentsResponse.json() : [];
         list.replaceChildren();
-        sources.forEach((item) => list.append(officialSourceCard(item)));
+        const featuredUrl = document.querySelector("#resources-view .official-sample a")?.href;
+        const remainingSources = sources.filter((item) => item.url !== featuredUrl);
+        remainingSources.forEach((item) => list.append(officialSourceCard(item)));
         documents.forEach((item) => list.append(uploadedDocumentCard(item)));
-        if (!sources.length && !documents.length) list.append(emptyState("No VSIT resources are available right now."));
+        if (!remainingSources.length && !documents.length) list.append(emptyState("No additional VSIT resources are available right now."));
     } catch (error) {
         list.replaceChildren(emptyState(error.message));
     }
@@ -404,9 +406,11 @@ async function loadTopicPage(name) {
         const terms = { notices: ["news", "notice", "examination"], syllabus: ["syllabus", "academic", "programme"], services: ["contact", "student", "library", "placement", "admission"] }[name];
         const filtered = documents.filter((item) => terms.some((term) => `${item.title} ${item.category}`.toLowerCase().includes(term)));
         list.replaceChildren();
-        sources.forEach((item) => list.append(officialSourceCard(item)));
+        const featuredUrl = document.querySelector(`#${name}-view .official-sample a`)?.href;
+        const remainingSources = sources.filter((item) => item.url !== featuredUrl);
+        remainingSources.forEach((item) => list.append(officialSourceCard(item)));
         filtered.forEach((item) => list.append(uploadedDocumentCard(item)));
-        if (!sources.length && !filtered.length) list.append(emptyState("No VSIT sources are available right now."));
+        if (!remainingSources.length && !filtered.length) list.append(emptyState("No additional VSIT sources are available right now."));
     } catch (error) { list.replaceChildren(emptyState(error.message)); }
 }
 
