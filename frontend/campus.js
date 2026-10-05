@@ -3,7 +3,7 @@
  const gl=canvas.getContext('webgl',{alpha:true,antialias:true});
  if(!gl){canvas.replaceWith(Object.assign(document.createElement('p'),{textContent:'VSIT · Connected intelligence'}));toggle.hidden=true;return;}
  const vertex=`attribute vec3 position; attribute vec3 normal; uniform mat4 rotation; uniform float aspect; varying vec3 n; varying vec3 p; void main(){ vec4 q=rotation*vec4(position,1.); n=mat3(rotation)*normal; p=q.xyz; float d=3.8-q.z; gl_Position=vec4(q.x*3.05/aspect,q.y*3.05,-q.z*.1,d); }`;
- const fragment=`precision mediump float; varying vec3 n; varying vec3 p; void main(){vec3 N=normalize(n); float diffuse=max(dot(N,normalize(vec3(-.6,.9,1.))),0.); float rim=pow(1.-abs(N.z),3.); float shade=.48+.43*diffuse; gl_FragColor=vec4(vec3(shade*.96,shade*.96,shade*.92)+rim*.1,1.);}`;
+ const fragment=`precision mediump float; varying vec3 n; varying vec3 p; void main(){vec3 N=normalize(n); float key=max(dot(N,normalize(vec3(-.6,.9,1.))),0.); float fill=max(dot(N,normalize(vec3(.6,-.25,.6))),0.); float rim=pow(1.-abs(N.z),3.); float shade=.54+.30*key+.09*fill; gl_FragColor=vec4(vec3(shade*.98,shade*.975,shade*.95)+rim*.04,1.);}`;
  function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
  const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vertex));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);gl.useProgram(program);
  // Imported Z-Anatomy / BodyParts3D mesh, CC BY-SA 4.0; see assets/brain/CREDITS.txt.

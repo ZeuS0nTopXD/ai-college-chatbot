@@ -1,0 +1,71 @@
+/* Refined version of the existing black-and-ivory site theme. */
+body:has(.app-shell){background:#fffefa;color:#171717}
+.app-shell{background:#fffefa;--ink:#171717;--muted:#66665f;--line:#dcdad3;--blue:#171717}
+.app-shell .sidebar{background:#fffefa;border-color:#e7e5df}
+.app-shell .nav-item{border-radius:999px;transition:background .2s ease,transform .2s ease,border-color .2s ease}
+.app-shell .nav-item.active{background:#eeece6;border-color:#d5d2c9}
+.app-shell .nav-item:hover{background:#f2f0ea;transform:translateY(-1px)}
+.app-shell .campus-hero{background:#fffefa;border-color:#e4e2dc}
+.app-shell .hero-description{color:#63635e}
+.app-shell .hero-footer{border-color:#d5d2cb}
+/* A complete model viewport with controls anchored inside the frame. */
+.campus-art{position:relative;display:block;height:clamp(430px,42vw,560px);min-height:0;padding:44px 18px 58px;border:1px solid #e0ded7;border-radius:30px;background:radial-gradient(circle at 50% 42%,#faf9f5 0,#f3f1ec 72%,#eeece6 100%);box-shadow:0 22px 70px rgba(36,34,28,.07);overflow:hidden;isolation:isolate}
+.campus-art::before{content:'';position:absolute;left:50%;top:50%;width:min(78%,500px);aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid #d0cec6;border-radius:50%;box-shadow:0 0 0 42px rgba(255,254,250,.5),0 0 0 43px rgba(215,212,205,.25);pointer-events:none}
+.campus-art::after{content:'';position:absolute;inset:10px;border:1px solid rgba(255,255,255,.55);border-radius:22px;pointer-events:none}
+#neural-brain{position:relative;z-index:1;width:100%;height:100%;display:block}
+.campus-art .art-label-top{top:24px;left:25px;right:auto;z-index:2}
+.campus-art .art-shadow{left:27%;bottom:73px;width:46%;height:10px;background:rgba(39,38,32,.13);filter:blur(13px);z-index:0}
+.model-frame-footer{position:absolute;z-index:3;left:24px;right:24px;bottom:19px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.model-frame-footer .art-label-bottom{position:static;max-width:calc(100% - 120px);line-height:1.55;color:#65635d}
+.model-frame-footer .art-label-bottom a{color:#55544f;text-decoration-color:#aaa69d;text-underline-offset:3px}
+.model-frame-footer .motion-toggle{position:static;flex:none;border:1px solid #c9c5bc;border-radius:999px;background:rgba(255,254,250,.9);color:#34342f;padding:8px 13px}
+.model-frame-footer .motion-toggle:hover{background:#ece9e2;border-color:#9e9b91}
+/* Quiet depth and clearer hierarchy on every content page. */
+.app-shell .view{max-width:1500px;background:#fffefa}
+.app-shell .section-heading{border-color:#e0ddd6}
+.app-shell .section-heading h2{color:#20201e}
+.app-shell .chat-panel{border:1px solid #d9d6ce;border-radius:24px;box-shadow:0 18px 55px rgba(36,34,28,.055)}
+.chat-heading{background:#f5f3ef;border-color:#e4e1d9}
+.chat-heading h2{color:#22221f}
+.app-shell .chat-messages{background:#fffefa}
+.app-shell .message-bubble{border-color:#e0ddd6;box-shadow:0 4px 16px rgba(36,34,28,.025)}
+.app-shell .user-message .message-bubble{background:#282824;border-color:#282824}
+.app-shell .composer{background:#faf9f6;border-color:#e3e0d9}
+.app-shell .composer textarea,.app-shell .filter-bar input,.app-shell .filter-bar select,.app-shell .resource-search input{background:#fffefa;border:1px solid #d4d0c7;color:#252520}
+.app-shell .composer textarea:focus,.app-shell .filter-bar input:focus,.app-shell .filter-bar select:focus,.app-shell .resource-search input:focus{outline:2px solid #6a6962;outline-offset:2px}
+.app-shell .icon-button{background:#fffefa;border-color:#cbc7be}
+.app-shell .icon-button:hover{background:#f0eee8}
+.app-shell .info-card,.app-shell .filter-bar,.app-shell .search-hit,.app-shell .empty-state{background:#f8f7f3;border:1px solid #e0ddd5;border-radius:20px;box-shadow:0 7px 26px rgba(36,34,28,.035)}
+.app-shell .info-card{padding:25px}
+.app-shell .info-card:hover,.app-shell .search-hit:hover{border-color:#b9b5ac;box-shadow:0 17px 34px rgba(36,34,28,.065);transform:translateY(-3px)}
+.app-shell .info-card h3{font-family:'Plus Jakarta Sans',sans-serif;color:#252521;font-weight:700}
+.app-shell .info-card .tag{background:#eeece6;color:#45453f;border-color:#d8d4cb}
+.app-shell .info-card p,.app-shell .search-hit p{color:#67665f}
+.app-shell .filter-bar{padding:23px;gap:14px}
+.app-shell .search-hit{border-left:1px solid #e0ddd5;padding:21px 24px}
+.app-shell .empty-state{border-style:dashed;padding:42px}
+.app-shell .timetable-grid{border:1px solid #d2cec4;border-radius:18px}
+.app-shell .timetable-row,.app-shell .timetable-row.lecture-row,.app-shell .timetable-row.practical-row{background:#fffefa;border-bottom:1px solid #e4e1d9}
+.app-shell .timetable-row:nth-child(even):not(.timetable-header){background:#f8f7f3}
+.app-shell .timetable-row.timetable-header{background:#272723;color:#fff}
+.app-shell .timetable-row.lecture-row>span:last-child{background:#eaf0fc;color:#2452a8;border-color:#bfd0eb}
+.app-shell .timetable-row.practical-row>span:last-child{background:#fff0ed;color:#ab3830;border-color:#ecc6c0}
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .campus-hero{background:#f6f5f1}
+/* Administration shares the same palette, form language, and card rhythm. */
+.admin-page{--background:#fffefa;--ink:#171717;--muted:#66665f;--line:#dcdad3;--blue:#171717;background:#fffefa;color:#171717}
+.admin-page .admin-header{border-color:#dedbd4}
+.admin-page .admin-header h1,.admin-page .auth-card h2,.admin-page .admin-card h2{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;letter-spacing:-.04em}
+.admin-page .admin-header a{color:#34342f;text-underline-offset:4px}
+.admin-page .auth-card,.admin-page .admin-card{background:#f8f7f3;border:1px solid #dedbd3;border-radius:20px;box-shadow:0 13px 40px rgba(36,34,28,.045);padding:26px}
+.admin-page .stack-form input,.admin-page .stack-form textarea,.admin-page .stack-form select{background:#fffefa;border:1px solid #d4d0c7;border-radius:12px;color:#252520}
+.admin-page .admin-nav{border-color:#dedbd4}
+.admin-page .admin-nav button{background:#f7f6f2;color:#42423c;border:1px solid #dedbd3;border-radius:999px;padding:10px 17px}
+.admin-page .admin-nav button.active{background:#272723;color:#fff;border-color:#272723}
+.admin-page .primary-button{background:#272723;border-radius:999px;padding:11px 20px}
+.admin-page .secondary-button{background:#fffefa;border:1px solid #bdb9b0;border-radius:999px;padding:11px 20px}
+.admin-page .record-row{border-color:#e3e0d9}
+.app-shell :focus-visible,.admin-page :focus-visible{outline:2px solid #3b3a35;outline-offset:3px}
+@media(max-width:900px){.campus-art{height:clamp(350px,52vw,480px);padding:42px 13px 59px}.app-shell .info-card{padding:21px}}
+@media(max-width:700px){.campus-art{height:390px;min-height:0}.app-shell .chat-panel{box-shadow:none}}
+@media(max-width:560px){.campus-art{height:345px;padding:37px 10px 58px;border-radius:24px}.campus-art::after{inset:7px;border-radius:18px}.campus-art .art-label-top{top:16px;left:17px}.model-frame-footer{left:16px;right:16px;bottom:14px;gap:8px}.model-frame-footer .art-label-bottom{font-size:7px;max-width:calc(100% - 103px)}.model-frame-footer .motion-toggle{font-size:9px;padding:7px 10px}.campus-art .art-shadow{bottom:61px}.app-shell .info-card,.app-shell .filter-bar,.app-shell .search-hit{border-radius:17px}.admin-page .admin-card{padding:18px}}
+@media(prefers-reduced-motion:reduce){.app-shell *,.admin-page *{animation:none!important;transition:none!important}}

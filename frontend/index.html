@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="campus.css">
+    <link rel="stylesheet" href="polish.css">
 </head>
 <body>
     <div class="app-shell" data-current-view="assistant">
@@ -49,10 +50,12 @@
                     <div class="art-grid"></div>
                     <canvas id="neural-brain" aria-hidden="true"></canvas>
                     <span class="art-label art-label-top">INTELLIGENCE, CONNECTED.</span>
-                    <span class="art-label art-label-bottom">DRAG TO EXPLORE &nbsp; / &nbsp; <a href="assets/brain/CREDITS.txt" target="_blank" rel="noopener">MODEL CREDITS</a></span>
                     <div class="art-shadow"></div>
+                    <div class="model-frame-footer">
+                        <span class="art-label art-label-bottom">DRAG TO EXPLORE &nbsp; / &nbsp; <a href="assets/brain/CREDITS.txt" target="_blank" rel="noopener">MODEL CREDITS</a></span>
+                        <button type="button" id="motion-toggle" class="motion-toggle" aria-pressed="false">Pause motion</button>
+                    </div>
                 </div>
-                <button type="button" id="motion-toggle" class="motion-toggle" aria-pressed="false">Pause motion</button>
             </header>
 
             <section class="view active" id="assistant-view" aria-labelledby="page-title">
