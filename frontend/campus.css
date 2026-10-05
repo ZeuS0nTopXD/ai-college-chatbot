@@ -103,3 +103,8 @@ body:has(.app-shell) {background:#191a1c;padding:24px}
 #neural-brain:focus-visible{outline:2px solid #111;outline-offset:3px;border-radius:16px}
 .motion-paused .app-shell *{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){.app-shell *{animation:none!important;transition:none!important}}
+/* Full-bleed layout: the page and hero fill the browser viewport. */
+body:has(.app-shell){padding:0;background:#fffefa}
+.app-shell{width:100%;max-width:none;min-height:100dvh;margin:0;border:0}
+.app-shell .campus-hero{min-height:calc(100svh - 112px)}
+@media(max-width:700px){body:has(.app-shell){padding:0}.app-shell .campus-hero{min-height:auto}}
