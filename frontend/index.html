@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="campus.css">
 </head>
 <body>
-    <div class="app-shell">
+    <div class="app-shell" data-current-view="assistant">
         <aside class="sidebar">
             <a class="brand" href="/" aria-label="VSIT Student Assistant home">
                 <span class="brand-mark" aria-hidden="true">
@@ -42,6 +42,7 @@
                     <p class="eyebrow"><span class="live-dot"></span> YOUR CAMPUS. CONNECTED.</p>
                     <h1 id="page-title">A little clarity.<br>A lot of possibility.</h1>
                     <p class="hero-description">Your day at Vidyalankar, simplified. Find your next class, explore college resources, and get the answers you need.</p>
+                    <a class="hero-cta" href="#user-input">Start asking <span aria-hidden="true">↗</span></a>
                     <div class="hero-footer"><span>VIDYALANKAR SCHOOL OF IT</span><span>WADALA · MUMBAI</span></div>
                 </div>
                 <div class="campus-art">
@@ -56,6 +57,7 @@
 
             <section class="view active" id="assistant-view" aria-labelledby="page-title">
                 <div class="chat-panel">
+                    <div class="chat-heading"><span class="chat-heading-mark" aria-hidden="true">✳</span><div><p class="eyebrow">YOUR COLLEGE, IN ONE PLACE</p><h2>What can I help you find?</h2></div><span class="chat-heading-index" aria-hidden="true">01 / 06</span></div>
                     <div class="chat-messages" id="chat-messages" aria-live="polite" aria-label="Conversation">
                         <article class="message assistant-message">
                             <div class="avatar" aria-hidden="true">V</div>

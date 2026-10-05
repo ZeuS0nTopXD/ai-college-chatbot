@@ -27,6 +27,7 @@ document.querySelectorAll(".nav-item").forEach((button) => {
 });
 
 function showView(name) {
+    document.querySelector(".app-shell").dataset.currentView = name;
     Object.entries(views).forEach(([viewName, element]) => {
         const active = viewName === name;
         element.hidden = !active;
@@ -38,7 +39,9 @@ function showView(name) {
         if (active) button.setAttribute("aria-current", "page");
         else button.removeAttribute("aria-current");
     });
-    document.getElementById("page-title").textContent = titles[name];
+    const pageTitle = document.getElementById("page-title");
+    if (name === "assistant") pageTitle.innerHTML = "A little clarity.<br>A lot of possibility.";
+    else pageTitle.textContent = titles[name];
     if (name === "academics") loadAcademicEvents();
     if (name === "resources") loadDocuments();
     if (["notices", "syllabus", "services"].includes(name)) loadTopicPage(name);
@@ -46,6 +49,11 @@ function showView(name) {
 
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("user-input");
+document.querySelector(".hero-cta").addEventListener("click", (event) => {
+    event.preventDefault();
+    showView("assistant");
+    chatInput.focus();
+});
 const chatMessages = document.getElementById("chat-messages");
 const chatStatus = document.getElementById("chat-status");
 const sendButton = document.getElementById("send-button");

@@ -119,3 +119,45 @@ body:has(.app-shell){padding:0;background:#fffefa}
 .app-shell .sidebar nav{justify-self:end}
 @media(max-width:1000px){.app-shell .sidebar{grid-template-columns:90px 1fr}.app-shell .sidebar nav{grid-column:1/-1;justify-self:stretch;justify-content:center}}
 @media(max-width:560px){.app-shell .sidebar{grid-template-columns:70px 1fr;column-gap:8px}.brand-title strong{font-size:14px}.brand-title small{font-size:9px}.app-shell .sidebar nav{justify-content:flex-start}}
+/* Refined editorial landing and conversation surfaces. */
+.app-shell .campus-hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(24px,5vw,88px);padding:clamp(48px,7vw,104px) clamp(24px,7vw,112px);background:radial-gradient(circle at 88% 12%,#f5f3ed 0,transparent 33%),#fffefa}
+.app-shell .hero-copy{max-width:720px}
+.app-shell .topbar h1{font-size:clamp(46px,5.3vw,90px);line-height:1.04;margin:28px 0 24px;letter-spacing:-.067em}
+.app-shell .hero-description{max-width:510px;font-size:clamp(14px,1.15vw,17px);line-height:1.8}
+.hero-cta{display:inline-flex;align-items:center;justify-content:space-between;gap:40px;margin-top:30px;padding:15px 18px 15px 22px;min-width:195px;border-radius:999px;background:#151515;color:#fff;text-decoration:none;font:700 12px 'Plus Jakarta Sans',sans-serif;transition:transform .2s ease,box-shadow .2s ease}
+.hero-cta span{font-size:18px;font-weight:400;line-height:1}
+.hero-cta:hover{transform:translateY(-3px);box-shadow:0 8px 0 #d8d8d1}
+.hero-cta:focus-visible{outline:2px solid #111;outline-offset:4px}
+.app-shell .hero-footer{margin-top:clamp(48px,7vh,90px)}
+.campus-art{min-height:clamp(380px,42vw,560px);display:flex;align-items:center;justify-content:center;border:1px solid #e6e4df;border-radius:28px;background:radial-gradient(circle at 50% 45%,#fffefa 0,#f4f2ed 70%,#eeece7 100%);box-shadow:0 24px 70px #1414140b;overflow:hidden}
+.campus-art::before{content:'';position:absolute;width:min(76%,410px);aspect-ratio:1;border:1px solid #c9c8c1;border-radius:50%;box-shadow:0 0 0 38px #faf9f690,0 0 0 39px #dedcd340;opacity:.65}
+#neural-brain{height:clamp(370px,42vw,540px);flex:1}
+.art-label{z-index:2}.art-label-top{top:20px;left:24px}.art-label-bottom{bottom:20px;left:24px}.art-shadow{bottom:42px;left:30%;width:40%;z-index:0}
+.motion-toggle{right:clamp(24px,7vw,112px);bottom:22px}
+.app-shell .view{max-width:1500px}
+.app-shell .chat-panel{border-radius:22px;border-color:#dedcd7;box-shadow:0 26px 70px #1717170d}
+.chat-heading{display:flex;align-items:center;gap:18px;padding:22px 28px;border-bottom:1px solid #e9e7e1;background:#f8f7f2}
+.chat-heading-mark{display:grid;place-items:center;width:42px;height:42px;flex:none;border:1px solid #151515;border-radius:50%;font-size:24px;line-height:1}
+.chat-heading .eyebrow{margin:0 0 5px;color:#777;font-size:9px}
+.chat-heading h2{margin:0;font:800 clamp(18px,2vw,24px) 'Plus Jakarta Sans',sans-serif;letter-spacing:-.04em}
+.chat-heading-index{margin-left:auto;color:#8b8b87;font:10px ui-monospace,monospace;letter-spacing:.12em}
+.app-shell .chat-messages{padding:clamp(20px,3vw,40px);background:#fffefa}
+.app-shell .message-bubble{border-radius:4px 18px 18px 18px;line-height:1.68}
+.app-shell .user-message .message-bubble{border-radius:18px 4px 18px 18px}
+.app-shell .composer{padding:18px 24px 10px;gap:12px;border-color:#e7e5df}
+.app-shell .composer textarea{min-height:48px;padding:13px 17px}
+.app-shell .composer-note{padding:5px 24px 20px}
+.app-shell .section-heading{padding-bottom:20px;border-bottom:1px solid #dedcd7}
+.app-shell .section-heading h2{font-size:clamp(28px,3.3vw,44px)}
+@media(max-width:900px){.app-shell .campus-hero{gap:22px;padding:45px 6% 62px}.app-shell .topbar h1{font-size:clamp(42px,5.5vw,64px)}.campus-art{min-height:360px}#neural-brain{height:360px}.motion-toggle{right:6%}}
+@media(max-width:700px){.app-shell .campus-hero{grid-template-columns:1fr;padding:42px 6% 72px}.app-shell .topbar h1{font-size:clamp(42px,9vw,58px)}.app-shell .hero-footer{margin-top:46px}.campus-art{min-height:280px}#neural-brain{height:300px}.motion-toggle{right:6%;bottom:22px}.app-shell .chat-panel{box-shadow:none}}
+@media(max-width:560px){.app-shell .campus-hero{padding:34px 5% 65px}.app-shell .topbar h1{font-size:clamp(40px,11vw,50px)}.hero-cta{margin-top:22px}.campus-art{min-height:255px}#neural-brain{height:270px}.art-label-top{top:14px;left:14px}.art-label-bottom{bottom:14px;left:14px}.chat-heading{gap:11px;padding:16px}.chat-heading-mark{width:34px;height:34px;font-size:20px}.chat-heading-index{display:none}.app-shell .composer{padding:12px;gap:8px}.app-shell .composer-note{padding:4px 15px 16px}}
+@media(prefers-reduced-motion:reduce){.hero-cta{transition:none}}
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .campus-hero{min-height:auto;display:block;padding:45px 7% 50px;background:#f8f7f2}
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .campus-hero h1{font-size:clamp(34px,4vw,54px);margin:17px 0 0}
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .hero-description,
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .hero-cta,
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .hero-footer,
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .campus-art,
+.app-shell[data-current-view]:not([data-current-view="assistant"]) .motion-toggle{display:none}
+@media(max-width:700px){.app-shell[data-current-view]:not([data-current-view="assistant"]) .campus-hero{padding:32px 6%}}
