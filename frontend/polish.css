@@ -59,6 +59,8 @@ body:has(.app-shell){background:#fffefa;color:#171717}
 .app-shell .info-card h3{font-family:'Plus Jakarta Sans',sans-serif;color:#252521;font-weight:700}
 .app-shell .info-card .tag{background:#eeece6;color:#45453f;border-color:#d8d4cb}
 .app-shell .info-card p,.app-shell .search-hit p{color:#67665f}
+.app-shell #academic-list .info-card a{display:inline-block;margin-top:16px;color:#252520;font-size:11px;font-weight:700;text-decoration:none;border-bottom:1px solid #8c8880;padding-bottom:4px}
+.app-shell #academic-list .info-card a:hover{border-color:#171717}
 .app-shell .filter-bar{padding:23px;gap:14px}
 .app-shell .search-hit{border-left:1px solid #e0ddd5;padding:21px 24px}
 .app-shell .empty-state{border-style:dashed;padding:42px}

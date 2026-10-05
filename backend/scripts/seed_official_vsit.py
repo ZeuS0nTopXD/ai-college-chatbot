@@ -6,6 +6,8 @@ from backend.data.official_vsit_data import (
     OFFICIAL_KNOWLEDGE_DATA,
     OFFICIAL_OFFICE_DATA,
 )
+from backend.data.official_academic_events import OFFICIAL_ACADEMIC_EVENTS
+from backend.models.academic import AcademicEvent
 from backend.models.knowledge import KnowledgeBase
 from backend.database.database import SessionLocal
 from backend.models.faculty import Faculty
@@ -44,6 +46,10 @@ def ensure_official_records():
         existing_questions = {row.question for row in db.query(KnowledgeBase).all()}
         existing_faculty = {row.name for row in db.query(Faculty).all()}
         existing_offices = {row.office_name for row in db.query(Office).all()}
+        existing_events = {
+            (row.title, row.course, row.semester, row.starts_at)
+            for row in db.query(AcademicEvent).all()
+        }
         existing_timetable = {
             (row.academic_year, row.semester, row.course, row.division, row.day,
              row.start_time, row.end_time, row.subject_code, row.room)
@@ -63,6 +69,12 @@ def ensure_official_records():
             Office(**item)
             for item in OFFICIAL_OFFICE_DATA
             if item["office_name"] not in existing_offices
+        )
+        db.add_all(
+            AcademicEvent(**item)
+            for item in OFFICIAL_ACADEMIC_EVENTS
+            if (item["title"], item["course"], item["semester"], item["starts_at"])
+            not in existing_events
         )
         for item in OFFICIAL_TIMETABLE_DATA:
             values = _timetable_values(item)
@@ -97,6 +109,10 @@ def sync_official_vsit():
     seed_knowledge()
     db = SessionLocal()
     try:
+        existing_events = {
+            (row.title, row.course, row.semester, row.starts_at)
+            for row in db.query(AcademicEvent).all()
+        }
         db.query(Faculty).delete(synchronize_session=False)
         db.query(Office).delete(synchronize_session=False)
         db.query(Timetable).delete(synchronize_session=False)
@@ -105,6 +121,12 @@ def sync_official_vsit():
         db.add_all(Office(**item) for item in OFFICIAL_OFFICE_DATA)
         db.add_all(Timetable(**_timetable_values(item))
                    for item in OFFICIAL_TIMETABLE_DATA)
+        db.add_all(
+            AcademicEvent(**item)
+            for item in OFFICIAL_ACADEMIC_EVENTS
+            if (item["title"], item["course"], item["semester"], item["starts_at"])
+            not in existing_events
+        )
         db.commit()
         print("Loaded verified faculty and office records.")
         print(f"Loaded {len(OFFICIAL_TIMETABLE_DATA)} official TYIT timetable periods.")

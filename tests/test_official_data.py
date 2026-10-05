@@ -4,6 +4,7 @@ from backend.models.office import Office
 from backend.models.result import Result
 from backend.models.timetable import Timetable
 from backend.models.knowledge import KnowledgeBase
+from backend.models.academic import AcademicEvent
 from backend.scripts.seed_official_vsit import sync_official_vsit, ensure_official_records
 
 
@@ -33,6 +34,27 @@ def test_official_record_refresh_adds_new_records_without_clearing_existing(clie
         assert db.query(Office).filter(Office.office_name == "Library").count() == 1
     finally:
         db.close()
+
+
+def test_signed_winter_2026_notice_seeds_date_only_academic_events_once(client):
+    from backend.data.official_academic_events import OFFICIAL_ACADEMIC_EVENTS, SOURCE_URL
+
+    assert len(OFFICIAL_ACADEMIC_EVENTS) == 24
+    ensure_official_records()
+    ensure_official_records()
+
+    db = SessionLocal()
+    try:
+        rows = db.query(AcademicEvent).filter(AcademicEvent.resource_url == SOURCE_URL).all()
+        assert len(rows) == 24
+        assert all(row.starts_at.strftime("%Y-%m-%d %H:%M") == "2026-10-12 00:00" for row in rows)
+    finally:
+        db.close()
+
+    response = client.get("/api/academics", params={"course": "BSc IT", "semester": "5"})
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["resource_url"] == SOURCE_URL
 
 
 def test_official_timetable_pdf_dataset_covers_tyit_divisions():

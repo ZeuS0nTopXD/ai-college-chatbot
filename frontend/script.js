@@ -332,10 +332,20 @@ function academicCard(event) {
     title.textContent = event.title;
     const date = document.createElement("p");
     date.className = "meta";
-    date.textContent = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(event.starts_at));
+    const startsAt = new Date(event.starts_at);
+    const dateOnly = /T00:00:00(?:\.\d+)?(?:Z|[+-]\d\d:\d\d)?$/.test(event.starts_at);
+    date.textContent = new Intl.DateTimeFormat("en-IN", dateOnly ? { dateStyle: "medium" } : { dateStyle: "medium", timeStyle: "short" }).format(startsAt);
     const description = document.createElement("p");
     description.textContent = event.description || "No additional details provided.";
     card.append(tag, title, date, description);
+    if (event.resource_url) {
+        const source = document.createElement("a");
+        source.href = event.resource_url;
+        source.target = "_blank";
+        source.rel = "noopener noreferrer";
+        source.textContent = "View on VSIT website ↗";
+        card.append(source);
+    }
     return card;
 }
 

@@ -128,8 +128,11 @@ def answer_academic_question(db: Session, message: str) -> dict | None:
     ranked.sort(key=lambda pair: (-pair[0], pair[1].starts_at, pair[1].id))
     event = ranked[0][1]
     date_text = f"{event.starts_at.day} {event.starts_at.strftime('%B %Y')}"
-    time_text = event.starts_at.strftime("%I:%M %p").lstrip("0")
-    response = f"📅 {event.title} is scheduled for {date_text} at {time_text}."
+    if event.starts_at.time() == datetime.min.time():
+        response = f"📅 {event.title} on {date_text}. The official notice gives a commencement date but no exam time; check the detailed timetable."
+    else:
+        time_text = event.starts_at.strftime("%I:%M %p").lstrip("0")
+        response = f"📅 {event.title} is scheduled for {date_text} at {time_text}."
     if event.location:
         response += f" Location: {event.location}."
 
