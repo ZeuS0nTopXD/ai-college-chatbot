@@ -108,3 +108,14 @@ body:has(.app-shell){padding:0;background:#fffefa}
 .app-shell{width:100%;max-width:none;min-height:100dvh;margin:0;border:0}
 .app-shell .campus-hero{min-height:calc(100svh - 112px)}
 @media(max-width:700px){body:has(.app-shell){padding:0}.app-shell .campus-hero{min-height:auto}}
+
+/* Separate identity, title, and navigation. */
+.app-shell .sidebar{display:grid;grid-template-columns:90px minmax(170px,1fr) auto;align-items:center;column-gap:24px;row-gap:10px}
+.app-shell .brand{margin:0;justify-self:start}
+.brand-title{justify-self:center;text-align:center;white-space:nowrap;color:#151515}
+.brand-title strong,.brand-title small{display:block}
+.brand-title strong{font:800 16px 'Plus Jakarta Sans',sans-serif;letter-spacing:-.03em}
+.brand-title small{margin-top:3px;font:400 10px 'Plus Jakarta Sans',sans-serif;color:#686868}
+.app-shell .sidebar nav{justify-self:end}
+@media(max-width:1000px){.app-shell .sidebar{grid-template-columns:90px 1fr}.app-shell .sidebar nav{grid-column:1/-1;justify-self:stretch;justify-content:center}}
+@media(max-width:560px){.app-shell .sidebar{grid-template-columns:70px 1fr;column-gap:8px}.brand-title strong{font-size:14px}.brand-title small{font-size:9px}.app-shell .sidebar nav{justify-content:flex-start}}
