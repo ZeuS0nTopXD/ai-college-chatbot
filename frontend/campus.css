@@ -92,3 +92,14 @@ body:has(.app-shell) {background:#191a1c;padding:24px}
 .app-shell .timetable-row.practical-row>span:last-child {background:#fff0ee;color:#ae3029;border:1px solid #eec4be}
 .app-shell button:focus-visible,.app-shell a:focus-visible {outline:2px solid #111;outline-offset:4px}
 @media(max-width:700px){body:has(.app-shell){padding:8px}.app-shell .campus-hero{padding:32px 6% 50px}.campus-art{min-height:220px}#neural-brain{height:240px}.app-shell .sidebar{padding:18px 5%}.hero-footer{font-size:8px}.app-shell .chat-panel{box-shadow:none}}
+/* Motion and dimensional surfaces. */
+.app-shell .chat-panel {box-shadow:0 2px 0 #d5d5cf,0 12px 0 -8px #e2e2da,0 24px 45px -25px #1114}
+.app-shell .info-card {transition:transform .25s ease,box-shadow .25s ease;transform-origin:center bottom}
+@media(hover:hover){.app-shell .info-card:hover{transform:perspective(900px) rotateX(3deg) translateY(-5px);box-shadow:0 12px 0 -8px #d9d9d0,0 22px 35px -25px #1116}.app-shell .send-button:hover,.app-shell .primary-button:hover{transform:translateY(-2px);box-shadow:0 5px 0 #aaa}}
+.app-shell button:active{transform:translateY(1px)}
+.app-shell .view.active{animation:page-arrive .4s ease both}
+.app-shell .message{animation:page-arrive .3s ease both}
+@keyframes page-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#neural-brain:focus-visible{outline:2px solid #111;outline-offset:3px;border-radius:16px}
+.motion-paused .app-shell *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.app-shell *{animation:none!important;transition:none!important}}

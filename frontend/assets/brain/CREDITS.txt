@@ -1,0 +1,14 @@
+Brain model credits
+
+Derived from Brain Project: https://github.com/itayinbarr/brainproject
+Original anatomy: copyright Z-Anatomy contributors and BodyParts3D / DBCLS.
+https://www.z-anatomy.com/ and https://lifesciencedb.jp/bp3d/
+
+The model brain.bin is licensed under Creative Commons Attribution-ShareAlike 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Changes: extracted cortex, cerebellum and brainstem; centered and uniformly scaled;
+simplified by 85%; recalculated vertex normals; converted to signed 16-bit interleaved
+position/normal triangles. Monochrome lighting is applied by the website renderer.
+This modified model is distributed under the same CC BY-SA 4.0 license.
+Original source and extended attribution: LICENSE-source.txt.
