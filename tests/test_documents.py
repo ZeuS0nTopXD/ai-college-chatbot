@@ -10,6 +10,38 @@ from backend.models.knowledge import KnowledgeBase
 FIXTURE = Path(__file__).parent / "fixtures" / "vsit_notice.txt"
 
 
+def test_public_official_sources_populate_each_resource_section(client):
+    for section in ("resources", "notices", "syllabus", "services"):
+        response = client.get("/api/documents/official-sources", params={"section": section})
+        assert response.status_code == 200
+        sources = response.json()
+        assert len(sources) >= 3
+        assert all(item["url"].startswith("https://vsit.edu.in/") for item in sources)
+        assert all(section in item["sections"] for item in sources)
+
+    titles = {item["title"] for item in client.get("/api/documents/official-sources").json()}
+    assert "B.Sc. Information Technology syllabus" in titles
+    assert "Library hours and services" in titles
+
+
+@pytest.mark.parametrize(
+    "question,url_suffix",
+    [
+        ("Show me the BSc IT syllabus", "/syllabus-b-sc-it/"),
+        ("Where can I find VSIT exam notices?", "/news-update/"),
+        ("How do I apply for a transcript?", "/transcripts/"),
+        ("Where is the admissions website?", "/admission/"),
+    ],
+)
+def test_chat_links_to_the_matching_official_vsit_resource(client, question, url_suffix):
+    response = client.post("/chat", json={"message": question})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["category"] == "RESOURCE"
+    assert body["resource_url"].endswith(url_suffix)
+    assert "VSIT website" in body["bot_response"]
+
+
 def admin_headers(client):
     response = client.post(
         "/api/auth/login",

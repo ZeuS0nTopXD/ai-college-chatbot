@@ -16,6 +16,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from backend.dependencies import get_db
+from backend.data.official_links import OFFICIAL_LINKS
 from backend.models.document import Document, DocumentChunk
 from backend.schemas.document import (
     DocumentRead,
@@ -37,6 +38,13 @@ admin_router = APIRouter(
     tags=["administration"],
     dependencies=[Depends(require_admin)],
 )
+
+
+@public_router.get("/official-sources")
+def list_official_sources(section: str | None = None):
+    if section:
+        return [item for item in OFFICIAL_LINKS if section in item["sections"]]
+    return OFFICIAL_LINKS
 
 
 @public_router.get("", response_model=list[DocumentRead])

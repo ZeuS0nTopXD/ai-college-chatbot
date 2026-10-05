@@ -37,6 +37,7 @@ from backend.services.ai_service import (
 )
 
 from backend.services.academic_service import answer_academic_question
+from backend.services.official_link_service import answer_official_source_question
 from backend.services.document_service import search_documents
 
 from backend.services.result_service import (
@@ -2103,6 +2104,15 @@ def chat(
     private_response = _private_student_data_response(user_message)
     if private_response:
         return private_response
+
+    official_source_answer = answer_official_source_question(user_message)
+    if official_source_answer:
+        return make_response(
+            user_message,
+            "RESOURCE",
+            official_source_answer["bot_response"],
+            resource_url=official_source_answer["resource_url"],
+        )
 
     # ========================================================
     # 1. OFFICE

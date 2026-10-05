@@ -351,49 +351,62 @@ function academicCard(event) {
 
 async function loadDocuments() {
     const list = document.getElementById("document-list");
-    list.replaceChildren(emptyState("Loading documents…"));
+    list.replaceChildren(emptyState("Loading VSIT resources…"));
     try {
-        const response = await fetch("/api/documents");
-        if (!response.ok) throw new Error("Could not load documents.");
-        const documents = await response.json();
+        const [sourcesResponse, documentsResponse] = await Promise.all([
+            fetch("/api/documents/official-sources?section=resources"),
+            fetch("/api/documents").catch(() => null),
+        ]);
+        if (!sourcesResponse.ok) throw new Error("Could not load VSIT resources.");
+        const sources = await sourcesResponse.json();
+        const documents = documentsResponse?.ok ? await documentsResponse.json() : [];
         list.replaceChildren();
-        if (!documents.length) list.append(emptyState("No college documents have been published yet."));
-        documents.forEach((documentItem) => {
-            const card = document.createElement("article");
-            card.className = "info-card";
-            const tag = document.createElement("span");
-            tag.className = "tag";
-            tag.textContent = documentItem.category;
-            const title = document.createElement("h3");
-            title.textContent = documentItem.title;
-            const detail = document.createElement("p");
-            detail.textContent = `${documentItem.filename} · ${documentItem.page_count} page${documentItem.page_count === 1 ? "" : "s"}`;
-            card.append(tag, title, detail);
-            list.append(card);
-        });
+        sources.forEach((item) => list.append(officialSourceCard(item)));
+        documents.forEach((item) => list.append(uploadedDocumentCard(item)));
+        if (!sources.length && !documents.length) list.append(emptyState("No VSIT resources are available right now."));
     } catch (error) {
         list.replaceChildren(emptyState(error.message));
     }
+}
+
+function officialSourceCard(item) {
+    const card = document.createElement("article"); card.className = "info-card official-source-card";
+    const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = "VSIT website";
+    const title = document.createElement("h3"); title.textContent = item.title;
+    const detail = document.createElement("p"); detail.textContent = item.description;
+    const link = document.createElement("a"); link.href = item.url; link.target = "_blank";
+    link.rel = "noopener noreferrer"; link.textContent = "View on VSIT website ↗";
+    card.append(tag, title, detail, link);
+    return card;
+}
+
+function uploadedDocumentCard(item) {
+    const card = document.createElement("article"); card.className = "info-card";
+    const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = item.category;
+    const title = document.createElement("h3"); title.textContent = item.title;
+    const detail = document.createElement("p");
+    detail.textContent = `Indexed document · ${item.page_count} page${item.page_count === 1 ? "" : "s"}`;
+    card.append(tag, title, detail);
+    return card;
 }
 
 async function loadTopicPage(name) {
     const list = document.querySelector(`#${name}-view .topic-list`);
     list.replaceChildren(emptyState("Loading official VSIT sources…"));
     try {
-        const response = await fetch("/api/documents");
-        if (!response.ok) throw new Error("Could not load official sources.");
-        const documents = await response.json();
+        const [sourcesResponse, documentsResponse] = await Promise.all([
+            fetch(`/api/documents/official-sources?section=${name}`),
+            fetch("/api/documents").catch(() => null),
+        ]);
+        if (!sourcesResponse.ok) throw new Error("Could not load official sources.");
+        const sources = await sourcesResponse.json();
+        const documents = documentsResponse?.ok ? await documentsResponse.json() : [];
         const terms = { notices: ["news", "notice", "examination"], syllabus: ["syllabus", "academic", "programme"], services: ["contact", "student", "library", "placement", "admission"] }[name];
         const filtered = documents.filter((item) => terms.some((term) => `${item.title} ${item.category}`.toLowerCase().includes(term)));
         list.replaceChildren();
-        if (!filtered.length) list.append(emptyState("No indexed official sources are available yet."));
-        filtered.forEach((item) => {
-            const card = document.createElement("article"); card.className = "info-card";
-            const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = item.category;
-            const title = document.createElement("h3"); title.textContent = item.title;
-            const detail = document.createElement("p"); detail.textContent = `${item.page_count} page${item.page_count === 1 ? "" : "s"} · indexed official source`;
-            card.append(tag, title, detail); list.append(card);
-        });
+        sources.forEach((item) => list.append(officialSourceCard(item)));
+        filtered.forEach((item) => list.append(uploadedDocumentCard(item)));
+        if (!sources.length && !filtered.length) list.append(emptyState("No VSIT sources are available right now."));
     } catch (error) { list.replaceChildren(emptyState(error.message)); }
 }
 
@@ -401,17 +414,27 @@ document.getElementById("resource-search-form").addEventListener("submit", async
     event.preventDefault();
     const query = document.getElementById("resource-query").value.trim();
     const results = document.getElementById("resource-results");
-    results.replaceChildren(emptyState("Searching documents…"));
+    results.replaceChildren(emptyState("Searching VSIT resources…"));
     try {
-        const response = await fetch("/api/documents/search", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query }),
+        const [sourcesResponse, documentsResponse] = await Promise.all([
+            fetch("/api/documents/official-sources"),
+            fetch("/api/documents/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query }),
+            }).catch(() => null),
+        ]);
+        if (!sourcesResponse.ok) throw new Error("Resource search failed.");
+        const sources = await sourcesResponse.json();
+        const data = documentsResponse?.ok ? await documentsResponse.json() : { hits: [] };
+        const words = query.toLowerCase().replace(/\./g, "").match(/[a-z0-9]+/g) || [];
+        const matchingSources = sources.filter((item) => {
+            const content = `${item.title} ${item.description}`.toLowerCase().replace(/\./g, "");
+            return words.some((word) => word.length > 2 && content.includes(word));
         });
-        if (!response.ok) throw new Error("Document search failed.");
-        const data = await response.json();
         results.replaceChildren();
-        if (!data.hits.length) results.append(emptyState("No reliable document match was found."));
+        matchingSources.forEach((item) => results.append(officialSourceCard(item)));
+        if (!matchingSources.length && !data.hits.length) results.append(emptyState("No matching VSIT resource or uploaded document was found."));
         data.hits.forEach((hit) => {
             const card = document.createElement("article");
             card.className = "search-hit";
