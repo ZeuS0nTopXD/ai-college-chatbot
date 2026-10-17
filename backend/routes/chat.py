@@ -2082,6 +2082,7 @@ def chat(
     user_message = (
         request.message or ""
     ).strip()
+    original_message = user_message
 
     # Allow the UI to persist a student's selected course/division without
     # exposing private records or requiring an account.
@@ -2113,6 +2114,25 @@ def chat(
             official_source_answer["bot_response"],
             resource_url=official_source_answer["resource_url"],
         )
+
+    # An administrator's exact question is authoritative. Resolve it before
+    # specialist detectors (especially timetable keywords) can hijack it.
+    normalized_question = normalize_query(original_message)
+    if normalized_question:
+        exact_entry = next(
+            (
+                entry
+                for entry in db.query(KnowledgeBase).all()
+                if normalize_query(entry.question or "") == normalized_question
+            ),
+            None,
+        )
+        if exact_entry:
+            return make_response(
+                original_message,
+                exact_entry.category or "VSIT",
+                exact_entry.answer,
+            )
 
     # ========================================================
     # 1. OFFICE

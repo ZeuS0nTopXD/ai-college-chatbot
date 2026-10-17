@@ -223,6 +223,24 @@ def test_chat_searches_admin_knowledge_entries_even_when_classifier_is_general(c
     )
 
 
+def test_exact_admin_entry_wins_before_specialist_router(client):
+    seed(
+        KnowledgeBase(
+            category="GENERAL",
+            topic="student support",
+            question="What is the timetable policy?",
+            answer="The timetable policy is published by the Computing department.",
+        )
+    )
+
+    response = client.post("/chat", json={"message": "What is the timetable policy?"})
+
+    assert response.status_code == 200
+    assert response.json()["bot_response"] == (
+        "The timetable policy is published by the Computing department."
+    )
+
+
 def test_chat_answers_official_admission_and_library_questions(client):
     from backend.scripts.seed_knowledge import seed_knowledge
 
