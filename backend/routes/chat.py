@@ -2177,17 +2177,18 @@ def chat(
     if priority_category not in {
         "VSIT", "NGO", "ADMISSIONS", "PLACEMENTS", "LIBRARY",
         "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS", "CAREER",
-    } and not is_obviously_non_timetable_question(
+    } or is_timetable_question(user_message):
+        if not is_obviously_non_timetable_question(
         user_message
-    ):
-        try:
-            timetable_question = (
-                is_timetable_question(
-                    user_message
+        ):
+            try:
+                timetable_question = (
+                    is_timetable_question(
+                        user_message
+                    )
                 )
-            )
-        except Exception:
-            timetable_question = False
+            except Exception:
+                timetable_question = False
 
     if timetable_question:
         return handle_timetable_question(
