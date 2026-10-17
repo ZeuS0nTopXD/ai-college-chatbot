@@ -877,10 +877,15 @@ def classify_question(message):
     if not message:
         return "GENERAL"
 
-    if message in {
-        "hi", "hello", "hey", "hii", "hiii", "good morning",
-        "good afternoon", "good evening", "namaste",
-    }:
+    # Accept normal conversational greetings with an optional short
+    # addressee (for example, "hi there" or "good morning assistant").
+    # Keep this deliberately narrow so a real question containing a greeting
+    # still reaches the relevant VSIT handler.
+    if re.fullmatch(
+        r"(?:hi+|hello|hey|yo|namaste)(?:\s+(?:there|bot|assistant))?"
+        r"|good\s+(?:morning|afternoon|evening)(?:\s+(?:there|bot|assistant))?",
+        message,
+    ):
         return "GREETING"
 
     # ========================================================
