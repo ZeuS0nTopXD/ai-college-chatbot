@@ -2138,13 +2138,38 @@ def chat(
             db,
         )
 
+    # Classify verified knowledge questions before the broad timetable
+    # detector. This keeps the chat route aligned with the knowledge-base
+    # route even if a future timetable keyword is overly permissive.
+    priority_category = classify_question(user_message)
+    if priority_category in {
+        "VSIT", "NGO", "ADMISSIONS", "PLACEMENTS", "LIBRARY",
+        "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS", "CAREER",
+    }:
+        priority_categories = [priority_category]
+        if priority_category in {"VSIT", "CAREER"}:
+            priority_categories.extend(
+                ["FACULTY", "ADMISSIONS", "PLACEMENTS", "LIBRARY", "ACADEMIC", "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS"]
+            )
+        knowledge_list = (
+            db.query(KnowledgeBase)
+            .filter(KnowledgeBase.category.in_(priority_categories))
+            .all()
+        )
+        best_match = search_knowledge(user_message, knowledge_list)
+        if best_match:
+            return make_response(user_message, priority_category, best_match.answer)
+
     # ========================================================
     # 3. TIMETABLE
     # ========================================================
 
     timetable_question = False
 
-    if not is_obviously_non_timetable_question(
+    if priority_category not in {
+        "VSIT", "NGO", "ADMISSIONS", "PLACEMENTS", "LIBRARY",
+        "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS", "CAREER",
+    } and not is_obviously_non_timetable_question(
         user_message
     ):
         try:
