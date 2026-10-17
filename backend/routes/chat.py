@@ -2142,6 +2142,14 @@ def chat(
     # detector. This keeps the chat route aligned with the knowledge-base
     # route even if a future timetable keyword is overly permissive.
     priority_category = classify_question(user_message)
+    if priority_category == "GREETING":
+        return make_response(
+            user_message,
+            "GREETING",
+            "Hello! I can help with VSIT faculty, offices, timetables, "
+            "exams, results and college information. What would you like "
+            "to know?",
+        )
     if priority_category in {
         "VSIT", "NGO", "ADMISSIONS", "PLACEMENTS", "LIBRARY",
         "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS", "CAREER",

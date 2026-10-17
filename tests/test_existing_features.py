@@ -267,6 +267,18 @@ def test_verified_vsit_question_wins_over_timetable_detector(client, monkeypatch
     assert "specify the day for the timetable" not in response.json()["bot_response"].lower()
 
 
+def test_greeting_wins_over_timetable_detector(client, monkeypatch):
+    import backend.routes.chat as chat_route
+
+    monkeypatch.setattr(chat_route, "is_timetable_question", lambda _message: True)
+
+    response = client.post("/chat", json={"message": "hi"})
+
+    assert response.status_code == 200
+    assert response.json()["category"] == "GREETING"
+    assert "specify the day for the timetable" not in response.json()["bot_response"].lower()
+
+
 @pytest.mark.parametrize("message", ["hi there", "hey bot", "good morning assistant"])
 def test_chat_understands_natural_greetings(client, message):
     response = client.post("/chat", json={"message": message})
