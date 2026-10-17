@@ -2153,7 +2153,7 @@ def chat(
     if priority_category in {
         "VSIT", "NGO", "ADMISSIONS", "PLACEMENTS", "LIBRARY",
         "STUDENT_SUPPORT", "STUDENT_LIFE", "CAMPUS", "CAREER",
-    }:
+    } and not is_timetable_question(user_message):
         priority_categories = [priority_category]
         if priority_category in {"VSIT", "CAREER"}:
             priority_categories.extend(
@@ -2290,6 +2290,18 @@ def chat(
                 category,
                 best_match.answer,
             )
+
+    # Admin-created knowledge must remain reachable even when the classifier
+    # does not yet know the entry's topic. Search the complete verified set
+    # before falling back to documents or the optional AI service.
+    all_knowledge = db.query(KnowledgeBase).all()
+    best_match = search_knowledge(user_message, all_knowledge)
+    if best_match:
+        return make_response(
+            user_message,
+            getattr(best_match, "category", None) or "VSIT",
+            best_match.answer,
+        )
 
     # ========================================================
     # 8. COLLEGE DOCUMENTS

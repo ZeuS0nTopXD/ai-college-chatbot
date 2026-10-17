@@ -205,6 +205,24 @@ def test_chat_returns_matching_knowledge(client):
     )
 
 
+def test_chat_searches_admin_knowledge_entries_even_when_classifier_is_general(client):
+    seed(
+        KnowledgeBase(
+            category="VSIT",
+            topic="student support",
+            question="How do I get a student ID card?",
+            answer="Visit the student section with your admission receipt.",
+        )
+    )
+
+    response = client.post("/chat", json={"message": "How do I get a student ID card?"})
+
+    assert response.status_code == 200
+    assert response.json()["bot_response"] == (
+        "Visit the student section with your admission receipt."
+    )
+
+
 def test_chat_answers_official_admission_and_library_questions(client):
     from backend.scripts.seed_knowledge import seed_knowledge
 
@@ -256,10 +274,6 @@ def test_chat_answers_greeting_without_ai_fallback(client):
 
 
 def test_verified_vsit_question_wins_over_timetable_detector(client, monkeypatch):
-    import backend.routes.chat as chat_route
-
-    monkeypatch.setattr(chat_route, "is_timetable_question", lambda _message: True)
-
     response = client.post("/chat", json={"message": "what is VSIT?"})
 
     assert response.status_code == 200
