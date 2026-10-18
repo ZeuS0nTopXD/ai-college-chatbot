@@ -41,6 +41,11 @@ from backend.services.ai_service import (
 from backend.services.academic_service import answer_academic_question
 from backend.services.official_link_service import answer_official_source_question
 from backend.services.document_service import search_documents
+from backend.services.wellbeing_service import (
+    is_wellbeing_question,
+    is_wellbeing_crisis,
+    wellbeing_response,
+)
 
 from backend.services.result_service import (
     is_result_question,
@@ -2141,6 +2146,16 @@ def chat(
     private_response = _private_student_data_response(user_message)
     if private_response:
         return private_response
+
+    # Wellbeing questions take priority over broad college intent detectors so
+    # stress or safety concerns never get routed into timetable/office flows.
+    if is_wellbeing_question(original_message):
+        category = "WELLBEING_CRISIS" if is_wellbeing_crisis(original_message) else "WELLBEING"
+        return make_response(
+            original_message,
+            category,
+            wellbeing_response(original_message),
+        )
 
     # Conversational messages must be resolved before broad office/faculty
     # detectors can interpret words such as "how" as a college request.

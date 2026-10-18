@@ -232,6 +232,16 @@ def is_timetable_question(question: str) -> bool:
 
     q = normalize_message(question)
 
+    # Placement questions are career/notice questions, not class schedules.
+    # The generic “when is …” rule below must not hijack them.
+    if re.search(r"\bplacements?\b|\bplacement drive\b|\bcampus recruitment\b", q):
+        has_class_context = any(
+            re.search(r"(?<!\w)" + re.escape(keyword) + r"(?!\w)", q)
+            for keyword in TIMETABLE_KEYWORDS
+        ) or re.search(r"\b(?:fy|sy|ty)\s*it\b|\bdivision\s*[a-e]\b", q)
+        if not has_class_context:
+            return False
+
     # Direct timetable phrases.
     for keyword in TIMETABLE_KEYWORDS:
         if re.search(r"(?<!\w)" + re.escape(keyword) + r"(?!\w)", q):

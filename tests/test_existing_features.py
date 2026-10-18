@@ -345,6 +345,21 @@ def test_broad_office_detector_does_not_hijack_conversation_or_placement_knowled
     assert response.json()["category"] != "OFFICE"
 
 
+@pytest.mark.parametrize("message", ["I feel stressed about exams", "I am overwhelmed and anxious"])
+def test_chat_supports_student_wellbeing_questions(client, message):
+    response = client.post("/chat", json={"message": message})
+    assert response.status_code == 200
+    assert response.json()["category"] == "WELLBEING"
+    assert "support" in response.json()["bot_response"].lower()
+
+
+def test_chat_escalates_immediate_safety_concern(client):
+    response = client.post("/chat", json={"message": "I might hurt myself"})
+    assert response.status_code == 200
+    assert response.json()["category"] == "WELLBEING_CRISIS"
+    assert "emergency" in response.json()["bot_response"].lower()
+
+
 def test_verified_vsit_question_wins_over_timetable_detector(client, monkeypatch):
     response = client.post("/chat", json={"message": "what is VSIT?"})
 
