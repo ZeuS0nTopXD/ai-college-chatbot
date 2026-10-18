@@ -223,6 +223,26 @@ def test_chat_searches_admin_knowledge_entries_even_when_classifier_is_general(c
     )
 
 
+def test_general_ai_path_receives_ranked_knowledge_context(client, monkeypatch):
+    seed(
+        KnowledgeBase(
+            category="GENERAL",
+            topic="student support",
+            question="Can students reserve the innovation lab?",
+            answer="Students can reserve it through the Computing department office.",
+        )
+    )
+    from backend.routes.chat import _knowledge_context
+
+    db = SessionLocal()
+    try:
+        context = _knowledge_context(db, "Can I book the innovation lab?")
+    finally:
+        db.close()
+
+    assert "Computing department office" in context
+
+
 def test_exact_admin_entry_wins_before_specialist_router(client):
     seed(
         KnowledgeBase(

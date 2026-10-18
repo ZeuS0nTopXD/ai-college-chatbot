@@ -29,10 +29,12 @@ from backend.services.classifier import (
     classify_question,
     search_knowledge,
 )
+from backend.services.local_retrieval import rank_candidates
 from backend.services.query_understanding import normalize_query
 
 from backend.services.ai_service import (
     get_ai_response,
+    get_contextual_ai_response,
     get_missing_info_response,
 )
 
@@ -68,6 +70,29 @@ from backend.services.timetable_service import (
 
 
 router = APIRouter()
+
+
+def _knowledge_context(db: Session, message: str, limit: int = 5) -> str:
+    """Return compact, ranked verified context for the local language model."""
+    records = db.query(KnowledgeBase).all()
+    candidates = [
+        {
+            "category": item.category,
+            "topic": item.topic,
+            "question": item.question,
+            "answer": item.answer,
+        }
+        for item in records
+    ]
+    ranked = rank_candidates(message, candidates)[:limit]
+    if not ranked:
+        return ""
+    return "\n\n".join(
+        f"Category: {item.get('category', '')}\n"
+        f"Question: {item.get('question', '')}\n"
+        f"Verified answer: {item.get('answer', '')}"
+        for item in ranked
+    )
 
 
 def _private_student_data_response(message: str):
@@ -2382,9 +2407,11 @@ def chat(
     # ========================================================
 
     if category == "CAREER":
-        response = get_ai_response(
-            user_message,
-            category,
+        context = _knowledge_context(db, user_message)
+        response = (
+            get_contextual_ai_response(user_message, category, context)
+            if context
+            else get_ai_response(user_message, category)
         )
 
         return make_response(
@@ -2397,9 +2424,11 @@ def chat(
     # 11. GENERAL
     # ========================================================
 
-    response = get_ai_response(
-        user_message,
-        "GENERAL",
+    context = _knowledge_context(db, user_message)
+    response = (
+        get_contextual_ai_response(user_message, category, context)
+        if context
+        else get_ai_response(user_message, "GENERAL")
     )
 
     return make_response(
