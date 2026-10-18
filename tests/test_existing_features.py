@@ -7,7 +7,13 @@ from backend.models.result import Result
 from backend.models.timetable import Timetable
 from backend.models.faculty import Faculty
 from backend.services.document_service import SearchHit
+from backend.routes.chat import is_division_specific_teacher_question
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from backend.database.database import Base
+from backend.routes.chat import ChatRequest, chat
 
 
 def seed(record):
@@ -75,6 +81,75 @@ def test_chat_answers_teacher_from_timetable(client):
     assert response.status_code == 200
     assert response.json()["category"] == "FACULTY"
     assert "Prof. Asha Patil" in response.json()["bot_response"]
+
+
+def test_division_specific_teacher_questions_use_timetable_scope():
+    assert is_division_specific_teacher_question("Who teaches IOT in TYIT B?")
+    assert is_division_specific_teacher_question(
+        "which subjects does the professor teach in division C?"
+    )
+    assert not is_division_specific_teacher_question("Who teaches IOT?")
+
+
+def test_chat_route_filters_teacher_lookup_to_requested_division():
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+    )
+    Base.metadata.create_all(engine)
+    db = sessionmaker(bind=engine)()
+    try:
+        db.add_all(
+            [
+                Timetable(
+                    academic_year="2026-27",
+                    semester="Odd Semester",
+                    course="B.Sc. Information Technology",
+                    division="A",
+                    day="Monday",
+                    start_time=time(9, 0),
+                    end_time=time(10, 0),
+                    subject_code="IOT",
+                    subject_name="Internet of Things",
+                    teacher_names="Prof. Asha Patil",
+                    room="Lab 2",
+                    session_type="Practical",
+                ),
+                Timetable(
+                    academic_year="2026-27",
+                    semester="Odd Semester",
+                    course="B.Sc. Information Technology",
+                    division="B",
+                    day="Monday",
+                    start_time=time(9, 0),
+                    end_time=time(10, 0),
+                    subject_code="IOT",
+                    subject_name="Internet of Things",
+                    teacher_names="Prof. Rohan Shah",
+                    room="Lab 3",
+                    session_type="Practical",
+                ),
+            ]
+        )
+        db.commit()
+
+        response = chat(
+            ChatRequest(message="Who teaches IOT in TYIT B?"),
+            db,
+        )
+
+        assert "Prof. Rohan Shah" in response["bot_response"]
+        assert "Prof. Asha Patil" not in response["bot_response"]
+
+        profile_response = chat(
+            ChatRequest(message="Who teaches IOT?", division="B"),
+            db,
+        )
+        assert "Prof. Rohan Shah" in profile_response["bot_response"]
+        assert "Prof. Asha Patil" not in profile_response["bot_response"]
+    finally:
+        db.close()
+        engine.dispose()
 
 
 def test_chat_answers_short_head_of_department_variant(client):

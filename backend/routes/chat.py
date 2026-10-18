@@ -253,6 +253,16 @@ def is_faculty_question(message: str) -> bool:
     )
 
 
+def is_division_specific_teacher_question(message: str) -> bool:
+    """Return true when a teacher lookup names a specific class division."""
+    intent = get_timetable_intent(message)
+    if intent not in {"TEACHER", "TEACHER_SUBJECT"}:
+        return False
+
+    details = extract_timetable_details(message)
+    return bool(details.get("division"))
+
+
 # ============================================================
 # FACULTY SUBJECT EXTRACTION
 # ============================================================
@@ -525,6 +535,22 @@ def find_teacher_from_timetable(
     )
 
     return subject, teachers
+
+
+def subject_matches_timetable_row(item, subject: str) -> bool:
+    """Match a subject against either its timetable name or code."""
+    target = normalize_text(subject)
+    values = unique_values(
+        [
+            value(item, "subject_name"),
+            value(item, "subject_code"),
+            value(item, "subject"),
+        ]
+    )
+    return any(
+        normalize_text(item_value) == target
+        for item_value in values
+    )
 
 
 # ============================================================
@@ -1612,31 +1638,8 @@ def handle_timetable_question(
 
         matching = []
 
-        subject_q = normalize_text(
-            subject
-        )
-
         for item in rows:
-            row_subject = value(
-                item,
-                "subject_name",
-                "subject_code",
-                "subject",
-            )
-
-            if not row_subject:
-                continue
-
-            row_q = normalize_text(
-                row_subject
-            )
-
-            if (
-                row_q == subject_q
-                or row_q == normalize_text(
-                    str(subject)
-                )
-            ):
+            if subject_matches_timetable_row(item, subject):
                 matching.append(item)
 
         teachers = unique_values(
@@ -1854,15 +1857,7 @@ def handle_timetable_question(
         matching = [
             item
             for item in timetable
-            if normalize_text(
-                value(
-                    item,
-                    "subject_name",
-                    "subject_code",
-                    "subject",
-                )
-            )
-            == normalize_text(subject)
+            if subject_matches_timetable_row(item, subject)
         ]
 
         teachers = unique_values(
@@ -2264,6 +2259,15 @@ def chat(
     # ========================================================
     # 2. FACULTY
     # ========================================================
+
+    # A division-qualified teacher question must use timetable rows. The
+    # Faculty table stores department-wide subject assignments and would
+    # otherwise return every teacher for that subject across all divisions.
+    if is_division_specific_teacher_question(user_message):
+        return handle_timetable_question(
+            user_message,
+            db,
+        )
 
     if is_faculty_question(
         user_message
