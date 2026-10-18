@@ -29,6 +29,29 @@ def test_connection_failure_does_not_expose_ai_internals(monkeypatch):
     assert "ollama" not in response.lower()
 
 
+def test_ollama_requests_bound_generation_to_avoid_tunnel_timeouts(monkeypatch):
+    captured = {}
+
+    class Response:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {"response": "bounded answer"}
+
+    def capture_post(url, **kwargs):
+        captured["url"] = url
+        captured["payload"] = kwargs["json"]
+        captured["timeout"] = kwargs["timeout"]
+        return Response()
+
+    monkeypatch.setattr(ai_service.requests, "post", capture_post)
+    assert ai_service._call_ollama("hello") == "bounded answer"
+    assert captured["payload"]["stream"] is False
+    assert captured["payload"]["options"]["num_predict"] <= 256
+    assert captured["payload"]["options"]["temperature"] <= 0.3
+
+
 def test_contextual_prompt_uses_retrieved_context_as_evidence(monkeypatch):
     captured = {}
 

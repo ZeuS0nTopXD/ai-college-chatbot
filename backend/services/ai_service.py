@@ -9,7 +9,9 @@ load_dotenv()
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 
 MODEL_NAME = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
-OLLAMA_TIMEOUT_SECONDS = float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "20"))
+OLLAMA_TIMEOUT_SECONDS = float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "30"))
+OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "192"))
+OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", "0.2"))
 
 
 # -----------------------------------------
@@ -27,7 +29,13 @@ def _call_ollama(prompt):
     data = {
         "model": MODEL_NAME,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        # Keep replies bounded so a slow local model cannot leave the
+        # Cloudflare tunnel open until Render cancels the request.
+        "options": {
+            "num_predict": OLLAMA_NUM_PREDICT,
+            "temperature": OLLAMA_TEMPERATURE,
+        },
     }
 
     try:
