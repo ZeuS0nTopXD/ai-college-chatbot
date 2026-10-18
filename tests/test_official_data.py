@@ -22,6 +22,8 @@ def test_official_sync_loads_published_records_and_clears_samples(client):
         assert "Admissions" in topics
         assert "Placements" in topics
         assert "Library" in topics
+        assert db.query(KnowledgeBase).filter(KnowledgeBase.question == "How do I get a bonafide certificate from VSIT?").count() == 1
+        assert db.query(KnowledgeBase).filter(KnowledgeBase.question == "How do I apply for a transcript from VSIT?").count() == 1
     finally:
         db.close()
 
