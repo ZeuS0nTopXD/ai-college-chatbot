@@ -13,6 +13,10 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'data-view="feedback"' in html
     assert 'id="feedback-form"' in html
     assert 'class="account-button admin-login-link" href="/admin"' in html
+    styles = (FRONTEND / "polish.css").read_text(encoding="utf-8")
+    assert ".app-shell .student-account" in styles
+    assert ".app-shell .account-button" in styles
+    assert "grid-template-columns:80px 220px minmax(0,1fr) auto" in styles
     assert '"/api/auth/register"' in script
     assert '"/api/auth/student-login"' in script
     assert '"/api/feedback"' in script
