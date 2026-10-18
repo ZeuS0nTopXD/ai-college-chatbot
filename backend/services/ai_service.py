@@ -163,6 +163,24 @@ Now provide the best possible answer.
     return _call_ollama(prompt)
 
 
+def get_grounded_response(user_message, category, verified_answer):
+    """Let Ollama explain one verified answer, while preserving it offline."""
+    prompt = f"""
+You are the VSIT student assistant. Answer the student's question naturally and concisely.
+The verified source text below is authoritative. Use only its facts; do not add dates, names,
+fees, policies, links, or claims that are not present. If it does not fully answer the question,
+say what is missing rather than guessing.
+Category: {category}
+Student question: {user_message}
+Verified source text: {verified_answer}
+Return only the answer for the student.
+"""
+    generated = _call_ollama(prompt)
+    if generated.lower().startswith(("i could not find a verified answer", "the ai engine", "i couldn't generate")):
+        return verified_answer
+    return generated
+
+
 def get_missing_info_response(user_message, category):
 
     organization_name = ""

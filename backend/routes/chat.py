@@ -37,6 +37,7 @@ from backend.services.ai_service import (
     get_contextual_ai_response,
     get_missing_info_response,
     get_wellbeing_response,
+    get_grounded_response,
 )
 
 from backend.services.academic_service import answer_academic_question
@@ -2261,7 +2262,11 @@ def chat(
         )
         best_match = search_knowledge(user_message, knowledge_list)
         if best_match:
-            return make_response(user_message, priority_category, best_match.answer)
+            return make_response(
+                user_message,
+                priority_category,
+                get_grounded_response(user_message, priority_category, best_match.answer),
+            )
 
     # ========================================================
     # 3. TIMETABLE
@@ -2384,7 +2389,7 @@ def chat(
             return make_response(
                 user_message,
                 category,
-                best_match.answer,
+                get_grounded_response(user_message, category, best_match.answer),
             )
 
     # Admin-created knowledge must remain reachable even when the classifier
@@ -2396,7 +2401,11 @@ def chat(
         return make_response(
             user_message,
             getattr(best_match, "category", None) or "VSIT",
-            best_match.answer,
+            get_grounded_response(
+                user_message,
+                getattr(best_match, "category", None) or "VSIT",
+                best_match.answer,
+            ),
         )
 
     # ========================================================
