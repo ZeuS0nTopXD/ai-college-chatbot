@@ -338,6 +338,13 @@ def test_placement_date_question_does_not_return_office_directory(client):
     assert "placement cell" not in response.json()["bot_response"].lower()
 
 
+@pytest.mark.parametrize("message", ["how are you", "how do placements work"])
+def test_broad_office_detector_does_not_hijack_conversation_or_placement_knowledge(client, message):
+    response = client.post("/chat", json={"message": message})
+    assert response.status_code == 200
+    assert response.json()["category"] != "OFFICE"
+
+
 def test_verified_vsit_question_wins_over_timetable_detector(client, monkeypatch):
     response = client.post("/chat", json={"message": "what is VSIT?"})
 

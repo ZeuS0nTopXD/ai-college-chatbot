@@ -1096,9 +1096,9 @@ def is_office_question(message):
 
     # Placement timing and start-date questions belong to placement knowledge,
     # not the Placement Cell directory.
-    if re.search(r"\bplacement(?:s)?\b", text) and re.search(
-        r"\b(?:when|date|start|begin|begins|drive)\b", text
-    ) and not re.search(r"\b(?:office|cell|contact|location|room|hours|timing)\b", text):
+    if re.search(r"\bplacement(?:s)?\b", text) and not re.search(
+        r"\b(?:office|cell|contact|location|room|hours|timing)\b", text
+    ):
         return False
 
     patterns = [
@@ -2141,6 +2141,18 @@ def chat(
     private_response = _private_student_data_response(user_message)
     if private_response:
         return private_response
+
+    # Conversational messages must be resolved before broad office/faculty
+    # detectors can interpret words such as "how" as a college request.
+    opening_category = classify_question(original_message)
+    if opening_category == "GREETING":
+        return make_response(
+            original_message,
+            "GREETING",
+            "Hello! I can help with VSIT faculty, offices, timetables, "
+            "exams, results and college information. What would you like "
+            "to know?",
+        )
 
     official_source_answer = answer_official_source_question(user_message)
     if official_source_answer:
