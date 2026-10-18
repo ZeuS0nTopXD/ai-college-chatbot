@@ -24,6 +24,9 @@ TYPO_CORRECTIONS = {
     "timetablee": "timetable",
     "admisson": "admission",
     "placemnt": "placement",
+    "wen": "when",
+    "reqs": "requirements",
+    "req": "requirements",
 }
 
 HINGLISH_REPLACEMENTS = {

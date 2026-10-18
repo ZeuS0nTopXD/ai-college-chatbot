@@ -895,6 +895,9 @@ def classify_question(message):
     ):
         return "GREETING"
 
+    if re.fullmatch(r"(?:hey|hi|hello)\s+(?:u|you)\s+(?:good|okay|ok|well)", message):
+        return "GREETING"
+
     if re.fullmatch(r"(?:thanks?|thank\s+you|thx|cheers|bye|goodbye|see\s+you|help)", message):
         return "GREETING"
 
@@ -1046,7 +1049,7 @@ def search_knowledge(user_message, knowledge_list):
 
     # High-signal question intents should beat broad topic matches.
     intent_patterns = (
-        (r"\b(?:when|what time)\b.*\b(?:placements?|recruitment)\b.*\b(?:begin|start|timeline|semester|month)",
+        (r"(?=.*\b(?:when|what time|begin|start)\b)(?=.*\b(?:placements?|recruitment)\b)(?=.*\b(?:begin|start|timeline|semester|month)\b)",
          r"\b(?:placements?|recruitment).*\b(?:begin|start|timeline|semester|month)"),
         (r"\bwhere\b.*\blibrary\b", r"\bwhere\b.*\blibrary\b"),
         (r"\b(?:apply|get|request)\b.*\btranscript\b", r"\b(?:apply|get|request).*\btranscript\b"),

@@ -2199,7 +2199,7 @@ def chat(
             greeting = "You’re welcome! Ask me anything about VSIT, academics, resources, or student support."
         elif normalized_opening in {"bye", "goodbye", "see you"}:
             greeting = "Take care! I’ll be here whenever you need help with VSIT."
-        elif normalized_opening in {"how are you", "how are you doing", "what s up", "what's up"}:
+        elif normalized_opening in {"how are you", "how are you doing", "what s up", "what's up", "hey u good", "hey you good"}:
             greeting = "I’m doing well and ready to help. What would you like to know about VSIT?"
         else:
             greeting = (
