@@ -1044,6 +1044,20 @@ def search_knowledge(user_message, knowledge_list):
         user_message
     )
 
+    # High-signal question intents should beat broad topic matches.
+    intent_patterns = (
+        (r"\b(?:when|what time)\b.*\b(?:placements?|recruitment)\b.*\b(?:begin|start|timeline|semester|month)",
+         r"\b(?:placements?|recruitment).*\b(?:begin|start|timeline|semester|month)"),
+        (r"\bwhere\b.*\blibrary\b", r"\bwhere\b.*\blibrary\b"),
+        (r"\b(?:apply|get|request)\b.*\btranscript\b", r"\b(?:apply|get|request).*\btranscript\b"),
+    )
+    for user_pattern, question_pattern in intent_patterns:
+        if re.search(user_pattern, user_message_lower):
+            for item in knowledge_list:
+                question = normalize_message(getattr(item, "question", "") or "")
+                if re.search(question_pattern, question):
+                    return item
+
     if "coordinat" in user_message_lower and (
         "b.sc" in user_message_lower
         or "bsc" in user_message_lower
@@ -1440,6 +1454,22 @@ def search_knowledge(user_message, knowledge_list):
             r"\b[a-zA-Z]{3,}\b",
             item_question
         )
+
+        # Prefer entries whose question expresses the same intent, rather
+        # than whichever answer happens to contain the broad topic word.
+        # This prevents “when do placements begin?” from selecting the
+        # unrelated registration procedure entry.
+        user_words = {
+            word for word in re.findall(r"\b[a-zA-Z]{3,}\b", user_message_lower)
+            if word not in ignored_words
+        }
+        candidate_words = {
+            word for word in question_words
+            if word not in ignored_words
+        }
+        if user_words and candidate_words:
+            overlap = len(user_words & candidate_words) / len(user_words)
+            score += int(overlap * 80)
 
         for word in question_words:
 

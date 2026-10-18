@@ -32,14 +32,14 @@ def answer_official_source_question(message: str) -> dict | None:
             title = "Programme brochures"
     elif re.search(r"\b(brochure|brochures|prospectus)\b", text):
         title = "Programme brochures"
-    elif re.search(r"\b(transcript|transcripts)\b", text):
+    elif asks_for_link and re.search(r"\b(transcript|transcripts)\b", text):
         title = "Transcript applications"
     elif asks_for_link and re.search(r"\b(exam|exams|examination|notice|notices|circular|circulars)\b", text):
         if "regular" in text and "commencement" in text:
             title = "Winter 2026 regular examination commencement notice"
         else:
             title = "News Update and examination notices"
-    elif asks_for_link and "library" in text:
+    elif asks_for_link and "library" in text and not re.search(r"\bwhere\s+(?:is|can i find)\b", text):
         title = "Library hours and services"
     elif asks_for_link and re.search(r"\b(admission|admissions)\b", text):
         title = "Admissions"
