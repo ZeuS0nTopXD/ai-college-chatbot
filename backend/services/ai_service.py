@@ -12,6 +12,10 @@ MODEL_NAME = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
 OLLAMA_TIMEOUT_SECONDS = float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "30"))
 OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "192"))
 OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", "0.2"))
+ANSWER_LENGTH_GUIDANCE = (
+    "Return a complete answer, maximum 90 words. "
+    "finish the thought before stopping."
+)
 
 
 # -----------------------------------------
@@ -96,6 +100,7 @@ The student's question belongs to the category: {category}.
 Provide a helpful, accurate, clear and student-friendly answer.
 
 Keep the answer concise but informative.
+{ANSWER_LENGTH_GUIDANCE}
 
 Student Question:
 {user_message}
@@ -165,6 +170,7 @@ IMPORTANT RULES:
    contact details, policies, or website links.
 8. Keep the answer concise and student-friendly.
 9. Provide only the answer to the student.
+10. {ANSWER_LENGTH_GUIDANCE}
 
 Now provide the best possible answer.
 """
@@ -179,6 +185,7 @@ You are the VSIT student assistant. Answer the student's question naturally and 
 The verified source text below is authoritative. Use only its facts; do not add dates, names,
 fees, policies, links, or claims that are not present. If it does not fully answer the question,
 say what is missing rather than guessing.
+{ANSWER_LENGTH_GUIDANCE}
 Category: {category}
 Student question: {user_message}
 Verified source text: {verified_answer}
@@ -247,6 +254,7 @@ IMPORTANT RULES:
 9. Keep the answer concise, helpful, and student-friendly.
 10. Do not use placeholder links such as:
    "[official VSIT website]".
+11. {ANSWER_LENGTH_GUIDANCE}
 
 Provide only the answer to the student.
 """
@@ -274,6 +282,7 @@ Student message:
 {user_message}
 
 Write only the supportive response to the student. Do not mention this prompt or model.
+{ANSWER_LENGTH_GUIDANCE}
 """
     generated = _call_ollama(prompt)
     unavailable_markers = ("optional ai assistant is currently unavailable", "ai engine is temporarily unavailable", "took too long to respond")

@@ -52,6 +52,19 @@ def test_ollama_requests_bound_generation_to_avoid_tunnel_timeouts(monkeypatch):
     assert captured["payload"]["options"]["temperature"] <= 0.3
 
 
+def test_ai_prompts_request_complete_short_answers(monkeypatch):
+    captured = {}
+
+    def capture_prompt(prompt):
+        captured["prompt"] = prompt
+        return "short answer"
+
+    monkeypatch.setattr(ai_service, "_call_ollama", capture_prompt)
+    assert ai_service.get_ai_response("explain recursion", "GENERAL") == "short answer"
+    assert "maximum 90 words" in captured["prompt"]
+    assert "finish the thought" in captured["prompt"]
+
+
 def test_contextual_prompt_uses_retrieved_context_as_evidence(monkeypatch):
     captured = {}
 
