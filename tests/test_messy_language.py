@@ -9,3 +9,10 @@ def test_common_typos_and_shorthand_reach_the_right_intent():
     assert search_knowledge("bsc it reqs??", rows).question == "What are the B.Sc. IT admission requirements?"
     assert search_knowledge("placemnt start wen", rows).question == "When do campus placements begin at VSIT?"
     assert classify_question("hey u good") == "GREETING"
+
+
+def test_combined_typos_and_shorthand_match_placement_timing():
+    rows = [SimpleNamespace(**item) for item in OFFICIAL_KNOWLEDGE_DATA]
+    assert search_knowledge(
+        "heloo can u tell me wen placemnts start pls", rows
+    ).question == "When do campus placements begin at VSIT?"
