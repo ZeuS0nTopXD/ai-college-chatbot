@@ -1101,6 +1101,21 @@ def is_office_question(message):
         message
     )
 
+    # Certificate and student-record procedures have verified knowledge
+    # entries. Let those entries answer first unless the student explicitly
+    # asks for an office, contact, location, room, or opening hours.
+    student_service = re.search(
+        r"\b(?:bonafide|transcript|no dues|leaving certificate|railway concession|"
+        r"id card|i card|identity card|student record|certificate)\b",
+        text,
+    )
+    explicit_office_request = re.search(
+        r"\b(?:office|section|contact|phone|email|location|located|room|hours|timings?)\b",
+        text,
+    )
+    if student_service and not explicit_office_request:
+        return False
+
     # Placement timing and start-date questions belong to placement knowledge,
     # not the Placement Cell directory.
     if re.search(r"\bplacement(?:s)?\b", text) and not re.search(

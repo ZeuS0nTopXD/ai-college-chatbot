@@ -956,6 +956,18 @@ def classify_question(message):
     # could become a generic VSIT question.
     # ========================================================
 
+    student_service = re.search(
+        r"\b(?:bonafide|transcript|no dues|leaving certificate|railway concession|"
+        r"id card|i card|identity card|student record|certificate)\b",
+        message,
+    )
+    explicit_office_request = re.search(
+        r"\b(?:office|section|contact|phone|email|location|located|room|hours|timings?)\b",
+        message,
+    )
+    if student_service and not explicit_office_request:
+        return "STUDENT_SUPPORT"
+
     if is_office_question(message):
         return "OFFICE"
 
