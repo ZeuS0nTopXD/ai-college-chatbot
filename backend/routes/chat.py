@@ -1101,6 +1101,19 @@ def is_office_question(message):
         message
     )
 
+    # “Admission requirements/eligibility” asks for course facts. Only route
+    # explicit office, contact, location, or hours requests to the directory.
+    admission_requirements = re.search(
+        r"\b(?:admission|admissions|eligibility|eligible|qualification|requirements?|marks|percentage)\b",
+        text,
+    ) and re.search(r"\b(?:bsc|b\.sc|information technology|bsc it|course|program)\b", text)
+    explicit_admission_office = re.search(
+        r"\b(?:office|cell|section|contact|phone|email|location|located|room|hours|timings?)\b",
+        text,
+    )
+    if admission_requirements and not explicit_admission_office:
+        return False
+
     # Certificate and student-record procedures have verified knowledge
     # entries. Let those entries answer first unless the student explicitly
     # asks for an office, contact, location, room, or opening hours.

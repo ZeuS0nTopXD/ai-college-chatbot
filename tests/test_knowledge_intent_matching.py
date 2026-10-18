@@ -13,3 +13,9 @@ def test_high_signal_questions_select_the_matching_verified_entry():
     assert search_knowledge("how do I apply for a transcript from VSIT?", rows).question == (
         "How do I apply for a transcript from VSIT?"
     )
+    assert search_knowledge("What are the BSC IT admission requirements?", rows).question == (
+        "What are the B.Sc. IT admission requirements?"
+    )
+    assert search_knowledge("what marks do I need for information technology?", rows).question == (
+        "What are the B.Sc. IT admission requirements?"
+    )

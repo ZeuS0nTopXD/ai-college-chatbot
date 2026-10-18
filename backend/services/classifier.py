@@ -1058,6 +1058,16 @@ def search_knowledge(user_message, knowledge_list):
                 if re.search(question_pattern, question):
                     return item
 
+    if (
+        re.search(r"\b(?:admission|admissions|eligibility|eligible|qualification|requirements?|marks|percentage)\b", user_message_lower)
+        and re.search(r"\b(?:bsc|b\.sc|information technology|bsc it)\b", user_message_lower)
+    ):
+        for item in knowledge_list:
+            question = normalize_message(getattr(item, "question", "") or "")
+            compact_question = question.replace(" ", "")
+            if "admission requirements" in question and "bsc" in compact_question:
+                return item
+
     if "coordinat" in user_message_lower and (
         "b.sc" in user_message_lower
         or "bsc" in user_message_lower
