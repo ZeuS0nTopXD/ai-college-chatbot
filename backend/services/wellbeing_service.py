@@ -3,7 +3,7 @@
 import re
 
 _CRISIS_PATTERNS = (r"\bkill myself\b", r"\bsuicid(?:e|al)\b", r"\bself[- ]?harm\b", r"\bhurt myself\b", r"\bend my life\b", r"\bnot want to live\b")
-_WELLBEING_PATTERNS = (r"\bstress(?:ed|ful)?\b", r"\banxious\b|\banxiety\b", r"\boverwhelm(?:ed|ing)?\b", r"\bpanic(?: attack)?\b", r"\bburn(?:ed|out)\b|\bburnout\b", r"\bdepress(?:ed|ion)\b", r"\blonely\b|\bloneliness\b", r"\bcan'?t cope\b|\bcannot cope\b", r"\bexam pressure\b|\bstudy pressure\b", r"\bfeeling (?:sad|low|down)\b")
+_WELLBEING_PATTERNS = (r"\bstress(?:ed|ful)?\b", r"\banxious\b|\banxiety\b", r"\boverwhelm(?:ed|ing)?\b", r"\bpanic(?: attack)?\b", r"\bburn(?:ed|out)\b|\bburnout\b", r"\bdepress(?:ed|ion)\b", r"\blonely\b|\bloneliness\b", r"\bcan'?t cope\b|\bcannot cope\b", r"\b(?:freaking|freaked) out\b", r"\bcan'?t (?:handle|deal with|manage)\b|\bcannot (?:handle|deal with|manage)\b", r"\bexam pressure\b|\bstudy pressure\b", r"\bfeeling (?:sad|low|down)\b")
 
 def _matches(message: str, patterns: tuple[str, ...]) -> bool:
     text = re.sub(r"\s+", " ", (message or "").strip().lower())
