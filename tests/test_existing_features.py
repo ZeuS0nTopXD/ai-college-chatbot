@@ -6,6 +6,7 @@ from backend.models.office import Office
 from backend.models.result import Result
 from backend.models.timetable import Timetable
 from backend.models.faculty import Faculty
+from backend.services.document_service import SearchHit
 import pytest
 
 
@@ -243,6 +244,39 @@ def test_general_ai_path_receives_ranked_knowledge_context(client, monkeypatch):
     assert "Computing department office" in context
 
 
+def test_retrieval_context_includes_uploaded_document_hits(monkeypatch):
+    from backend.routes import chat as chat_route
+
+    class EmptyQuery:
+        def all(self):
+            return []
+
+    class EmptyDb:
+        def query(self, *_args):
+            return EmptyQuery()
+
+    monkeypatch.setattr(
+        chat_route,
+        "search_documents",
+        lambda _db, _message, **_kwargs: [
+            SearchHit(
+                document_id=7,
+                title="Midterm Examination Notice",
+                category="Examinations",
+                page=2,
+                excerpt="The midterm examination form closes on 12 September.",
+                score=0.91,
+            )
+        ],
+    )
+
+    context = chat_route._knowledge_context(EmptyDb(), "when does the exam form close")
+
+    assert "Midterm Examination Notice" in context
+    assert "page: 2" in context.lower()
+    assert "12 September" in context
+
+
 def test_exact_admin_entry_wins_before_specialist_router(client):
     seed(
         KnowledgeBase(
@@ -312,7 +346,9 @@ def test_chat_works_when_ollama_is_unavailable(client, monkeypatch):
 
     assert response.status_code == 200
     assert response.json()["bot_response"]
-    assert "unavailable" in response.json()["bot_response"].lower()
+    assert "couldn't finish" in response.json()["bot_response"].lower()
+    assert "optional ai assistant" not in response.json()["bot_response"].lower()
+    assert "ollama" not in response.json()["bot_response"].lower()
     assert "local ai service is not running" not in response.json()["bot_response"].lower()
 
 

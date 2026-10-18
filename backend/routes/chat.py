@@ -80,7 +80,7 @@ router = APIRouter()
 
 
 def _knowledge_context(db: Session, message: str, limit: int = 5) -> str:
-    """Return compact, ranked verified context for the local language model."""
+    """Return ranked verified knowledge and uploaded document context."""
     records = db.query(KnowledgeBase).all()
     candidates = [
         {
@@ -92,14 +92,23 @@ def _knowledge_context(db: Session, message: str, limit: int = 5) -> str:
         for item in records
     ]
     ranked = rank_candidates(message, candidates)[:limit]
-    if not ranked:
-        return ""
-    return "\n\n".join(
+    sections = [
+        "Source type: verified knowledge entry\n"
         f"Category: {item.get('category', '')}\n"
         f"Question: {item.get('question', '')}\n"
         f"Verified answer: {item.get('answer', '')}"
         for item in ranked
+    ]
+    document_hits = search_documents(db, message, limit=min(limit, 4))
+    sections.extend(
+        "Source type: uploaded college document\n"
+        f"Title: {hit.title}\n"
+        f"Category: {hit.category}\n"
+        f"Page: {hit.page}\n"
+        f"Document excerpt: {hit.excerpt}"
+        for hit in document_hits
     )
+    return "\n\n".join(sections)
 
 
 def _private_student_data_response(message: str):
@@ -2479,6 +2488,7 @@ def chat(
             get_missing_info_response(
                 user_message=user_message,
                 category=category,
+                knowledge_context=_knowledge_context(db, user_message),
             ),
         )
 
