@@ -332,6 +332,13 @@ def test_chat_handles_small_talk_as_greeting(client, message):
     assert response.json()["category"] == "GREETING"
 
 
+@pytest.mark.parametrize("message", ["thanks", "thank you", "bye", "help"])
+def test_chat_handles_short_conversation_messages(client, message):
+    response = client.post("/chat", json={"message": message})
+    assert response.status_code == 200
+    assert response.json()["category"] == "GREETING"
+
+
 def test_placement_date_question_does_not_return_office_directory(client):
     response = client.post("/chat", json={"message": "when is placement drive"})
     assert response.status_code == 200

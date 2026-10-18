@@ -895,6 +895,9 @@ def classify_question(message):
     ):
         return "GREETING"
 
+    if re.fullmatch(r"(?:thanks?|thank\s+you|thx|cheers|bye|goodbye|see\s+you|help)", message):
+        return "GREETING"
+
     # ========================================================
     # 1. RESULT
     # ========================================================

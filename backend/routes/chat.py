@@ -2161,12 +2161,20 @@ def chat(
     # detectors can interpret words such as "how" as a college request.
     opening_category = classify_question(original_message)
     if opening_category == "GREETING":
+        normalized_opening = normalize_query(original_message)
+        if normalized_opening in {"thanks", "thank you", "thx", "cheers"}:
+            greeting = "You’re welcome! Ask me anything about VSIT, academics, resources, or student support."
+        elif normalized_opening in {"bye", "goodbye", "see you"}:
+            greeting = "Take care! I’ll be here whenever you need help with VSIT."
+        else:
+            greeting = (
+                "Hello! I can help with VSIT faculty, offices, timetables, exams, results, "
+                "college information, resources, and student support. What would you like to know?"
+            )
         return make_response(
             original_message,
             "GREETING",
-            "Hello! I can help with VSIT faculty, offices, timetables, "
-            "exams, results and college information. What would you like "
-            "to know?",
+            greeting,
         )
 
     official_source_answer = answer_official_source_question(user_message)
