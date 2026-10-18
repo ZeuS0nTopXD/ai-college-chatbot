@@ -888,6 +888,13 @@ def classify_question(message):
     ):
         return "GREETING"
 
+    if re.fullmatch(
+        r"(?:how\s+are\s+you|how's\s+it\s+going|how\s+it\s+going|what's\s+up|what\s+s\s+up|how\s+are\s+you\s+doing)"
+        r"(?:\s+(?:bot|assistant))?",
+        message,
+    ):
+        return "GREETING"
+
     # ========================================================
     # 1. RESULT
     # ========================================================

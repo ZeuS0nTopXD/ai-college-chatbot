@@ -1094,6 +1094,13 @@ def is_office_question(message):
         message
     )
 
+    # Placement timing and start-date questions belong to placement knowledge,
+    # not the Placement Cell directory.
+    if re.search(r"\bplacement(?:s)?\b", text) and re.search(
+        r"\b(?:when|date|start|begin|begins|drive)\b", text
+    ) and not re.search(r"\b(?:office|cell|contact|location|room|hours|timing)\b", text):
+        return False
+
     patterns = [
         r"\boffice\b",
         r"\boffice timing",
