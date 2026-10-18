@@ -261,6 +261,20 @@ def test_exact_admin_entry_wins_before_specialist_router(client):
     )
 
 
+def test_profile_division_does_not_turn_department_question_into_timetable(client):
+    response = client.post(
+        "/chat",
+        json={
+            "message": "I need help finding the computing department",
+            "course": "B.Sc. Information Technology",
+            "division": "A",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["category"] != "TIMETABLE"
+
+
 def test_chat_answers_official_admission_and_library_questions(client):
     from backend.scripts.seed_knowledge import seed_knowledge
 

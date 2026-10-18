@@ -2111,10 +2111,14 @@ def chat(
 
     # Allow the UI to persist a student's selected course/division without
     # exposing private records or requiring an account.
-    if request.course:
-        user_message = f"{user_message} {request.course}"
-    if request.division:
-        user_message = f"{user_message} division {request.division}"
+    # Persisted profile fields are context for timetable lookups only. Do not
+    # append them to ordinary questions, where a division token can falsely
+    # trigger the timetable detector.
+    if is_timetable_question(original_message):
+        if request.course:
+            user_message = f"{user_message} {request.course}"
+        if request.division:
+            user_message = f"{user_message} division {request.division}"
 
     # ========================================================
     # EMPTY MESSAGE
