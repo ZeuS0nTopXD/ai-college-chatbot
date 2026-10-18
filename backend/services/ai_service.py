@@ -9,6 +9,7 @@ load_dotenv()
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 
 MODEL_NAME = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
+OLLAMA_TIMEOUT_SECONDS = float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "20"))
 
 
 # -----------------------------------------
@@ -34,7 +35,7 @@ def _call_ollama(prompt):
         response = requests.post(
             OLLAMA_URL,
             json=data,
-            timeout=60
+            timeout=OLLAMA_TIMEOUT_SECONDS
         )
 
         response.raise_for_status()
@@ -175,8 +176,12 @@ Student question: {user_message}
 Verified source text: {verified_answer}
 Return only the answer for the student.
 """
-    generated = _call_ollama(prompt)
-    if generated.lower().startswith(("i could not find a verified answer", "the ai engine", "i couldn't generate")):
+    generated = _call_ollama(prompt).strip()
+    if not generated or generated.lower().startswith((
+        "i could not find a verified answer",
+        "the ai engine",
+        "i couldn't generate",
+    )):
         return verified_answer
     return generated
 
