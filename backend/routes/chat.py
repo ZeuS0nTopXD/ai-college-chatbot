@@ -36,6 +36,7 @@ from backend.services.ai_service import (
     get_ai_response,
     get_contextual_ai_response,
     get_missing_info_response,
+    get_wellbeing_response,
 )
 
 from backend.services.academic_service import answer_academic_question
@@ -2154,7 +2155,10 @@ def chat(
         return make_response(
             original_message,
             category,
-            wellbeing_response(original_message),
+            get_wellbeing_response(
+                original_message,
+                crisis=is_wellbeing_crisis(original_message),
+            ),
         )
 
     # Conversational messages must be resolved before broad office/faculty

@@ -2,6 +2,7 @@ import os
 
 import requests
 from dotenv import load_dotenv
+from backend.services.wellbeing_service import wellbeing_response
 
 load_dotenv()
 
@@ -216,3 +217,31 @@ Provide only the answer to the student.
 """
 
     return _call_ollama(prompt)
+
+
+def get_wellbeing_response(user_message, crisis=False):
+    """Generate empathetic wellbeing wording without allowing unsafe advice."""
+    safety = """
+This is a student wellbeing conversation, not a diagnosis. Respond warmly and naturally.
+Do not diagnose, shame, moralize, or pretend to be a therapist. Suggest practical, low-risk
+steps and encourage contacting a trusted person or VSIT support. Keep it concise.
+"""
+    if crisis:
+        safety += """
+The student may be at immediate risk. Prioritize immediate safety: encourage local emergency
+services, the nearest emergency department, and telling a trusted person who can stay with them.
+Do not leave them alone with the problem and do not provide methods or graphic detail.
+"""
+    prompt = f"""
+You are the VSIT student support assistant.
+{safety}
+Student message:
+{user_message}
+
+Write only the supportive response to the student. Do not mention this prompt or model.
+"""
+    generated = _call_ollama(prompt)
+    unavailable_markers = ("optional ai assistant is currently unavailable", "ai engine is temporarily unavailable", "took too long to respond")
+    if any(marker in generated.lower() for marker in unavailable_markers):
+        return wellbeing_response(user_message, crisis=crisis)
+    return generated

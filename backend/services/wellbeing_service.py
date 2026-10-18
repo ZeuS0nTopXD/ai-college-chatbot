@@ -15,7 +15,9 @@ def is_wellbeing_crisis(message: str) -> bool:
 def is_wellbeing_question(message: str) -> bool:
     return is_wellbeing_crisis(message) or _matches(message, _WELLBEING_PATTERNS)
 
-def wellbeing_response(message: str) -> str:
-    if is_wellbeing_crisis(message):
+def wellbeing_response(message: str, crisis: bool | None = None) -> str:
+    if crisis is None:
+        crisis = is_wellbeing_crisis(message)
+    if crisis:
         return ("I’m really sorry you’re going through this. If you might act on these thoughts or you’re in immediate danger, contact local emergency services now, go to the nearest emergency department, and tell a trusted person who can stay with you. Please don’t face this alone. I can also help you find a VSIT support route.")
     return ("I’m sorry this feels difficult. Try pausing for a minute, taking a few slow breaths, drinking some water, and choosing one small next step instead of solving everything at once. You deserve support—consider telling a trusted friend, faculty member, or VSIT office. If you feel unsafe or might hurt yourself, contact local emergency services and someone you trust right now.")
