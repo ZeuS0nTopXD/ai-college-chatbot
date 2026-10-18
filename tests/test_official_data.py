@@ -31,6 +31,7 @@ def test_official_record_refresh_adds_new_records_without_clearing_existing(clie
     db = SessionLocal()
     try:
         assert db.query(KnowledgeBase).filter(KnowledgeBase.topic == "Admissions").count() >= 1
+        assert db.query(KnowledgeBase).filter(KnowledgeBase.question == "Where can I find the Computing department?").count() == 1
         assert db.query(Office).filter(Office.office_name == "Library").count() == 1
     finally:
         db.close()
