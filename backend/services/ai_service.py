@@ -50,24 +50,23 @@ def _call_ollama(prompt):
     except requests.exceptions.ConnectionError:
 
         return (
-            "I could not find a verified answer in the available VSIT data, "
-            "and the optional AI assistant is currently unavailable. "
-            "Please check the official college website or contact the "
-            "concerned department for help."
+            "I couldn't find that in the verified VSIT information yet. "
+            "Try asking about timetables, admissions, placements, offices, "
+            "faculty, notices, or student services."
         )
 
     except requests.exceptions.Timeout:
 
         return (
-            "The AI engine took too long to respond. "
-            "Please try again with a shorter or simpler question."
+            "I couldn't finish that answer right now. Please try again "
+            "with a shorter or simpler question."
         )
 
     except requests.exceptions.RequestException:
 
         return (
-            "The AI engine is temporarily unavailable. "
-            "Please try again in a moment."
+            "I couldn't finish that answer right now. Please try again "
+            "in a moment."
         )
 
 
