@@ -7,6 +7,8 @@ from backend.models.academic import AcademicEvent
 from backend.models.faculty import Faculty
 from backend.models.knowledge import KnowledgeBase
 from backend.models.office import Office
+from backend.models.feedback import Feedback
+from backend.models.student import StudentUser
 from backend.schemas.academic import (
     AcademicEventCreate,
     AcademicEventRead,
@@ -21,6 +23,7 @@ from backend.schemas.admin import (
     OfficeUpdate,
 )
 from backend.schemas.knowledge import KnowledgeCreate, KnowledgeRead, KnowledgeUpdate
+from backend.schemas.feedback import FeedbackRead, FeedbackStatusUpdate
 from backend.security import require_admin
 from backend.scripts.refresh_official_sources import refresh_sources
 
@@ -185,3 +188,46 @@ def update_office(
 @router.delete("/offices/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_office(record_id: int, db: Session = Depends(get_db)):
     return _delete(db, _get_or_404(db, Office, record_id))
+
+
+def _feedback_read(record: Feedback, student: StudentUser) -> FeedbackRead:
+    return FeedbackRead(
+        id=record.id,
+        user_id=record.user_id,
+        student_name=student.name,
+        student_email=student.email,
+        rating=record.rating,
+        message=record.message,
+        context=record.context,
+        status=record.status,
+        created_at=record.created_at,
+    )
+
+
+@router.get("/feedback", response_model=list[FeedbackRead])
+def list_feedback(db: Session = Depends(get_db)):
+    rows = (
+        db.query(Feedback, StudentUser)
+        .join(StudentUser, StudentUser.id == Feedback.user_id)
+        .order_by(Feedback.created_at.desc(), Feedback.id.desc())
+        .all()
+    )
+    return [_feedback_read(record, student) for record, student in rows]
+
+
+@router.patch("/feedback/{record_id}", response_model=FeedbackRead)
+def update_feedback(
+    record_id: int,
+    payload: FeedbackStatusUpdate,
+    db: Session = Depends(get_db),
+):
+    record = _get_or_404(db, Feedback, record_id)
+    record.status = payload.status
+    _save(db, record)
+    student = _get_or_404(db, StudentUser, record.user_id)
+    return _feedback_read(record, student)
+
+
+@router.delete("/feedback/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_feedback(record_id: int, db: Session = Depends(get_db)):
+    return _delete(db, _get_or_404(db, Feedback, record_id))

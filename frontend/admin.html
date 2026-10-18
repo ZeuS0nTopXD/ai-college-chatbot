@@ -34,6 +34,7 @@
                 <button data-admin-view="faculty">Faculty</button>
                 <button data-admin-view="offices">Offices</button>
                 <button data-admin-view="documents">Documents</button>
+                <button data-admin-view="feedback">Feedback</button>
                 <button id="logout-button">Log out</button>
             </div>
 
@@ -120,6 +121,10 @@
                     </form>
                 </div>
                 <div class="admin-card"><h2>Documents</h2><div class="record-list" id="documents-list"></div></div>
+            </section>
+            <section class="admin-panel" data-admin-panel="feedback" hidden>
+                <div class="admin-card"><h2>Student feedback</h2><p>Review comments submitted by signed-in students.</p><button class="secondary-button" id="refresh-feedback" type="button">Refresh feedback</button></div>
+                <div class="admin-card"><h2>Inbox</h2><div class="record-list" id="feedback-list"></div></div>
             </section>
             <p class="status-message" id="admin-status" aria-live="polite"></p>
         </section>

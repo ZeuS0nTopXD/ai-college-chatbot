@@ -78,7 +78,68 @@ async function showAdminView(name) {
         button.classList.toggle("active", button.dataset.adminView === name);
     });
     if (name === "documents") await loadDocuments();
+    else if (name === "feedback") await loadFeedback();
     else await loadResource(name);
+}
+
+document.getElementById("refresh-feedback").addEventListener("click", loadFeedback);
+
+async function loadFeedback() {
+    const list = document.getElementById("feedback-list");
+    list.textContent = "Loading feedback…";
+    try {
+        const response = await adminFetch("/api/admin/feedback");
+        if (!response.ok) throw new Error(await responseMessage(response));
+        const records = await response.json();
+        list.replaceChildren();
+        if (!records.length) {
+            list.textContent = "No student feedback yet.";
+            return;
+        }
+        records.forEach((record) => list.append(feedbackRow(record)));
+    } catch (error) {
+        list.textContent = error.message;
+    }
+}
+
+function feedbackRow(record) {
+    const row = document.createElement("article");
+    row.className = "record-row feedback-record";
+    const content = document.createElement("div");
+    const heading = document.createElement("strong");
+    heading.textContent = `${record.rating}/5 · ${record.student_name}`;
+    const meta = document.createElement("small");
+    meta.textContent = `${record.student_email} · ${record.context || "general"} · ${new Date(record.created_at).toLocaleString()}`;
+    const message = document.createElement("p");
+    message.textContent = record.message;
+    content.append(heading, meta, message);
+    const actions = document.createElement("div");
+    actions.className = "record-actions";
+    if (record.status !== "reviewed") actions.append(button("Mark reviewed", () => reviewFeedback(record.id)));
+    actions.append(button("Delete", () => deleteFeedback(record.id), true));
+    row.append(content, actions);
+    return row;
+}
+
+async function reviewFeedback(id) {
+    const response = await adminFetch(`/api/admin/feedback/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "reviewed" }),
+    });
+    if (response.ok) {
+        setStatus("Feedback marked reviewed.");
+        await loadFeedback();
+    } else setStatus(await responseMessage(response));
+}
+
+async function deleteFeedback(id) {
+    if (!window.confirm("Delete this feedback?")) return;
+    const response = await adminFetch(`/api/admin/feedback/${id}`, { method: "DELETE" });
+    if (response.ok) {
+        setStatus("Feedback deleted.");
+        await loadFeedback();
+    } else setStatus(await responseMessage(response));
 }
 
 async function saveResource(event, resourceName) {

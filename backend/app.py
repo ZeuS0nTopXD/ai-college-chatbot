@@ -26,6 +26,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from backend.models.office import Office  # noqa: F401
     from backend.models.result import Result  # noqa: F401
     from backend.models.timetable import Timetable  # noqa: F401
+    from backend.models.student import StudentUser  # noqa: F401
+    from backend.models.feedback import Feedback  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 
@@ -39,6 +41,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         auth,
         chat,
         documents,
+        feedback,
         knowledge,
         result,
         timetable,
@@ -90,6 +93,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(result.router)
     app.include_router(academic.router)
     app.include_router(auth.router)
+    app.include_router(feedback.router)
     app.include_router(admin.router)
     app.include_router(documents.public_router)
     app.include_router(documents.admin_router)

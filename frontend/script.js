@@ -2,6 +2,8 @@ const state = {
     latestAnswer: "",
     speechEnabled: true,
     profile: JSON.parse(localStorage.getItem("vsitStudentProfile") || "{}"),
+    studentToken: sessionStorage.getItem("vsit-student-token"),
+    studentUser: null,
 };
 
 const views = {
@@ -11,6 +13,7 @@ const views = {
     notices: document.getElementById("notices-view"),
     syllabus: document.getElementById("syllabus-view"),
     services: document.getElementById("services-view"),
+    feedback: document.getElementById("feedback-view"),
 };
 
 const titles = {
@@ -20,6 +23,7 @@ const titles = {
     notices: "Notices and circulars",
     syllabus: "Syllabus and courses",
     services: "Student services",
+    feedback: "Student feedback",
 };
 
 document.querySelectorAll(".nav-item").forEach((button) => {
@@ -45,7 +49,125 @@ function showView(name) {
     if (name === "academics") loadAcademicEvents();
     if (name === "resources") loadDocuments();
     if (["notices", "syllabus", "services"].includes(name)) loadTopicPage(name);
+    if (name === "feedback") updateFeedbackVisibility();
 }
+
+const authDialog = document.getElementById("student-auth-dialog");
+const authForm = document.getElementById("student-auth-form");
+let authMode = "login";
+
+document.getElementById("student-login-button").addEventListener("click", () => openStudentAuth("login"));
+document.getElementById("student-register-button").addEventListener("click", () => openStudentAuth("register"));
+document.getElementById("feedback-login-action").addEventListener("click", () => openStudentAuth("login"));
+document.getElementById("student-auth-close").addEventListener("click", () => authDialog.close());
+document.getElementById("student-logout-button").addEventListener("click", studentLogout);
+document.getElementById("student-auth-switch").addEventListener("click", () => openStudentAuth(authMode === "login" ? "register" : "login"));
+authForm.addEventListener("submit", submitStudentAuth);
+
+function openStudentAuth(mode) {
+    authMode = mode;
+    authForm.reset();
+    document.getElementById("student-auth-title").textContent = mode === "register" ? "Create your account" : "Sign in";
+    document.getElementById("student-auth-description").textContent = mode === "register" ? "Create a student account to share feedback with VSIT." : "Use your student account to send feedback.";
+    document.getElementById("student-register-fields").hidden = mode !== "register";
+    document.getElementById("student-register-fields").querySelector("input").required = mode === "register";
+    document.getElementById("student-auth-submit").textContent = mode === "register" ? "Create account" : "Sign in";
+    document.getElementById("student-auth-switch").textContent = mode === "register" ? "Already have an account? Sign in" : "Create an account";
+    document.getElementById("student-auth-status").textContent = "";
+    if (typeof authDialog.showModal === "function") authDialog.showModal();
+    else authDialog.hidden = false;
+}
+
+async function submitStudentAuth(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const fields = new FormData(form);
+    const payload = { email: String(fields.get("email") || ""), password: String(fields.get("password") || "") };
+    if (authMode === "register") payload.name = String(fields.get("name") || "");
+    const status = document.getElementById("student-auth-status");
+    status.textContent = authMode === "register" ? "Creating account…" : "Signing in…";
+    try {
+        const endpoint = authMode === "register" ? "/api/auth/register" : "/api/auth/student-login";
+        const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(readApiError(data));
+        state.studentToken = data.access_token;
+        state.studentUser = data.user;
+        sessionStorage.setItem("vsit-student-token", state.studentToken);
+        updateStudentAccount();
+        authDialog.close();
+        updateFeedbackVisibility();
+    } catch (error) {
+        status.textContent = error.message;
+    }
+}
+
+async function loadStudentSession() {
+    if (!state.studentToken) return updateStudentAccount();
+    try {
+        const response = await studentFetch("/api/auth/student-me");
+        if (!response.ok) throw new Error("Session expired.");
+        state.studentUser = await response.json();
+    } catch (_error) {
+        studentLogout();
+        return;
+    }
+    updateStudentAccount();
+    updateFeedbackVisibility();
+}
+
+function updateStudentAccount() {
+    const signedIn = Boolean(state.studentUser && state.studentToken);
+    document.getElementById("student-account-label").textContent = signedIn ? state.studentUser.name : "Guest student";
+    document.getElementById("student-login-button").hidden = signedIn;
+    document.getElementById("student-register-button").hidden = signedIn;
+    document.getElementById("student-logout-button").hidden = !signedIn;
+}
+
+function studentLogout() {
+    state.studentToken = null;
+    state.studentUser = null;
+    sessionStorage.removeItem("vsit-student-token");
+    updateStudentAccount();
+    updateFeedbackVisibility();
+}
+
+function updateFeedbackVisibility() {
+    const signedIn = Boolean(state.studentToken && state.studentUser);
+    document.getElementById("feedback-login-prompt").hidden = signedIn;
+    document.getElementById("feedback-form").hidden = !signedIn;
+}
+
+async function studentFetch(url, options = {}) {
+    const headers = new Headers(options.headers || {});
+    if (state.studentToken) headers.set("Authorization", `Bearer ${state.studentToken}`);
+    const response = await fetch(url, { ...options, headers });
+    if (response.status === 401) studentLogout();
+    return response;
+}
+
+document.getElementById("feedback-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const status = document.getElementById("feedback-status");
+    const fields = new FormData(form);
+    status.textContent = "Sending feedback…";
+    try {
+        const response = await studentFetch("/api/feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rating: Number(fields.get("rating")), message: String(fields.get("message") || ""), context: String(fields.get("context") || "") || null }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(readApiError(data));
+        form.reset();
+        status.textContent = "Thanks — your feedback was sent to the VSIT team.";
+    } catch (error) {
+        status.textContent = error.message;
+    }
+});
+
+loadStudentSession();
 
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("user-input");

@@ -298,7 +298,30 @@ body {
 .admin-card { border-radius: 3px; border-color: #d4d4d4; box-shadow: none; }
 .admin-card h2 { margin-top: 0; }
 .record-row { border-color: #e5e5e5; }
+.feedback-record { align-items: flex-start; gap: 16px; }
+.feedback-record strong, .feedback-record small, .feedback-record p { display: block; }
+.feedback-record small { margin-top: 5px; color: #737373; font: 10px ui-monospace, monospace; }
+.feedback-record p { margin: 10px 0 0; color: #404040; line-height: 1.55; }
 .small-button { border-radius: 0; border-color: #d4d4d4; font: 600 10px ui-monospace, monospace; text-transform: uppercase; }
+
+.student-account { display: flex; align-items: center; gap: 7px; margin-left: auto; color: #d4d4d4; font: 600 10px ui-monospace, monospace; text-transform: uppercase; }
+.account-button, .text-button { border: 1px solid #737373; border-radius: 999px; padding: 8px 11px; color: #f4f4f0; background: transparent; font: inherit; cursor: pointer; }
+.admin-login-link { text-decoration: none; }
+.account-button:hover, .text-button:hover { border-color: #10b981; color: #a7f3d0; }
+.feedback-card { max-width: 760px; padding: 26px; margin-bottom: 18px; border: 1px solid #d4d4d4; border-radius: 4px; background: #fff; }
+.feedback-card h3 { margin: 0 0 8px; font-family: 'Cinzel', Georgia, serif; }
+.feedback-card p { color: #525252; }
+.feedback-card.stack-form { display: grid; gap: 15px; }
+.feedback-card .form-actions { display: flex; align-items: center; gap: 14px; }
+.feedback-card .status-message { margin: 0; }
+.student-auth-dialog { width: min(92vw, 480px); padding: 0; border: 1px solid #d4d4d4; background: transparent; }
+.student-auth-dialog::backdrop { background: rgba(23,23,23,.5); backdrop-filter: blur(4px); }
+.auth-dialog-card { position: relative; display: grid; gap: 13px; padding: 30px; background: #fff; }
+.auth-dialog-card h2 { margin: 0; font-family: 'Cinzel', Georgia, serif; }
+.auth-dialog-card label { display: grid; gap: 7px; color: #525252; font: 600 10px ui-monospace, monospace; text-transform: uppercase; letter-spacing: .04em; }
+.auth-dialog-card input { padding: 12px; border: 1px solid #d4d4d4; border-radius: 0; background: #f4f4f0; }
+.dialog-close { position: absolute; top: 12px; right: 14px; border: 0; color: #525252; background: transparent; font-size: 22px; cursor: pointer; }
+.auth-dialog-card .text-button { border: 0; color: #047857; padding: 0; justify-self: start; }
 
 @media (max-width: 700px) {
     .sidebar { min-height: 64px; padding: 10px 14px; gap: 10px; }
@@ -313,4 +336,7 @@ body {
     .chat-panel { min-height: calc(100vh - 216px); }
     .chat-messages { min-height: 390px; padding: 22px 16px; }
     .filter-bar { grid-template-columns: 1fr; }
+    .student-account { gap: 4px; }
+    .student-account > span { display: none; }
+    .account-button { padding: 7px 8px; font-size: 9px; }
 }

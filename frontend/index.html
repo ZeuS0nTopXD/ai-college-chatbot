@@ -30,7 +30,15 @@
                 <button class="nav-item" data-view="notices"><span>▤</span> Notices</button>
                 <button class="nav-item" data-view="syllabus"><span>≡</span> Syllabus</button>
                 <button class="nav-item" data-view="services"><span>◎</span> Services</button>
+                <button class="nav-item" data-view="feedback"><span>✎</span> Feedback</button>
             </nav>
+            <div class="student-account" aria-live="polite">
+                <span id="student-account-label">Guest student</span>
+                <button type="button" class="account-button" id="student-login-button">Sign in</button>
+                <button type="button" class="account-button" id="student-register-button">Register</button>
+                <button type="button" class="account-button" id="student-logout-button" hidden>Log out</button>
+                <a class="account-button admin-login-link" href="/admin">Admin login</a>
+            </div>
             <div class="sidebar-footer">
                 <p>Vidyalankar School of Information Technology</p>
                 <a href="/admin">Administrator login</a>
@@ -134,8 +142,37 @@
                 <article class="official-sample"><span class="official-sample-label">FROM THE VSIT WEBSITE</span><div><h3>Library</h3><p>The reading room is open Monday to Saturday, 8:00 AM–4:30 PM. The X Block library is open 8:00 AM–5:30 PM for circulation and reference.</p></div><a href="https://vsit.edu.in/library/" target="_blank" rel="noopener noreferrer">View on VSIT website <span aria-hidden="true">↗</span></a></article>
                 <div class="card-grid topic-list" data-topic="service"></div>
             </section>
+
+            <section class="view" id="feedback-view" aria-labelledby="feedback-heading" hidden>
+                <div class="section-heading"><div><p class="eyebrow">STUDENT VOICE</p><h2 id="feedback-heading">Share feedback</h2></div></div>
+                <article class="feedback-card" id="feedback-login-prompt">
+                    <h3>Help us improve the assistant</h3>
+                    <p>Sign in to send feedback about the answers, resources, or student experience.</p>
+                    <button type="button" class="primary-button" id="feedback-login-action">Sign in to give feedback</button>
+                </article>
+                <form class="feedback-card stack-form" id="feedback-form" hidden>
+                    <label>Rating<select name="rating" required><option value="5">5 · Excellent</option><option value="4">4 · Good</option><option value="3">3 · Okay</option><option value="2">2 · Needs work</option><option value="1">1 · Poor</option></select></label>
+                    <label>What should we know?<textarea name="message" rows="5" minlength="5" maxlength="2000" required placeholder="Tell us what worked or what should change."></textarea></label>
+                    <label>Related area (optional)<input name="context" maxlength="80" placeholder="e.g. academics, timetable, resources"></label>
+                    <div class="form-actions"><button class="primary-button" type="submit">Send feedback</button><p class="status-message" id="feedback-status" aria-live="polite"></p></div>
+                </form>
+            </section>
         </main>
     </div>
+    <dialog id="student-auth-dialog" class="student-auth-dialog">
+        <form method="dialog" class="auth-dialog-card" id="student-auth-form">
+            <button type="button" class="dialog-close" id="student-auth-close" aria-label="Close">×</button>
+            <p class="eyebrow">VSIT STUDENT ACCOUNT</p>
+            <h2 id="student-auth-title">Sign in</h2>
+            <p id="student-auth-description">Use your student account to send feedback.</p>
+            <div id="student-register-fields" hidden><label>Full name<input name="name" autocomplete="name" maxlength="100"></label></div>
+            <label>Email<input name="email" type="email" autocomplete="email" required></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></label>
+            <button class="primary-button" type="submit" id="student-auth-submit">Sign in</button>
+            <button type="button" class="text-button" id="student-auth-switch">Create an account</button>
+            <p class="status-message" id="student-auth-status" aria-live="polite"></p>
+        </form>
+    </dialog>
     <script src="script.js"></script>
     <script src="campus.js"></script>
 </body>

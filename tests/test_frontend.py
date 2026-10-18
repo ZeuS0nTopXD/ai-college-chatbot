@@ -11,6 +11,10 @@ def test_student_frontend_has_accessible_navigation_and_assistant_controls(clien
     assert 'aria-live="polite"' in html
     assert 'id="voice-button"' in html
     assert 'id="speech-toggle"' in html
+    assert 'id="student-login-button"' in html
+    assert 'id="student-register-button"' in html
+    assert 'data-view="feedback"' in html
+    assert 'id="feedback-form"' in html
 
 
 def test_student_frontend_uses_relative_api_urls_and_progressive_voice(client):
@@ -26,6 +30,9 @@ def test_student_frontend_uses_relative_api_urls_and_progressive_voice(client):
     assert "speechSynthesis" in script
     assert "result_url" in script
     assert "resource_url" in script
+    assert '"/api/auth/register"' in script
+    assert '"/api/auth/student-login"' in script
+    assert '"/api/feedback"' in script
 
 
 def test_admin_frontend_contains_login_management_and_upload_controls(client):
@@ -40,6 +47,8 @@ def test_admin_frontend_contains_login_management_and_upload_controls(client):
     assert 'id="office-form"' in html
     assert 'id="document-form"' in html
     assert 'type="file"' in html
+    assert 'data-admin-view="feedback"' in html
+    assert 'data-admin-panel="feedback"' in html
 
 
 def test_frontend_styles_include_keyboard_focus_and_mobile_layout(client):
@@ -54,3 +63,4 @@ def test_admin_async_forms_capture_the_form_before_awaiting(client):
     script = client.get("/admin.js").text
 
     assert script.count("const form = event.currentTarget;") >= 3
+    assert 'adminFetch("/api/admin/feedback")' in script
