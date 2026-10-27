@@ -55,6 +55,9 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'data-use-context="true"' in html
     assert 'state.profile.course + ", division " + state.profile.division' in script
     assert 'value="M.Sc. Information Technology"' not in html
+    assert 'option value="FYIT"' in html
+    assert 'option value="SYIT"' in html
+    assert 'option value="F">F</option>' in html
     assert '<link rel="icon" href="favicon.svg"' in html
     assert (FRONTEND / "favicon.svg").exists()
     assert 'script.js?v=student-auth-20261027' in html
@@ -67,6 +70,15 @@ def test_quick_prompts_are_actionable_and_context_aware():
     assert 'data-question="Who teaches IOT for my class?" data-use-context="true"' in html
     assert 'data-question="Where can I find the latest exam timetable?"' in html
     assert 'data-question="Where is the library and what are its hours?"' in html
+
+
+def test_official_timetable_resources_are_bundled():
+    links = (FRONTEND.parent / "backend" / "data" / "official_links.py").read_text(encoding="utf-8")
+
+    assert "/assets/timetables/FYIT-odd-semester-2026-27.pdf" in links
+    assert "/assets/timetables/SYIT-odd-semester-2026-27.pdf" in links
+    assert (FRONTEND / "assets" / "timetables" / "FYIT-odd-semester-2026-27.pdf").exists()
+    assert (FRONTEND / "assets" / "timetables" / "SYIT-odd-semester-2026-27.pdf").exists()
 
 
 def test_admin_page_has_feedback_review_controls():

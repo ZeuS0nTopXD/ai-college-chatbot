@@ -131,7 +131,7 @@ def _private_student_data_response(message: str):
 class ChatRequest(BaseModel):
     message: str = Field(max_length=4000)
     course: str | None = Field(default=None, max_length=120)
-    division: str | None = Field(default=None, pattern=r"^[A-Ea-e]$")
+    division: str | None = Field(default=None, pattern=r"^[A-Fa-f]$")
 
 
 # ============================================================

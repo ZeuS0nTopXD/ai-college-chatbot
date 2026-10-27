@@ -5,6 +5,18 @@ These are external links, not uploaded or locally indexed documents.
 
 OFFICIAL_LINKS = [
     {
+        "title": "FYIT timetable - Odd Semester 2026-27",
+        "description": "VSIT Department of Computing timetable for FYIT divisions A-E, effective 7 June 2026.",
+        "url": "/assets/timetables/FYIT-odd-semester-2026-27.pdf",
+        "sections": ["resources", "notices"],
+    },
+    {
+        "title": "SYIT timetable - Odd Semester 2026-27",
+        "description": "VSIT Department of Computing timetable for SYIT divisions A-F, effective 29 June 2026.",
+        "url": "/assets/timetables/SYIT-odd-semester-2026-27.pdf",
+        "sections": ["resources", "notices"],
+    },
+    {
         "title": "Winter 2026 regular examination commencement notice",
         "description": "Signed VSIT notice with 12 October 2026 commencement dates by programme and semester. Exam times are published separately.",
         "url": "https://vsit.edu.in/wp-content/uploads/2026/08/Notice-for-regular-exam-commencement-dates.pdf",
