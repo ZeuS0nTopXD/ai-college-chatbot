@@ -187,6 +187,11 @@ body:has(.app-shell){background:#fffefa;color:#171717}
 .app-shell .admin-login-link{border-color:#272723;color:#fffefa;background:#272723}
 .app-shell .admin-login-link:hover{border-color:#171717;color:#fffefa;background:#171717}
 
+/* Keep every chat control on the same button grid and center the action pair. */
+.app-shell .student-context-form .secondary-button,
+.app-shell .student-context-form .context-clear-button,
+.app-shell .assistant-actions .text-button{box-sizing:border-box;min-height:42px;border-width:1px;border-style:solid;border-radius:999px;line-height:1}
+
 /* Final desktop layout: give the context controls their own readable row and
    keep the conversation actions aligned below it. */
 @media(min-width:981px){
@@ -197,7 +202,7 @@ body:has(.app-shell){background:#fffefa;color:#171717}
     .app-shell .student-context-form button{flex:none;white-space:nowrap}
     .app-shell .student-context-form .context-clear-button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px;border:1px solid #c5c1b8;border-radius:999px;color:#3e3d38!important;background:#fffefa!important;font:600 10px 'Plus Jakarta Sans',sans-serif;letter-spacing:.015em;text-decoration:none;text-transform:uppercase;opacity:1!important}
     .app-shell .student-context-form .context-clear-button:hover{border-color:#292925;color:#fffefa!important;background:#292925!important}
-    .app-shell .assistant-actions{justify-content:flex-end;padding:14px 0 0;border-top:1px solid #e0ddd6;border-left:0}
+    .app-shell .assistant-actions{justify-content:center;padding:14px 0 0;border-top:1px solid #e0ddd6;border-left:0}
 }
 
 @media(max-width:1120px){
