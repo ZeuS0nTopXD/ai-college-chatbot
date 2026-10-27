@@ -33,12 +33,15 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'id="student-context-form"' in html
     assert 'id="quick-prompts"' in html
     assert 'id="recent-questions"' in html
+    assert 'id="conversation-list"' in html
+    assert 'id="new-chat"' in html
     assert 'id="clear-chat"' in html
     assert 'id="download-transcript"' in html
     assert 'payload.course = state.profile.course' in script
     assert 'download-transcript' in script
     assert 'vsitChatHistory' in script
     assert 'renderHistory' in script
+    assert 'renderConversationList' in script
     assert 'student-account-label' in script
     assert 'Browser storage is optional' in script
     assert 'data-use-context="true"' in html

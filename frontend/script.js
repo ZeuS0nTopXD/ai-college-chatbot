@@ -227,7 +227,59 @@ function rememberConversation(question, answer, category = "") {
         ...state.chatHistory.filter((item) => item.question !== question),
     ].slice(0, 20);
     persistChatHistory();
+    renderConversationList();
     if (document.querySelector(".app-shell")?.dataset.currentView === "history") renderHistory();
+}
+
+function formatConversationTime(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    const elapsed = Math.max(0, Date.now() - date.getTime());
+    const minutes = Math.floor(elapsed / 60000);
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    if (hours < 48) return "Yesterday";
+    return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+}
+
+function renderConversationList() {
+    const list = document.getElementById("conversation-list");
+    const count = document.getElementById("conversation-count");
+    if (!list) return;
+    list.replaceChildren();
+    const conversations = state.chatHistory.slice(0, 8);
+    if (count) count.textContent = String(conversations.length);
+    if (!conversations.length) {
+        const empty = document.createElement("p");
+        empty.className = "conversation-empty";
+        empty.textContent = "Your recent questions will appear here.";
+        list.appendChild(empty);
+        return;
+    }
+    conversations.forEach((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "conversation-item";
+        button.title = item.question;
+        const title = document.createElement("strong");
+        title.textContent = item.question;
+        const meta = document.createElement("span");
+        meta.textContent = `${item.category || "Assistant"} · ${formatConversationTime(item.createdAt)}`;
+        button.append(title, meta);
+        button.addEventListener("click", () => openSavedConversation(item));
+        list.appendChild(button);
+    });
+}
+
+function openSavedConversation(item) {
+    showView("assistant");
+    chatMessages.replaceChildren();
+    appendMessage("user", item.question);
+    appendMessage("assistant", item.answer, [], [], item.category);
+    state.latestAnswer = item.answer;
+    chatStatus.textContent = `Viewing saved ${formatCategory(item.category)} answer.`;
 }
 
 function renderHistory() {
@@ -268,6 +320,7 @@ function renderHistory() {
 document.getElementById("history-clear").addEventListener("click", () => {
     state.chatHistory = [];
     persistChatHistory();
+    renderConversationList();
     renderHistory();
 });
 
@@ -332,11 +385,16 @@ document.getElementById("student-context-form").addEventListener("submit", (even
     chatStatus.textContent = course || division ? "Context saved for more relevant answers." : "Context cleared; answers will use your question only.";
 });
 
-document.getElementById("clear-chat").addEventListener("click", () => {
+function startNewChat() {
     chatMessages.innerHTML = initialChatMarkup;
     state.latestAnswer = "";
     chatStatus.textContent = "Chat cleared. Your saved course and division are still available.";
-});
+    chatInput.value = "";
+    chatInput.focus();
+}
+
+document.getElementById("clear-chat").addEventListener("click", startNewChat);
+document.getElementById("new-chat").addEventListener("click", startNewChat);
 
 document.getElementById("download-transcript").addEventListener("click", () => {
     const transcript = Array.from(chatMessages.querySelectorAll(".message")).map((message) => {
@@ -355,6 +413,7 @@ document.getElementById("download-transcript").addEventListener("click", () => {
 
 syncStudentContextControls();
 renderRecentQuestions();
+renderConversationList();
 
 chatInput.addEventListener("input", () => {
     chatInput.style.height = "auto";
