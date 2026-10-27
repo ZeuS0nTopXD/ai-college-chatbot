@@ -21,6 +21,7 @@ def test_student_page_has_account_and_feedback_controls():
     assert ".app-shell .assistant-actions .text-button" in styles
     assert ".app-shell .context-intro .tool-label" in styles
     assert "font:600 14px/1.2 'Plus Jakarta Sans',sans-serif" in styles
+    assert ".student-context-form label{display:flex;flex:1;align-items:center" in styles
     assert 'id="student-register-button"' in html
     assert 'data-view="feedback"' in html
     assert 'id="feedback-form"' in html
