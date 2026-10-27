@@ -1,7 +1,26 @@
+function readStoredObject(key, fallback = {}) {
+    try {
+        const value = JSON.parse(localStorage.getItem(key) || "null");
+        return value && typeof value === "object" && !Array.isArray(value) ? value : fallback;
+    } catch (_error) {
+        return fallback;
+    }
+}
+
+function readStoredList(key) {
+    try {
+        const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string").slice(0, 6) : [];
+    } catch (_error) {
+        return [];
+    }
+}
+
 const state = {
     latestAnswer: "",
     speechEnabled: true,
-    profile: JSON.parse(localStorage.getItem("vsitStudentProfile") || "{}"),
+    profile: readStoredObject("vsitStudentProfile"),
+    recentQuestions: readStoredList("vsitRecentQuestions"),
     studentToken: sessionStorage.getItem("vsit-student-token"),
     studentUser: null,
 };
@@ -179,6 +198,92 @@ document.querySelector(".hero-cta").addEventListener("click", (event) => {
 const chatMessages = document.getElementById("chat-messages");
 const chatStatus = document.getElementById("chat-status");
 const sendButton = document.getElementById("send-button");
+const initialChatMarkup = chatMessages.innerHTML;
+
+function syncStudentContextControls() {
+    const course = document.getElementById("student-course");
+    const division = document.getElementById("student-division");
+    if (course) course.value = state.profile.course || "";
+    if (division) division.value = state.profile.division || "";
+}
+
+function persistStudentContext() {
+    try {
+        localStorage.setItem("vsitStudentProfile", JSON.stringify(state.profile));
+    } catch (_error) {
+        // Browser storage is optional; the current session still has the context in memory.
+    }
+}
+
+function renderRecentQuestions() {
+    const container = document.getElementById("recent-questions");
+    if (!container) return;
+    container.replaceChildren();
+    if (!state.recentQuestions.length) {
+        container.hidden = true;
+        return;
+    }
+    container.hidden = false;
+    const label = document.createElement("span");
+    label.className = "tool-label";
+    label.textContent = "RECENT";
+    container.appendChild(label);
+    state.recentQuestions.forEach((question) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "recent-question";
+        button.textContent = question;
+        button.addEventListener("click", () => sendMessage(question));
+        container.appendChild(button);
+    });
+}
+
+function rememberQuestion(question) {
+    state.recentQuestions = [question, ...state.recentQuestions.filter((item) => item !== question)].slice(0, 6);
+    try {
+        localStorage.setItem("vsitRecentQuestions", JSON.stringify(state.recentQuestions));
+    } catch (_error) {
+        // Recent questions remain available until refresh when storage is unavailable.
+    }
+    renderRecentQuestions();
+}
+
+document.getElementById("student-context-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const course = form.elements.course.value.trim();
+    const division = form.elements.division.value.trim().toUpperCase();
+    if (course) state.profile.course = course;
+    else delete state.profile.course;
+    if (division) state.profile.division = division;
+    else delete state.profile.division;
+    persistStudentContext();
+    chatStatus.textContent = course || division ? "Context saved for more relevant answers." : "Context cleared; answers will use your question only.";
+});
+
+document.getElementById("clear-chat").addEventListener("click", () => {
+    chatMessages.innerHTML = initialChatMarkup;
+    state.latestAnswer = "";
+    chatStatus.textContent = "Chat cleared. Your saved course and division are still available.";
+});
+
+document.getElementById("download-transcript").addEventListener("click", () => {
+    const transcript = Array.from(chatMessages.querySelectorAll(".message")).map((message) => {
+        const author = message.querySelector(".message-author")?.textContent || "Message";
+        const text = message.querySelector(".message-bubble")?.innerText || "";
+        return author + "\n" + text.trim();
+    }).join("\n\n");
+    const blob = new Blob(["VSIT Student Assistant transcript\n\n" + transcript + "\n"], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "vsit-assistant-" + new Date().toISOString().slice(0, 10) + ".txt";
+    link.click();
+    URL.revokeObjectURL(url);
+});
+
+syncStudentContextControls();
+renderRecentQuestions();
 
 chatInput.addEventListener("input", () => {
     chatInput.style.height = "auto";
@@ -200,7 +305,13 @@ chatForm.addEventListener("submit", async (event) => {
 });
 
 document.querySelectorAll("[data-question]").forEach((button) => {
-    button.addEventListener("click", () => sendMessage(button.dataset.question));
+    button.addEventListener("click", () => {
+        let question = button.dataset.question;
+        if (button.dataset.useContext === "true" && state.profile.course && state.profile.division) {
+            question += " for " + state.profile.course + ", division " + state.profile.division;
+        }
+        sendMessage(question);
+    });
 });
 
 async function sendMessage(message) {
@@ -208,8 +319,10 @@ async function sendMessage(message) {
     if (profileMatch) {
         state.profile.course = `${profileMatch[0].toUpperCase().replace(/[- ]?[A-E]$/, "")}`;
         state.profile.division = profileMatch[1].toUpperCase();
-        localStorage.setItem("vsitStudentProfile", JSON.stringify(state.profile));
+        persistStudentContext();
+        syncStudentContextControls();
     }
+    rememberQuestion(message);
     appendMessage("user", message);
     chatInput.value = "";
     chatInput.style.height = "auto";
@@ -217,10 +330,13 @@ async function sendMessage(message) {
     chatStatus.textContent = "Checking VSIT information…";
 
     try {
+        const payload = { message };
+        if (state.profile.course) payload.course = state.profile.course;
+        if (state.profile.division) payload.division = state.profile.division;
         const response = await fetch("/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message, course: state.profile.course || null, division: state.profile.division || null }),
+            body: JSON.stringify(payload),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(readApiError(data));

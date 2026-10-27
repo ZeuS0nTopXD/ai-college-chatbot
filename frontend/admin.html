@@ -29,7 +29,8 @@
 
         <section id="admin-workspace" hidden>
             <div class="admin-nav" role="tablist" aria-label="Administration areas">
-                <button class="active" data-admin-view="academics">Academics</button>
+                <button class="active" data-admin-view="dashboard">Overview</button>
+                <button data-admin-view="academics">Academics</button>
                 <button data-admin-view="knowledge">Knowledge</button>
                 <button data-admin-view="faculty">Faculty</button>
                 <button data-admin-view="offices">Offices</button>
@@ -38,7 +39,19 @@
                 <button id="logout-button">Log out</button>
             </div>
 
-            <section class="admin-panel" data-admin-panel="academics">
+            <section class="admin-panel admin-dashboard-panel" data-admin-panel="dashboard">
+                <div class="admin-card admin-overview-card">
+                    <p class="eyebrow">CONTENT HEALTH</p>
+                    <h2>Workspace overview</h2>
+                    <div class="overview-counts" id="overview-counts" aria-live="polite"></div>
+                </div>
+                <div class="admin-card">
+                    <div class="overview-heading"><div><p class="eyebrow">STUDENT VOICE</p><h2>Recent feedback</h2></div><button class="secondary-button" id="refresh-overview" type="button">Refresh</button></div>
+                    <div class="record-list" id="overview-feedback"></div>
+                </div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="academics" hidden>
                 <div class="admin-card"><h2>Academic event</h2>
                     <form class="stack-form" id="academic-form">
                         <input type="hidden" name="id">

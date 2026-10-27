@@ -155,3 +155,64 @@ def test_admin_rejects_blank_required_names(client, resource, payload):
     )
 
     assert response.status_code == 422
+
+
+def test_admin_overview_requires_auth_and_reports_content_health(client):
+    assert client.get("/api/admin/overview").status_code == 401
+
+    headers = admin_headers(client)
+    client.post(
+        "/api/admin/knowledge",
+        json={
+            "category": "VSIT",
+            "topic": "library",
+            "question": "Where is the library?",
+            "answer": "The library is in X Block.",
+        },
+        headers=headers,
+    )
+    client.post(
+        "/api/admin/faculty",
+        json={"name": "Prof. Overview", "department": "Computing"},
+        headers=headers,
+    )
+
+    overview = client.get("/api/admin/overview", headers=headers)
+
+    assert overview.status_code == 200
+    payload = overview.json()
+    assert payload["counts"]["knowledge_entries"] == 1
+    assert payload["counts"]["faculty"] == 1
+    assert payload["counts"]["academic_events"] == 0
+    assert payload["counts"]["documents"] == 0
+    assert payload["feedback"]["total"] == 0
+    assert payload["feedback"]["pending"] == 0
+    assert payload["feedback"]["recent"] == []
+
+
+def test_admin_overview_includes_recent_feedback(client):
+    student = client.post(
+        "/api/auth/register",
+        json={
+            "name": "Overview Student",
+            "email": "overview@example.com",
+            "password": "student-password",
+        },
+    )
+    token = student.json()["access_token"]
+    response = client.post(
+        "/api/feedback",
+        json={"rating": 4, "message": "The new dashboard is useful.", "context": "assistant"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 201
+
+    overview = client.get("/api/admin/overview", headers=admin_headers(client))
+
+    assert overview.status_code == 200
+    payload = overview.json()
+    assert payload["feedback"]["total"] == 1
+    assert payload["feedback"]["pending"] == 1
+    assert payload["feedback"]["reviewed"] == 0
+    assert payload["feedback"]["recent"][0]["student_name"] == "Overview Student"
+    assert payload["feedback"]["recent"][0]["message"] == "The new dashboard is useful."

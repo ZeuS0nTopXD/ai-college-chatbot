@@ -9,6 +9,7 @@ from backend.models.knowledge import KnowledgeBase
 from backend.models.office import Office
 from backend.models.feedback import Feedback
 from backend.models.student import StudentUser
+from backend.models.document import Document
 from backend.schemas.academic import (
     AcademicEventCreate,
     AcademicEventRead,
@@ -33,6 +34,49 @@ router = APIRouter(
     tags=["administration"],
     dependencies=[Depends(require_admin)],
 )
+
+
+@router.get("/overview")
+def admin_overview(db: Session = Depends(get_db)):
+    """Return a compact health snapshot for the administration dashboard."""
+    counts = {
+        "academic_events": db.query(AcademicEvent).count(),
+        "knowledge_entries": db.query(KnowledgeBase).count(),
+        "faculty": db.query(Faculty).count(),
+        "offices": db.query(Office).count(),
+        "documents": db.query(Document).count(),
+        "students": db.query(StudentUser).count(),
+    }
+    feedback_total = db.query(Feedback).count()
+    feedback_pending = db.query(Feedback).filter(Feedback.status != "reviewed").count()
+    recent_rows = (
+        db.query(Feedback, StudentUser)
+        .join(StudentUser, StudentUser.id == Feedback.user_id)
+        .order_by(Feedback.created_at.desc(), Feedback.id.desc())
+        .limit(5)
+        .all()
+    )
+    recent = [
+        {
+            "id": record.id,
+            "student_name": student.name,
+            "rating": record.rating,
+            "context": record.context,
+            "status": record.status,
+            "message": record.message,
+            "created_at": record.created_at,
+        }
+        for record, student in recent_rows
+    ]
+    return {
+        "counts": counts,
+        "feedback": {
+            "total": feedback_total,
+            "pending": feedback_pending,
+            "reviewed": feedback_total - feedback_pending,
+            "recent": recent,
+        },
+    }
 
 
 @router.post("/refresh-sources")

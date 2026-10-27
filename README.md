@@ -11,6 +11,8 @@ A deployable student-support MVP for Vidyalankar School of Information Technolog
 - PDF/TXT uploads with local page-aware search and source citations.
 - Password-protected admin CRUD for academics, knowledge, faculty, offices, and documents.
 - Responsive student dashboard and administration workspace.
+- Optional course/division context, quick prompts, recent-question recall, and transcript download in the student assistant.
+- Administration overview with live content counts and recent feedback health.
 - Browser speech-to-text and answer playback when the browser supports Web Speech APIs.
 - SQLite by default, with configurable SQLAlchemy database URLs.
 - Optional Ollama responses for general, academic, and career questions when deterministic information is unavailable.
@@ -138,6 +140,7 @@ The free service stores SQLite data and uploaded documents on ephemeral containe
 
 - `POST /chat` — answer a student question.
 - `GET /api/academics` — list published academic events.
+- `GET /api/admin/overview` — protected content and feedback summary for administrators.
 - `GET /api/documents` — list searchable college documents.
 - `POST /api/documents/search` — retrieve cited document passages.
 - `POST /api/auth/login` — create an administrator session.

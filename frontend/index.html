@@ -69,6 +69,26 @@
             <section class="view active" id="assistant-view" aria-labelledby="page-title">
                 <div class="chat-panel">
                     <div class="chat-heading"><span class="chat-heading-mark" aria-hidden="true">✳</span><div><p class="eyebrow">YOUR COLLEGE, IN ONE PLACE</p><h2>What can I help you find?</h2></div><span class="chat-heading-index" aria-hidden="true">01 / 06</span></div>
+                    <div class="assistant-tools">
+                        <form class="student-context-form" id="student-context-form">
+                            <span class="tool-label">PERSONALISE ANSWERS</span>
+                            <label>Course<select id="student-course" name="course"><option value="">Any course</option><option value="B.Sc. Information Technology">B.Sc. Information Technology</option><option value="BBA">BBA</option><option value="BAF">BAF</option></select></label>
+                            <label>Division<select id="student-division" name="division"><option value="">Any division</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select></label>
+                            <button class="secondary-button" type="submit">Save context</button>
+                        </form>
+                        <div class="assistant-actions" aria-label="Conversation tools">
+                            <button class="text-button" type="button" id="clear-chat">Clear chat</button>
+                            <button class="text-button" type="button" id="download-transcript">Download transcript</button>
+                        </div>
+                    </div>
+                    <div class="quick-prompts" id="quick-prompts" aria-label="Suggested questions">
+                        <span class="tool-label">TRY ASKING</span>
+                        <button type="button" data-question="What is the timetable for today?">Today’s timetable</button>
+                        <button type="button" data-question="Who teaches IOT?" data-use-context="true">Find a teacher</button>
+                        <button type="button" data-question="When are the next examinations?">Next exams</button>
+                        <button type="button" data-question="Where is the library and when is it open?">Library help</button>
+                    </div>
+                    <div class="recent-question-strip" id="recent-questions" aria-live="polite" hidden></div>
                     <div class="chat-messages" id="chat-messages" aria-live="polite" aria-label="Conversation">
                         <article class="message assistant-message">
                             <div class="avatar" aria-hidden="true">V</div>

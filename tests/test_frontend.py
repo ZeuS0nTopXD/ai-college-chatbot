@@ -15,6 +15,11 @@ def test_student_frontend_has_accessible_navigation_and_assistant_controls(clien
     assert 'id="student-register-button"' in html
     assert 'data-view="feedback"' in html
     assert 'id="feedback-form"' in html
+    assert 'id="student-context-form"' in html
+    assert 'id="quick-prompts"' in html
+    assert 'id="recent-questions"' in html
+    assert 'id="clear-chat"' in html
+    assert 'id="download-transcript"' in html
 
 
 def test_student_frontend_uses_relative_api_urls_and_progressive_voice(client):
@@ -33,6 +38,9 @@ def test_student_frontend_uses_relative_api_urls_and_progressive_voice(client):
     assert '"/api/auth/register"' in script
     assert '"/api/auth/student-login"' in script
     assert '"/api/feedback"' in script
+    assert 'payload.course = state.profile.course' in script
+    assert 'localStorage.setItem("vsitStudentProfile"' in script
+    assert 'download-transcript' in script
 
 
 def test_admin_frontend_contains_login_management_and_upload_controls(client):

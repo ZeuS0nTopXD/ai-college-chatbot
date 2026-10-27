@@ -20,6 +20,17 @@ def test_student_page_has_account_and_feedback_controls():
     assert '"/api/auth/register"' in script
     assert '"/api/auth/student-login"' in script
     assert '"/api/feedback"' in script
+    assert 'id="student-context-form"' in html
+    assert 'id="quick-prompts"' in html
+    assert 'id="recent-questions"' in html
+    assert 'id="clear-chat"' in html
+    assert 'id="download-transcript"' in html
+    assert 'payload.course = state.profile.course' in script
+    assert 'download-transcript' in script
+    assert 'Browser storage is optional' in script
+    assert 'data-use-context="true"' in html
+    assert 'state.profile.course + ", division " + state.profile.division' in script
+    assert 'value="M.Sc. Information Technology"' not in html
 
 
 def test_admin_page_has_feedback_review_controls():
@@ -29,3 +40,7 @@ def test_admin_page_has_feedback_review_controls():
     assert 'data-admin-view="feedback"' in html
     assert 'data-admin-panel="feedback"' in html
     assert 'adminFetch("/api/admin/feedback")' in script
+    assert 'data-admin-view="dashboard"' in html
+    assert 'data-admin-panel="dashboard"' in html
+    assert 'id="overview-counts"' in html
+    assert 'adminFetch("/api/admin/overview")' in script

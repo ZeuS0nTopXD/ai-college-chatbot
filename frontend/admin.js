@@ -67,7 +67,7 @@ document.getElementById("document-form").addEventListener("submit", async (event
 async function showWorkspace() {
     loginPanel.hidden = true;
     workspace.hidden = false;
-    await showAdminView("academics");
+    await showAdminView("dashboard");
 }
 
 async function showAdminView(name) {
@@ -77,12 +77,68 @@ async function showAdminView(name) {
     document.querySelectorAll("[data-admin-view]").forEach((button) => {
         button.classList.toggle("active", button.dataset.adminView === name);
     });
-    if (name === "documents") await loadDocuments();
+    if (name === "dashboard") await loadOverview();
+    else if (name === "documents") await loadDocuments();
     else if (name === "feedback") await loadFeedback();
     else await loadResource(name);
 }
 
 document.getElementById("refresh-feedback").addEventListener("click", loadFeedback);
+document.getElementById("refresh-overview").addEventListener("click", loadOverview);
+
+async function loadOverview() {
+    const counts = document.getElementById("overview-counts");
+    const feedback = document.getElementById("overview-feedback");
+    counts.textContent = "Loading overview…";
+    feedback.textContent = "Loading feedback…";
+    try {
+        const response = await adminFetch("/api/admin/overview");
+        if (!response.ok) throw new Error(await responseMessage(response));
+        const overview = await response.json();
+        counts.replaceChildren();
+        const labels = {
+            academic_events: "Academic events",
+            knowledge_entries: "Knowledge entries",
+            faculty: "Faculty",
+            offices: "Offices",
+            documents: "Documents",
+            students: "Students",
+        };
+        Object.entries(labels).forEach(([key, label]) => {
+            const card = document.createElement("div");
+            card.className = "overview-count";
+            const value = document.createElement("strong");
+            value.textContent = String(overview.counts?.[key] ?? 0);
+            const name = document.createElement("span");
+            name.textContent = label;
+            card.append(value, name);
+            counts.appendChild(card);
+        });
+        const recent = overview.feedback?.recent || [];
+        feedback.replaceChildren();
+        if (!recent.length) {
+            feedback.textContent = "No student feedback yet.";
+            return;
+        }
+        recent.forEach((record) => {
+            const row = document.createElement("article");
+            row.className = "record-row feedback-record";
+            const content = document.createElement("div");
+            const heading = document.createElement("strong");
+            heading.textContent = `${record.rating}/5 · ${record.student_name}`;
+            const meta = document.createElement("small");
+            meta.textContent = `${record.context || "general"} · ${record.status}`;
+            const message = document.createElement("p");
+            message.textContent = record.message;
+            content.append(heading, meta, message);
+            row.appendChild(content);
+            feedback.appendChild(row);
+        });
+    } catch (error) {
+        counts.textContent = error.message;
+        feedback.textContent = "Unable to load feedback.";
+    }
+}
 
 async function loadFeedback() {
     const list = document.getElementById("feedback-list");
