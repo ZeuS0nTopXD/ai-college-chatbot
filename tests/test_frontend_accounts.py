@@ -10,7 +10,7 @@ def test_student_page_has_account_and_feedback_controls():
 
     assert 'id="student-login-button"' in html
     assert '<span id="student-account-label">Guest student</span>' in html
-    assert 'href="polish.css?v=final-chat-polish-20261027"' in html
+    assert 'href="polish.css?v=final-chat-inline-20261027"' in html
     assert 'id="student-account-label"' in html
     assert 'data-view="history"' in html
     assert 'id="history-view"' in html
