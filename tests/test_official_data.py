@@ -162,7 +162,7 @@ def test_morning_practical_blocks_use_two_hour_single_or_split_periods():
             assert str(rows[1]["end_time"]).startswith("12:")
 
 
-def test_fyit_b_wp_batches_are_split_into_separate_periods():
+def test_fyit_b_wp_keeps_source_batch_rooms_together():
     from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
 
     rows = [
@@ -172,6 +172,5 @@ def test_fyit_b_wp_batches_are_split_into_separate_periods():
         and row["session_type"] == "Practical"
     ]
     assert [(row["start_time"], row["end_time"], row["room"]) for row in rows] == [
-        ("10:00 am", "11:00 am", "B4/B5: X120, X121"),
-        ("11:00 am", "12:00 pm", "B6: X119"),
+        ("10:00 am", "12:00 pm", "B4/B5: X120, X121; B6: X119"),
     ]
