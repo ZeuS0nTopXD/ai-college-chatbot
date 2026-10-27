@@ -9,6 +9,12 @@ def test_student_page_has_account_and_feedback_controls():
     script = (FRONTEND / "script.js").read_text(encoding="utf-8")
 
     assert 'id="student-login-button"' in html
+    assert '<span id="student-account-label">Guest student</span>' in html
+    assert 'id="student-account-label"' in html
+    assert 'data-view="history"' in html
+    assert 'id="history-view"' in html
+    assert 'id="history-list"' in html
+    assert 'id="history-clear"' in html
     assert 'id="student-register-button"' in html
     assert 'data-view="feedback"' in html
     assert 'id="feedback-form"' in html
@@ -27,6 +33,9 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'id="download-transcript"' in html
     assert 'payload.course = state.profile.course' in script
     assert 'download-transcript' in script
+    assert 'vsitChatHistory' in script
+    assert 'renderHistory' in script
+    assert 'student-account-label' in script
     assert 'Browser storage is optional' in script
     assert 'data-use-context="true"' in html
     assert 'state.profile.course + ", division " + state.profile.division' in script

@@ -30,6 +30,7 @@
                 <button class="nav-item" data-view="notices"><span>▤</span> Notices</button>
                 <button class="nav-item" data-view="syllabus"><span>≡</span> Syllabus</button>
                 <button class="nav-item" data-view="services"><span>◎</span> Services</button>
+                <button class="nav-item" data-view="history"><span>↺</span> History</button>
                 <button class="nav-item" data-view="feedback"><span>✎</span> Feedback</button>
             </nav>
             <div class="student-account" aria-live="polite">
@@ -81,14 +82,6 @@
                             <button class="text-button" type="button" id="download-transcript">Download transcript</button>
                         </div>
                     </div>
-                    <div class="quick-prompts" id="quick-prompts" aria-label="Suggested questions">
-                        <span class="tool-label">TRY ASKING</span>
-                        <button type="button" data-question="What is the timetable for today?">Today’s timetable</button>
-                        <button type="button" data-question="Who teaches IOT?" data-use-context="true">Find a teacher</button>
-                        <button type="button" data-question="When are the next examinations?">Next exams</button>
-                        <button type="button" data-question="Where is the library and when is it open?">Library help</button>
-                    </div>
-                    <div class="recent-question-strip" id="recent-questions" aria-live="polite" hidden></div>
                     <div class="chat-messages" id="chat-messages" aria-live="polite" aria-label="Conversation">
                         <article class="message assistant-message">
                             <div class="avatar" aria-hidden="true">V</div>
@@ -101,6 +94,14 @@
                             </div>
                         </article>
                     </div>
+                    <div class="quick-prompts" id="quick-prompts" aria-label="Suggested questions">
+                        <span class="tool-label">TRY ASKING</span>
+                        <button type="button" data-question="What is the timetable for today?">Today’s timetable</button>
+                        <button type="button" data-question="Who teaches IOT?" data-use-context="true">Find a teacher</button>
+                        <button type="button" data-question="When are the next examinations?">Next exams</button>
+                        <button type="button" data-question="Where is the library and when is it open?">Library help</button>
+                    </div>
+                    <div class="recent-question-strip" id="recent-questions" aria-live="polite" hidden></div>
 
                     <form class="composer" id="chat-form">
                         <label class="sr-only" for="user-input">Ask the VSIT assistant</label>
@@ -161,6 +162,12 @@
                 <div class="section-heading"><div><p class="eyebrow">STUDENT SUPPORT</p><h2 id="services-heading">Student services</h2></div></div>
                 <article class="official-sample"><span class="official-sample-label">FROM THE VSIT WEBSITE</span><div><h3>Library</h3><p>The reading room is open Monday to Saturday, 8:00 AM–4:30 PM. The X Block library is open 8:00 AM–5:30 PM for circulation and reference.</p></div><a href="https://vsit.edu.in/library/" target="_blank" rel="noopener noreferrer">View on VSIT website <span aria-hidden="true">↗</span></a></article>
                 <div class="card-grid topic-list" data-topic="service"></div>
+            </section>
+
+            <section class="view" id="history-view" aria-labelledby="history-heading" hidden>
+                <div class="section-heading"><div><p class="eyebrow">YOUR QUESTIONS</p><h2 id="history-heading">Chat history</h2></div><button class="secondary-button" id="history-clear" type="button">Clear history</button></div>
+                <p class="section-intro">Your recent conversations are stored in this browser so you can return to useful answers.</p>
+                <div class="history-list" id="history-list" aria-live="polite"></div>
             </section>
 
             <section class="view" id="feedback-view" aria-labelledby="feedback-heading" hidden>

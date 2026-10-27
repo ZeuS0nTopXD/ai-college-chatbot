@@ -16,11 +16,21 @@ function readStoredList(key) {
     }
 }
 
+function readStoredHistory() {
+    try {
+        const parsed = JSON.parse(localStorage.getItem("vsitChatHistory") || "[]");
+        return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.question === "string" && typeof item.answer === "string").slice(0, 20) : [];
+    } catch (_error) {
+        return [];
+    }
+}
+
 const state = {
     latestAnswer: "",
     speechEnabled: true,
     profile: readStoredObject("vsitStudentProfile"),
     recentQuestions: readStoredList("vsitRecentQuestions"),
+    chatHistory: readStoredHistory(),
     studentToken: sessionStorage.getItem("vsit-student-token"),
     studentUser: null,
 };
@@ -32,6 +42,7 @@ const views = {
     notices: document.getElementById("notices-view"),
     syllabus: document.getElementById("syllabus-view"),
     services: document.getElementById("services-view"),
+    history: document.getElementById("history-view"),
     feedback: document.getElementById("feedback-view"),
 };
 
@@ -42,6 +53,7 @@ const titles = {
     notices: "Notices and circulars",
     syllabus: "Syllabus and courses",
     services: "Student services",
+    history: "Chat history",
     feedback: "Student feedback",
 };
 
@@ -68,6 +80,7 @@ function showView(name) {
     if (name === "academics") loadAcademicEvents();
     if (name === "resources") loadDocuments();
     if (["notices", "syllabus", "services"].includes(name)) loadTopicPage(name);
+    if (name === "history") renderHistory();
     if (name === "feedback") updateFeedbackVisibility();
 }
 
@@ -199,6 +212,64 @@ const chatMessages = document.getElementById("chat-messages");
 const chatStatus = document.getElementById("chat-status");
 const sendButton = document.getElementById("send-button");
 const initialChatMarkup = chatMessages.innerHTML;
+
+function persistChatHistory() {
+    try {
+        localStorage.setItem("vsitChatHistory", JSON.stringify(state.chatHistory));
+    } catch (_error) {
+        // History is an enhancement; the assistant still works when storage is blocked.
+    }
+}
+
+function rememberConversation(question, answer, category = "") {
+    state.chatHistory = [
+        { question, answer, category, createdAt: new Date().toISOString() },
+        ...state.chatHistory.filter((item) => item.question !== question),
+    ].slice(0, 20);
+    persistChatHistory();
+    if (document.querySelector(".app-shell")?.dataset.currentView === "history") renderHistory();
+}
+
+function renderHistory() {
+    const list = document.getElementById("history-list");
+    if (!list) return;
+    list.replaceChildren();
+    if (!state.chatHistory.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "No saved conversations yet. Ask the assistant a question to build your history.";
+        list.appendChild(empty);
+        return;
+    }
+    state.chatHistory.forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "history-card";
+        const meta = document.createElement("p");
+        meta.className = "history-meta";
+        meta.textContent = (item.category || "Assistant") + " · " + new Date(item.createdAt || Date.now()).toLocaleString();
+        const question = document.createElement("h3");
+        question.textContent = item.question;
+        const answer = document.createElement("p");
+        answer.textContent = item.answer;
+        const replay = document.createElement("button");
+        replay.type = "button";
+        replay.className = "secondary-button";
+        replay.textContent = "Ask again";
+        replay.addEventListener("click", () => {
+            showView("assistant");
+            chatInput.value = item.question;
+            chatInput.focus();
+        });
+        card.append(meta, question, answer, replay);
+        list.appendChild(card);
+    });
+}
+
+document.getElementById("history-clear").addEventListener("click", () => {
+    state.chatHistory = [];
+    persistChatHistory();
+    renderHistory();
+});
 
 function syncStudentContextControls() {
     const course = document.getElementById("student-course");
@@ -342,6 +413,7 @@ async function sendMessage(message) {
         if (!response.ok) throw new Error(readApiError(data));
         const answer = data.bot_response || data.answer || "No answer was returned.";
         state.latestAnswer = answer;
+        rememberConversation(message, answer, data.category);
         const links = [];
         if (data.result_url) links.push({ label: "Open result", url: data.result_url });
         if (data.resource_url) links.push({ label: "Open resource", url: data.resource_url });
