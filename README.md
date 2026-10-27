@@ -119,7 +119,7 @@ Open [http://localhost:8000](http://localhost:8000). The named `vsit_data` volum
 Render, Railway, and a small VPS can run the included Dockerfile. Configure these items in the platform dashboard:
 
 1. Set `APP_ENV=production`, `ADMIN_PASSWORD` to a strong password of at least 12 characters, and a random `TOKEN_SECRET` of at least 32 characters. The app refuses the development defaults in production.
-2. Set `DATABASE_URL=sqlite:////app/data/vsit_student_assistant.db` for a single persistent instance, or use the provider's managed database URL.
+2. Use a managed PostgreSQL `DATABASE_URL` for cloud deployments so student accounts and feedback survive restarts. SQLite is suitable for local development or a host with a persistent disk.
 3. Set `DOCUMENT_STORAGE_PATH=/app/data/documents`.
 4. Attach a persistent disk at `/app/data` when using SQLite and local document storage.
 5. Set `CORS_ORIGINS` to the deployed HTTPS origin.
@@ -133,6 +133,7 @@ The repository includes `render.yaml` for a free Render Web Service deployment. 
 
 1. `ADMIN_PASSWORD`: a strong administrator password of at least 12 characters.
 2. `CORS_ORIGINS`: the final HTTPS origin, such as `https://vsit-student-assistant.onrender.com`.
+3. `DATABASE_URL`: a managed PostgreSQL URL, such as the pooled URL from Neon, using the SQLAlchemy form `postgresql+psycopg://...`.
 
 The free service stores SQLite data and uploaded documents on ephemeral container storage, so student accounts, feedback, and other records can be reset when Render redeploys or restarts the service. For durable records, create a free managed PostgreSQL database (for example, Neon), set its SQLAlchemy `DATABASE_URL` in Render, and redeploy. After the first deploy, verify `/health`, sign in at `/admin`, and run the official VSIT data refresh before adding any approved notices or academic records. Student login sessions are retained in the browser until the student signs out or the token expires.
 
