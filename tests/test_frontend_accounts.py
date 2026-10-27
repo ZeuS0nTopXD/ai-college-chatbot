@@ -89,5 +89,5 @@ def test_admin_page_has_feedback_review_controls():
 def test_render_requires_explicit_durable_database_url():
     render = (FRONTEND.parent / "render.yaml").read_text(encoding="utf-8")
 
-    assert "      - key: DATABASE_URL\n        sync: false" in render
+    assert "      - key: DATABASE_URL" not in render
     assert "sqlite:////app/data/vsit_student_assistant.db" not in render
