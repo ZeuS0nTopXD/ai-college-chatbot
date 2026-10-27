@@ -43,6 +43,13 @@ def ensure_official_records():
     """Add newly published records without overwriting admin-managed data."""
     db = SessionLocal()
     try:
+        # FYIT/SYIT are generated from the current scanned timetable source.
+        # Replace that managed slice on boot so corrected OCR rows cannot be
+        # mixed with rows from an earlier extraction.
+        db.query(Timetable).filter(
+            Timetable.course.in_(["FYIT", "SYIT"])
+        ).delete(synchronize_session=False)
+        db.flush()
         existing_questions = {row.question for row in db.query(KnowledgeBase).all()}
         existing_faculty = {row.name for row in db.query(Faculty).all()}
         existing_offices = {row.office_name for row in db.query(Office).all()}
