@@ -15,6 +15,9 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'id="history-view"' in html
     assert 'id="history-list"' in html
     assert 'id="history-clear"' in html
+    styles = (FRONTEND / "polish.css").read_text(encoding="utf-8")
+    assert ".app-shell .assistant-tools" in styles
+    assert ".app-shell .assistant-actions .text-button" in styles
     assert 'id="student-register-button"' in html
     assert 'data-view="feedback"' in html
     assert 'id="feedback-form"' in html
