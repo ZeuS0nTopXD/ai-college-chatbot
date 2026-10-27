@@ -1437,7 +1437,10 @@ def format_time_table(
         current_start = getattr(item, "start_time", None)
         if previous_end and current_start:
             try:
-                gap = current_start - previous_end
+                gap = (
+                    datetime.combine(datetime.today(), current_start)
+                    - datetime.combine(datetime.today(), previous_end)
+                )
             except TypeError:
                 gap = None
             if gap and gap.total_seconds() >= 15 * 60:
