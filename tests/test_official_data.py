@@ -132,9 +132,22 @@ def test_fyit_division_teacher_overrides_are_scoped():
     rows = [
         row for row in OFFICIAL_TIMETABLE_DATA
         if row["course"] == "FYIT" and row["division"] == "B" and row["subject_name"] == "WP"
+        and row["session_type"] == "Theory"
     ]
     assert rows
     assert {row["teacher_names"] for row in rows} == {"Ashwini K."}
+
+
+def test_practical_rows_use_batch_faculty_from_pr_lines():
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    rows = [
+        row for row in OFFICIAL_TIMETABLE_DATA
+        if row["course"] == "SYIT" and row["division"] == "B"
+        and row["subject_name"] == "SM" and row["session_type"] == "Practical"
+    ]
+    assert rows
+    assert rows[0]["teacher_names"] == "B3: Sarika D.; B4: Daniel P.; B5: Daniel P."
 
 
 def test_morning_practical_blocks_use_two_hour_single_or_split_periods():

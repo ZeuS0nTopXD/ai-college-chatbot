@@ -31,6 +31,46 @@ _EXTRA_TEACHERS_BY_DIVISION = {
     ("FYIT", "B", "WP"): "Ashwini K.",
 }
 
+# The timetable's ``PR:`` line assigns practical batches to different
+# instructors. Keep those assignments separate from the theory fallback so a
+# practical timetable row and a "who teaches" query do not report the theory
+# instructor by mistake.
+_PRACTICAL_TEACHERS = {
+    ("FYIT", "A", "IP"): "B1: Dr. Swapna K.; B2: Ketaki G.; B3: Dr. Geeta S.",
+    ("FYIT", "A", "WP"): "B1: Ashwini K.; B2: Dr. Swapna K.; B3: Madhavi A.",
+    ("FYIT", "A", "DM"): "B1: Janhavi V.; B2: Maitreyi J.; B3: Prabal D.",
+    ("FYIT", "B", "IP"): "B4: Seema V.; B5: Janhvi V.; B6: Dr. Geeta S.",
+    ("FYIT", "B", "WP"): "B4: Ashwini K.; B5: Madhavi A.; B6: Seema V.",
+    ("FYIT", "B", "DM"): "B4: Amraja S.; B5: Prabal D.; B6: Amraja S.",
+    ("FYIT", "C", "IP"): "B6: Dr. Geeta S.; B7: Dr. Swapna K.; B8: Janhavi V G.",
+    ("FYIT", "C", "WP"): "B6: Seema M.; B7: Seema V.; B8: Akshatha J.",
+    ("FYIT", "C", "DM"): "B6: Amraja S.; B7: Mataprasad C.; B8: Pooja S.",
+    ("FYIT", "D", "IP"): "B8: Janhavi V.; B9: Dr. Geeta S.; B10: Ashwini K.",
+    ("FYIT", "D", "WP"): "B8: Akshatha J.; B9: Seema M.; B10: Seema V.",
+    ("FYIT", "D", "DM"): "B8: Pooja S.; B9: Maitreyi J.; B10: Mataprasad C.",
+    ("FYIT", "F", "IP"): "B11: Dr. Swapna K.",
+    ("FYIT", "F", "WP"): "B11: Madhavi A.",
+    ("FYIT", "F", "DM"): "B11: Rahul S.",
+    ("SYIT", "A", "PP"): "B1: Ashwini K.; B2: Rajendra P.",
+    ("SYIT", "A", "DS"): "B1: Janhavi V.; B2: Dr. Kimaya S.",
+    ("SYIT", "A", "SM"): "B1: Daniel P.; B2: Sarika D.",
+    ("SYIT", "B", "PP"): "B3: Rohini D.; B4: Rajendra P.",
+    ("SYIT", "B", "DS"): "B3: Akshatha J.; B4: Madhavi A.",
+    ("SYIT", "B", "SM"): "B3: Sarika D.; B4: Daniel P.; B5: Daniel P.",
+    ("SYIT", "C", "PP"): "B5: Rishabh Y.; B6: Rohini D.; B7: Rajendra P.",
+    ("SYIT", "C", "DS"): "B5: Dr. Kimaya S.; B6: Khushi K.; B7: Akshatha J.",
+    ("SYIT", "C", "SM"): "B5: Daniel P.; B6: Mataprasad C.; B7: Sarika D.",
+    ("SYIT", "D", "PP"): "B7: Rajendra P.; B8: Snehal T.; B9: Rishabh Y.",
+    ("SYIT", "D", "DS"): "B7: Akshatha J.; B8: Shraddha S.; B9: Akshatha J.",
+    ("SYIT", "D", "SM"): "B7: Sarika D.; B8: Dr. Mataprasad C.; B9: Sarika D.",
+    ("SYIT", "E", "PP"): "B10: Snehal T.",
+    ("SYIT", "E", "DS"): "B10: Khushi K.",
+    ("SYIT", "E", "SM"): "B10: Mataprasad C.",
+    ("SYIT", "F", "PP"): "B11: Rohini D.",
+    ("SYIT", "F", "DS"): "B11: Madhavi A.",
+    ("SYIT", "F", "SM"): "B11: Dr. Laxmikant M.",
+}
+
 
 def _extra_rows():
     if not _EXTRA_TIMETABLE_PATH.exists():
@@ -42,10 +82,14 @@ def _extra_rows():
             if value.lower().endswith(("am", "pm")) and " " not in value:
                 value = value[:-2] + " " + value[-2:]
             row[key] = value
-        row["teacher"] = _EXTRA_TEACHERS_BY_DIVISION.get(
-            (row["course"], row["division"], row["subject"]),
-            _EXTRA_TEACHERS.get(row["course"], {}).get(row["subject"], ""),
-        )
+        practical_key = (row["course"], row["division"], row["subject"])
+        if row.get("lecture_type") == "Practical" and practical_key in _PRACTICAL_TEACHERS:
+            row["teacher"] = _PRACTICAL_TEACHERS[practical_key]
+        else:
+            row["teacher"] = _EXTRA_TEACHERS_BY_DIVISION.get(
+                practical_key,
+                _EXTRA_TEACHERS.get(row["course"], {}).get(row["subject"], ""),
+            )
         row["room"] = row.get("room") or ""
     return rows
 
