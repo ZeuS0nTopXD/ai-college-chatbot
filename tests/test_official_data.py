@@ -63,10 +63,27 @@ def test_signed_winter_2026_notice_seeds_date_only_academic_events_once(client):
 def test_official_timetable_pdf_dataset_covers_tyit_divisions():
     from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
 
-    assert OFFICIAL_TIMETABLE_DATA
-    assert {row["division"] for row in OFFICIAL_TIMETABLE_DATA} == {"A", "B", "C", "D", "E"}
+    tyit = [row for row in OFFICIAL_TIMETABLE_DATA if row["course"] == "B.Sc. Information Technology"]
+    fyit_syit = [row for row in OFFICIAL_TIMETABLE_DATA if row["course"] in {"FYIT", "SYIT"}]
+    assert tyit
+    assert {row["division"] for row in tyit} == {"A", "B", "C", "D", "E"}
     assert {row["academic_year"] for row in OFFICIAL_TIMETABLE_DATA} == {"2026-27"}
     assert {row["semester"] for row in OFFICIAL_TIMETABLE_DATA} == {"Odd Semester"}
-    assert {row["effective_from"] for row in OFFICIAL_TIMETABLE_DATA} == {"2026-07-13"}
-    assert sum(row["session_type"] == "Practical" for row in OFFICIAL_TIMETABLE_DATA) >= 20
+    assert {row["effective_from"] for row in tyit} == {"2026-07-13"}
+    assert {row["division"] for row in fyit_syit} >= {"A", "B", "C", "D", "E", "F"}
+    assert sum(row["session_type"] == "Practical" for row in OFFICIAL_TIMETABLE_DATA) >= 50
     assert all(row["session_type"] == "Practical" for row in OFFICIAL_TIMETABLE_DATA if "X103" in row["room"].replace("-", ""))
+
+
+def test_fyit_syit_theory_rooms_follow_source_classroom_headings():
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    expected = {
+        ("FYIT", "A"): "M-502", ("FYIT", "B"): "M-503",
+        ("FYIT", "C"): "M-508", ("FYIT", "D"): "M-511", ("FYIT", "F"): "M-407",
+        ("SYIT", "A"): "M-502", ("SYIT", "B"): "M-503",
+        ("SYIT", "C"): "M-508", ("SYIT", "D"): "M-511", ("SYIT", "E"): "M-517", ("SYIT", "F"): "M-407",
+    }
+    for row in OFFICIAL_TIMETABLE_DATA:
+        if row["course"] in {"FYIT", "SYIT"} and row["session_type"] == "Theory":
+            assert row["room"] == expected[(row["course"], row["division"])]
