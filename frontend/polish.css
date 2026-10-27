@@ -39,10 +39,10 @@ body:has(.app-shell){background:#fffefa;color:#171717}
 .model-frame-footer .motion-toggle{position:static;flex:none;border:1px solid #c9c5bc;border-radius:999px;background:rgba(255,254,250,.9);color:#34342f;padding:8px 13px}
 .model-frame-footer .motion-toggle:hover{background:#ece9e2;border-color:#9e9b91}
 /* Quiet depth and clearer hierarchy on every content page. */
-.app-shell .view{max-width:1500px;background:#fffefa}
+.app-shell .view{max-width:1500px;padding:28px clamp(18px,3.5vw,56px) 64px;background:#fffefa}
 .app-shell .section-heading{border-color:#e0ddd6}
 .app-shell .section-heading h2{color:#20201e}
-.app-shell .chat-panel{display:grid;grid-template-columns:minmax(205px,232px) minmax(0,1fr);min-height:640px;border:1px solid #d9d6ce;border-radius:24px;box-shadow:0 18px 55px rgba(36,34,28,.055);overflow:hidden}
+.app-shell .chat-panel{display:grid;grid-template-columns:minmax(205px,232px) minmax(0,1fr);min-height:clamp(700px,calc(100vh - 220px),900px);border:1px solid #d9d6ce;border-radius:24px;box-shadow:0 18px 55px rgba(36,34,28,.055);overflow:hidden}
 .app-shell .conversation-rail{display:flex;flex-direction:column;min-width:0;padding:18px 12px;border-right:1px solid #e3e0d9;background:#f5f3ef}
 .app-shell .conversation-rail-heading{display:flex;align-items:center;justify-content:space-between;padding:2px 8px 12px;color:#75736d;font:700 9px ui-monospace,monospace;letter-spacing:.13em}
 .app-shell .conversation-count{display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border:1px solid #d2cec5;border-radius:999px;color:#77736b;background:#fffefa;font-size:9px;letter-spacing:0}
@@ -56,22 +56,25 @@ body:has(.app-shell){background:#fffefa;color:#171717}
 .app-shell .conversation-item span{overflow:hidden;color:#85817a;font:9px ui-monospace,monospace;text-overflow:ellipsis;white-space:nowrap}
 .app-shell .conversation-empty{margin:4px 8px;color:#89867f;font:10px/1.55 ui-monospace,monospace}
 .app-shell .chat-session{display:flex;flex-direction:column;min-width:0;min-height:0;background:#fffefa}
-.app-shell .chat-session .chat-messages{flex:1;min-height:0;overflow-y:auto}
-.chat-heading{background:#f5f3ef;border-color:#e4e1d9}
+.app-shell .chat-session .chat-messages{flex:1;min-height:0;overflow-y:auto;padding:clamp(28px,4vw,52px)}
+.chat-heading{padding:26px 30px;background:#f5f3ef;border-color:#e4e1d9}
 .chat-heading h2{color:#22221f}
 .app-shell .chat-messages{background:#fffefa}
 .app-shell .message-bubble{border-color:#e0ddd6;box-shadow:0 4px 16px rgba(36,34,28,.025)}
 .app-shell .user-message .message-bubble{background:#282824;border-color:#282824}
-.app-shell .assistant-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;padding:14px 22px;border-top:0;border-bottom:1px solid #e3e0d9;background:#faf9f6}
-.app-shell .student-context-form{display:grid;grid-template-columns:auto minmax(145px,1fr) minmax(145px,1fr) auto;align-items:end;gap:10px;min-width:0}
-.app-shell .student-context-form .tool-label{align-self:center;white-space:nowrap}
-.app-shell .student-context-form label{min-width:0}
-.app-shell .student-context-form select{width:100%;min-width:0;min-height:38px;padding:8px 30px 8px 10px;border-color:#cbc7be;border-radius:8px;background:#fffefa;color:#292925}
+.app-shell .assistant-tools{display:grid;grid-template-columns:minmax(175px,.7fr) minmax(280px,1.35fr) auto;grid-template-areas:"context form actions";align-items:center;gap:16px;padding:18px 22px;border-top:0;border-bottom:1px solid #e3e0d9;background:#faf9f6}
+.app-shell .context-intro{grid-area:context;min-width:0}
+.app-shell .context-intro .tool-label{display:block;margin-bottom:5px;color:#4b4a45}
+.app-shell .context-intro p{margin:0;color:#85817a;font:10px/1.45 'Plus Jakarta Sans',sans-serif}
+.app-shell .student-context-form{display:grid;grid-area:form;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end;gap:10px;min-width:0}
+.app-shell .student-context-form label{display:grid;gap:6px;min-width:0;color:#68665f;font:700 9px ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+.app-shell .student-context-form label span{display:block}
+.app-shell .student-context-form select{width:100%;min-width:0;min-height:40px;padding:8px 30px 8px 10px;border-color:#cbc7be;border-radius:9px;background:#fffefa;color:#292925;font:500 11px 'Plus Jakarta Sans',sans-serif;letter-spacing:0;text-transform:none}
 .app-shell .student-context-form .secondary-button{min-height:38px;white-space:nowrap}
-.app-shell .assistant-actions{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}
+.app-shell .assistant-actions{display:flex;grid-area:actions;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}
 .app-shell .assistant-actions .text-button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border:1px solid #c5c1b8;border-radius:999px;color:#3e3d38;background:#fffefa;font:700 10px ui-monospace,monospace;letter-spacing:.03em;text-decoration:none;text-transform:uppercase;white-space:nowrap}
 .app-shell .assistant-actions .text-button:hover{border-color:#292925;color:#fffefa;background:#292925}
-.app-shell .quick-prompts{border-top:1px solid #e3e0d9;border-bottom:1px solid #e3e0d9;padding:12px 22px;background:#f7f6f2}
+.app-shell .quick-prompts{border-top:1px solid #e3e0d9;border-bottom:1px solid #e3e0d9;padding:14px 22px;background:#f7f6f2}
 .app-shell .recent-question-strip{display:none!important}
 .app-shell .composer{background:#faf9f6;border-color:#e3e0d9}
 .app-shell .composer textarea,.app-shell .filter-bar input,.app-shell .filter-bar select,.app-shell .resource-search input{background:#fffefa;border:1px solid #d4d0c7;color:#252520}
@@ -118,10 +121,10 @@ body:has(.app-shell){background:#fffefa;color:#171717}
 @media(max-width:900px){.app-shell .sidebar{grid-template-columns:80px minmax(0,1fr);grid-template-rows:64px 43px;column-gap:8px;min-height:107px;padding:0 20px}.app-shell .sidebar nav{grid-column:1/-1;grid-row:2;justify-self:stretch;justify-content:center;width:100%;border-top:1px solid #ece9e2}.app-shell .nav-item{padding:0 10px}}
 @media(max-width:700px){.app-shell .sidebar{padding:0 18px}.app-shell .sidebar nav{justify-content:flex-start}}
 @media(max-width:560px){.app-shell .sidebar{grid-template-columns:65px minmax(0,1fr);padding:0 14px}.app-shell .brand-mark{width:65px}.app-shell .brand-mark text{font-size:23px}.app-shell .brand-title{padding-left:13px}.app-shell .brand-title strong{font-size:17px}.app-shell .brand-title small{font-size:9px}.app-shell .sidebar nav{gap:4px}.app-shell .nav-item{font-size:10px;padding:0 10px}.campus-art{height:345px;padding:37px 10px 58px;border-radius:24px}.campus-art::after{inset:7px;border-radius:18px}.campus-art .art-label-top{top:16px;left:17px}.model-frame-footer{left:16px;right:16px;bottom:14px;gap:8px}.model-frame-footer .art-label-bottom{font-size:7px;max-width:calc(100% - 103px)}.model-frame-footer .motion-toggle{font-size:9px;padding:7px 10px}.campus-art .art-shadow{bottom:61px}.app-shell .info-card,.app-shell .filter-bar,.app-shell .search-hit{border-radius:17px}.admin-page .admin-card{padding:18px}}
-@media(max-width:980px){.app-shell .assistant-tools{grid-template-columns:1fr}.app-shell .assistant-actions{justify-content:flex-start}}
+@media(max-width:980px){.app-shell .assistant-tools{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"context actions" "form form"}.app-shell .assistant-actions{justify-content:flex-start}}
 @media(max-width:980px){.app-shell .chat-panel{grid-template-columns:1fr}.app-shell .conversation-rail{max-height:176px;padding:14px 16px;border-right:0;border-bottom:1px solid #e3e0d9}.app-shell .conversation-rail-heading{padding:0 2px 9px}.app-shell .new-chat-button{width:max-content;min-width:130px;margin-bottom:10px;padding:0 15px}.app-shell .conversation-list{display:flex;gap:6px;overflow-x:auto}.app-shell .conversation-item{flex:0 0 205px}}
-@media(max-width:560px){.app-shell .assistant-tools{gap:12px;padding:13px 14px}.app-shell .student-context-form{grid-template-columns:1fr 1fr;gap:9px}.app-shell .student-context-form .tool-label{grid-column:1/-1}.app-shell .student-context-form .secondary-button{grid-column:1/-1}.app-shell .assistant-actions{justify-content:stretch}.app-shell .assistant-actions .text-button{flex:1;min-width:0}.app-shell .quick-prompts,.app-shell .recent-question-strip{padding-left:14px;padding-right:14px}}
-@media(max-width:560px){.app-shell .chat-panel{min-height:600px;border-radius:18px}.app-shell .conversation-rail{max-height:160px;padding:12px}.app-shell .conversation-item{flex-basis:185px}.app-shell .chat-session .chat-heading{padding:16px}.app-shell .chat-session .chat-heading-mark{width:34px;height:34px;font-size:20px}}
+@media(max-width:560px){.app-shell .assistant-tools{grid-template-columns:1fr;grid-template-areas:"context" "form" "actions";gap:12px;padding:14px}.app-shell .student-context-form{grid-template-columns:1fr 1fr;gap:9px}.app-shell .student-context-form .secondary-button{grid-column:1/-1}.app-shell .assistant-actions{justify-content:stretch}.app-shell .assistant-actions .text-button{flex:1;min-width:0}.app-shell .quick-prompts,.app-shell .recent-question-strip{padding-left:14px;padding-right:14px}}
+@media(max-width:560px){.app-shell .chat-panel{min-height:640px;border-radius:18px}.app-shell .conversation-rail{max-height:160px;padding:12px}.app-shell .conversation-item{flex-basis:185px}.app-shell .chat-session .chat-heading{padding:16px}.app-shell .chat-session .chat-heading-mark{width:34px;height:34px;font-size:20px}}
 @media(prefers-reduced-motion:reduce){.app-shell *,.admin-page *{animation:none!important;transition:none!important}}
 
 /* Header account controls: keep the ivory theme legible and the layout explicit. */
