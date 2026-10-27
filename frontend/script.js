@@ -594,8 +594,20 @@ function renderTimetable(container, text) {
         });
         table.appendChild(row);
     };
+    const addBreakRow = (label) => {
+        addRow();
+        current = null;
+        const row = document.createElement("div");
+        row.className = "timetable-row timetable-break";
+        const cell = document.createElement("span");
+        cell.colSpan = 5;
+        cell.textContent = label.replace("⏸️", "").trim();
+        row.appendChild(cell);
+        table.appendChild(row);
+    };
     lines.forEach((line) => {
-        if (line.startsWith("🕒")) { addRow(); current = { time: line.replace("🕒", "").trim() }; }
+        if (line.startsWith("⏸️")) addBreakRow(line);
+        else if (line.startsWith("🕒")) { addRow(); current = { time: line.replace("🕒", "").trim() }; }
         else if (line.startsWith("📚")) current.subject = line.replace("📚 Subject:", "").trim();
         else if (line.startsWith("👨‍🏫")) current.teacher = line.replace("👨‍🏫 Teacher:", "").trim();
         else if (line.startsWith("🏫")) current.room = line.replace("🏫 Room:", "").trim();

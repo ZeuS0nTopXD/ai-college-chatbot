@@ -19,6 +19,7 @@ def test_student_page_has_account_and_feedback_controls():
     styles = (FRONTEND / "polish.css").read_text(encoding="utf-8")
     assert ".app-shell .assistant-tools" in styles
     assert ".app-shell .assistant-actions .text-button" in styles
+    assert ".app-shell .timetable-row.timetable-break" in styles
     assert ".app-shell .context-intro .tool-label" in styles
     assert "font:600 14px/1.2 'Plus Jakarta Sans',sans-serif" in styles
     assert ".student-context-form label{display:flex;flex:1;align-items:center" in styles
@@ -45,6 +46,8 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'id="new-chat"' in html
     assert 'id="clear-chat"' in html
     assert 'id="download-transcript"' in html
+    assert 'line.startsWith("⏸️")' in script
+    assert 'timetable-break' in script
     assert 'payload.course = state.profile.course' in script
     assert 'download-transcript' in script
     assert 'vsitChatHistory' in script
