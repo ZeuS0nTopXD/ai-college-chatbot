@@ -174,3 +174,21 @@ def test_fyit_b_wp_keeps_source_batch_rooms_together():
     assert [(row["start_time"], row["end_time"], row["room"]) for row in rows] == [
         ("10:00 am", "12:00 pm", "B4/B5: X120, X121; B6: X119"),
     ]
+
+
+def test_syit_practical_cells_preserve_single_and_double_periods():
+    from collections import defaultdict
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    blocks = defaultdict(list)
+    for row in OFFICIAL_TIMETABLE_DATA:
+        if row["course"] == "SYIT" and row["session_type"] == "Practical":
+            blocks[(row["division"], row["day"])].append(row)
+
+    assert [(row["start_time"], row["end_time"]) for row in blocks[("A", "Monday")]] == [
+        ("12:30 pm", "2:30 pm"),
+    ]
+    assert sorted((row["start_time"], row["end_time"]) for row in blocks[("C", "Tuesday")]) == [
+        ("12:30 pm", "1:30 pm"),
+        ("1:30 pm", "2:30 pm"),
+    ]
