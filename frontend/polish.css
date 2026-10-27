@@ -102,6 +102,8 @@ body:has(.app-shell){background:#fffefa;color:#171717}
 .app-shell .timetable-row.practical-row>span:last-child{background:#fff0ed;color:#ab3830;border-color:#ecc6c0}
 .app-shell .timetable-row.timetable-break{grid-template-columns:1fr!important;min-height:40px;background:#f3f1eb;color:#716d65;border-bottom:1px dashed #c9c4ba;text-align:center}
 .app-shell .timetable-row.timetable-break span{font:600 10px 'Plus Jakarta Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.app-shell .timetable-row:not(.timetable-break){grid-template-columns:1.15fr .9fr 1.75fr 1.1fr .75fr;}
+.app-shell .timetable-row:not(.timetable-break)>span:nth-child(3){line-height:1.45;white-space:normal;}
 .app-shell[data-current-view]:not([data-current-view="assistant"]) .campus-hero{background:#f6f5f1}
 /* Administration shares the same palette, form language, and card rhythm. */
 .admin-page{--background:#fffefa;--ink:#171717;--muted:#66665f;--line:#dcdad3;--blue:#171717;background:#fffefa;color:#171717}

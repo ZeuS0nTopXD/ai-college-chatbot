@@ -147,7 +147,23 @@ def test_practical_rows_use_batch_faculty_from_pr_lines():
         and row["subject_name"] == "SM" and row["session_type"] == "Practical"
     ]
     assert rows
-    assert rows[0]["teacher_names"] == "B3: Sarika D.; B4: Daniel P.; B5: Daniel P."
+    assert {row["teacher_names"] for row in rows} == {"B5: Daniel P.", "B3: Sarika D.; B4: Daniel P."}
+
+    pp_rows = [
+        row for row in OFFICIAL_TIMETABLE_DATA
+        if row["course"] == "SYIT" and row["division"] == "B"
+        and row["day"] == "Monday" and row["subject_name"] == "PP"
+        and row["session_type"] == "Practical"
+    ]
+    assert {row["teacher_names"] for row in pp_rows} == {"B3: Rohini D."}
+
+    tuesday_pp = [
+        row for row in OFFICIAL_TIMETABLE_DATA
+        if row["course"] == "SYIT" and row["division"] == "B"
+        and row["day"] == "Tuesday" and row["subject_name"] == "PP"
+        and row["session_type"] == "Practical"
+    ]
+    assert {row["teacher_names"] for row in tuesday_pp} == {"B4: Rajendra P."}
 
 
 def test_morning_practical_blocks_use_two_hour_single_or_split_periods():

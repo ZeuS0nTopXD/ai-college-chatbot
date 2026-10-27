@@ -71,6 +71,33 @@ _PRACTICAL_TEACHERS = {
     ("SYIT", "F", "SM"): "B11: Dr. Laxmikant M.",
 }
 
+# Some source cells continue onto the next period and therefore do not repeat
+# their batch label in the OCR room field. These keys preserve the batch scope
+# from the printed cell so a continuation row does not inherit extra faculty.
+_PRACTICAL_ROW_BATCHES = {
+    ("SYIT", "B", "Monday", "PP", "1:30 pm"): ("B3",),
+    ("SYIT", "B", "Wednesday", "SM", "12:30 pm"): ("B3", "B4"),
+    ("SYIT", "B", "Tuesday", "PP", "12:30 pm"): ("B4",),
+}
+
+
+def _practical_teacher_for_row(row):
+    import re
+
+    key = (row["course"], row["division"], row["subject"])
+    value = _PRACTICAL_TEACHERS.get(key)
+    if not value:
+        return ""
+    batches = _PRACTICAL_ROW_BATCHES.get(
+        (row["course"], row["division"], row["day"], row["subject"], row["start_time"])
+    )
+    if not batches:
+        batches = tuple(re.findall(r"B\d+", row.get("room", "")))
+    if not batches:
+        return value
+    entries = dict(re.findall(r"(B\d+):\s*([^;]+)", value))
+    return "; ".join(f"{batch}: {entries[batch]}" for batch in batches if batch in entries)
+
 
 def _extra_rows():
     if not _EXTRA_TIMETABLE_PATH.exists():
@@ -84,7 +111,7 @@ def _extra_rows():
             row[key] = value
         practical_key = (row["course"], row["division"], row["subject"])
         if row.get("lecture_type") == "Practical" and practical_key in _PRACTICAL_TEACHERS:
-            row["teacher"] = _PRACTICAL_TEACHERS[practical_key]
+            row["teacher"] = _practical_teacher_for_row(row)
         else:
             row["teacher"] = _EXTRA_TEACHERS_BY_DIVISION.get(
                 practical_key,
