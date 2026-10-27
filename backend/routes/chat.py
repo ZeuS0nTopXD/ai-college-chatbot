@@ -1432,7 +1432,22 @@ def format_time_table(
         "",
     ]
 
+    previous_end = None
     for item in items:
+        current_start = getattr(item, "start_time", None)
+        if previous_end and current_start:
+            try:
+                gap = current_start - previous_end
+            except TypeError:
+                gap = None
+            if gap and gap.total_seconds() >= 15 * 60:
+                lines.extend(
+                    [
+                        f"⏸️ Break: {previous_end} - {current_start}",
+                        "",
+                    ]
+                )
+
         start_time = value(
             item,
             "start_time",
@@ -1494,6 +1509,8 @@ def format_time_table(
                 "",
             ]
         )
+        if getattr(item, "end_time", None):
+            previous_end = item.end_time
 
     return "\n".join(lines).strip()
 
