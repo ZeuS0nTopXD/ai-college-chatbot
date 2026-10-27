@@ -42,14 +42,14 @@ COURSE_ALIASES = {
     "third year it": DEFAULT_COURSE,
     "third year information technology": DEFAULT_COURSE,
     "third year information technology": DEFAULT_COURSE,
-    "syit": DEFAULT_COURSE,
-    "sy it": DEFAULT_COURSE,
-    "second year it": DEFAULT_COURSE,
-    "second year information technology": DEFAULT_COURSE,
-    "fyit": DEFAULT_COURSE,
-    "fy it": DEFAULT_COURSE,
-    "first year it": DEFAULT_COURSE,
-    "first year information technology": DEFAULT_COURSE,
+    "syit": "SYIT",
+    "sy it": "SYIT",
+    "second year it": "SYIT",
+    "second year information technology": "SYIT",
+    "fyit": "FYIT",
+    "fy it": "FYIT",
+    "first year it": "FYIT",
+    "first year information technology": "FYIT",
 }
 
 DAYS = {
@@ -169,6 +169,12 @@ def course_display_name(course: str | None) -> str:
         return "TYIT"
 
     value = normalize_message(course)
+
+    if value == "fyit":
+        return "FYIT"
+
+    if value == "syit":
+        return "SYIT"
 
     if "information technology" in value:
         return "TYIT"

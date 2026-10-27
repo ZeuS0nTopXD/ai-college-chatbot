@@ -1720,6 +1720,21 @@ def handle_timetable_question(
     )
 
     if not base_timetable:
+        resource_url = {
+            "FYIT": "/assets/timetables/FYIT-odd-semester-2026-27.pdf",
+            "SYIT": "/assets/timetables/SYIT-odd-semester-2026-27.pdf",
+        }.get(course)
+        if resource_url:
+            return make_response(
+                user_message,
+                "TIMETABLE",
+                (
+                    f"I found the official {display_course} timetable PDF, "
+                    f"but that division’s periods are not indexed for in-chat lookup yet. "
+                    "Open the official timetable to check the exact schedule."
+                ),
+                resource_url=resource_url,
+            )
         return make_response(
             user_message,
             "TIMETABLE",
