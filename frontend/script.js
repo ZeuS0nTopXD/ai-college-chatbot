@@ -400,6 +400,15 @@ document.getElementById("student-context-form").addEventListener("submit", (even
     chatStatus.textContent = course || year || division ? "Context saved for more relevant answers." : "Context cleared; answers will use your question only.";
 });
 
+document.getElementById("clear-context").addEventListener("click", () => {
+    delete state.profile.course;
+    delete state.profile.year;
+    delete state.profile.division;
+    persistStudentContext();
+    syncStudentContextControls();
+    chatStatus.textContent = "Context cleared; answers will use your question only.";
+});
+
 function startNewChat() {
     chatMessages.innerHTML = initialChatMarkup;
     state.latestAnswer = "";

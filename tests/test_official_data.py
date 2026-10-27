@@ -98,5 +98,5 @@ def test_practical_subjects_keep_their_own_bracket_rooms():
         and row["day"] == "Tuesday" and str(row["start_time"]).replace(" ", "").startswith("10:00")
     ]
     rooms = {row["subject_name"]: row["room"] for row in rows}
-    assert rooms["IP"] == "X103"
-    assert rooms["DM"] == "X122, X123"
+    assert rooms["IP"] == "B6: X103"
+    assert rooms["DM"] == "B7/B8: X122, X123"

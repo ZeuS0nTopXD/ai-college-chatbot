@@ -56,6 +56,8 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'state.profile.year || state.profile.course' in script
     assert 'value="M.Sc. Information Technology"' not in html
     assert 'id="student-year"' in html
+    assert 'id="clear-context"' in html
+    assert 'delete state.profile.year' in script
     assert 'option value="FYIT">First year (FYIT)</option>' in html
     assert 'option value="SYIT">Second year (SYIT)</option>' in html
     assert 'option value="F">F</option>' in html
