@@ -34,6 +34,9 @@ def test_student_page_has_account_and_feedback_controls():
     assert "grid-template-columns:80px 220px minmax(0,1fr) auto" in styles
     assert '"/api/auth/register"' in script
     assert '"/api/auth/student-login"' in script
+    assert 'localStorage.getItem(studentTokenKey)' in script
+    assert 'localStorage.setItem(studentTokenKey' in script
+    assert 'localStorage.removeItem(studentTokenKey)' in script
     assert '"/api/feedback"' in script
     assert 'id="student-context-form"' in html
     assert 'id="quick-prompts"' in html
@@ -52,6 +55,9 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'data-use-context="true"' in html
     assert 'state.profile.course + ", division " + state.profile.division' in script
     assert 'value="M.Sc. Information Technology"' not in html
+    assert '<link rel="icon" href="favicon.svg"' in html
+    assert (FRONTEND / "favicon.svg").exists()
+    assert 'script.js?v=student-auth-20261027' in html
 
 
 def test_quick_prompts_are_actionable_and_context_aware():
@@ -67,6 +73,7 @@ def test_admin_page_has_feedback_review_controls():
     html = (FRONTEND / "admin.html").read_text(encoding="utf-8")
     script = (FRONTEND / "admin.js").read_text(encoding="utf-8")
 
+    assert '<link rel="icon" href="favicon.svg"' in html
     assert 'data-admin-view="feedback"' in html
     assert 'data-admin-panel="feedback"' in html
     assert 'adminFetch("/api/admin/feedback")' in script

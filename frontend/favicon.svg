@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">VSIT Student Assistant</title>
+  <desc id="desc">A dark circular VSIT mark with a four-point star.</desc>
+  <rect width="64" height="64" rx="16" fill="#292824"/>
+  <circle cx="32" cy="32" r="20" fill="#f7f5ef"/>
+  <path d="M32 16v32M16 32h32M21 21l22 22M43 21 21 43" stroke="#292824" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="3" fill="#b7654f"/>
+</svg>

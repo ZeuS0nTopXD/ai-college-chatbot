@@ -134,7 +134,7 @@ The repository includes `render.yaml` for a free Render Web Service deployment. 
 1. `ADMIN_PASSWORD`: a strong administrator password of at least 12 characters.
 2. `CORS_ORIGINS`: the final HTTPS origin, such as `https://vsit-student-assistant.onrender.com`.
 
-The free service stores SQLite data and uploaded documents on ephemeral container storage, so those files can be reset when Render redeploys or restarts the service. For durable records later, switch to managed PostgreSQL and object storage. After the first deploy, verify `/health`, sign in at `/admin`, and run the official VSIT data refresh before adding any approved notices or academic records.
+The free service stores SQLite data and uploaded documents on ephemeral container storage, so student accounts, feedback, and other records can be reset when Render redeploys or restarts the service. For durable records, create a free managed PostgreSQL database (for example, Neon), set its SQLAlchemy `DATABASE_URL` in Render, and redeploy. After the first deploy, verify `/health`, sign in at `/admin`, and run the official VSIT data refresh before adding any approved notices or academic records. Student login sessions are retained in the browser until the student signs out or the token expires.
 
 ## API overview
 

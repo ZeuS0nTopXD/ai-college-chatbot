@@ -25,13 +25,15 @@ function readStoredHistory() {
     }
 }
 
+const studentTokenKey = "vsit-student-token";
+
 const state = {
     latestAnswer: "",
     speechEnabled: true,
     profile: readStoredObject("vsitStudentProfile"),
     recentQuestions: readStoredList("vsitRecentQuestions"),
     chatHistory: readStoredHistory(),
-    studentToken: sessionStorage.getItem("vsit-student-token"),
+    studentToken: localStorage.getItem(studentTokenKey) || sessionStorage.getItem(studentTokenKey),
     studentUser: null,
 };
 
@@ -125,7 +127,8 @@ async function submitStudentAuth(event) {
         if (!response.ok) throw new Error(readApiError(data));
         state.studentToken = data.access_token;
         state.studentUser = data.user;
-        sessionStorage.setItem("vsit-student-token", state.studentToken);
+        localStorage.setItem(studentTokenKey, state.studentToken);
+        sessionStorage.removeItem(studentTokenKey);
         updateStudentAccount();
         authDialog.close();
         updateFeedbackVisibility();
@@ -159,7 +162,8 @@ function updateStudentAccount() {
 function studentLogout() {
     state.studentToken = null;
     state.studentUser = null;
-    sessionStorage.removeItem("vsit-student-token");
+    localStorage.removeItem(studentTokenKey);
+    sessionStorage.removeItem(studentTokenKey);
     updateStudentAccount();
     updateFeedbackVisibility();
 }
