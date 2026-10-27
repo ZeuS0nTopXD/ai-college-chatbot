@@ -24,6 +24,13 @@ _EXTRA_TEACHERS = {
     },
 }
 
+# Some FYIT subjects are allocated to different faculty by division. Keep
+# these overrides separate from the subject-wide fallback above so teacher
+# questions stay scoped to the selected class.
+_EXTRA_TEACHERS_BY_DIVISION = {
+    ("FYIT", "B", "WP"): "Ashwini K.",
+}
+
 
 def _extra_rows():
     if not _EXTRA_TIMETABLE_PATH.exists():
@@ -35,7 +42,10 @@ def _extra_rows():
             if value.lower().endswith(("am", "pm")) and " " not in value:
                 value = value[:-2] + " " + value[-2:]
             row[key] = value
-        row["teacher"] = _EXTRA_TEACHERS.get(row["course"], {}).get(row["subject"], "")
+        row["teacher"] = _EXTRA_TEACHERS_BY_DIVISION.get(
+            (row["course"], row["division"], row["subject"]),
+            _EXTRA_TEACHERS.get(row["course"], {}).get(row["subject"], ""),
+        )
         row["room"] = row.get("room") or ""
     return rows
 

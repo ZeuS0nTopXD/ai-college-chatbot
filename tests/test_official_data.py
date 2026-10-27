@@ -124,3 +124,14 @@ def test_every_fyit_division_keeps_practical_sessions():
         if row["session_type"] == "Practical"
     }
     assert practical_by_division == {"A", "B", "C", "D", "F"}
+
+
+def test_fyit_division_teacher_overrides_are_scoped():
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    rows = [
+        row for row in OFFICIAL_TIMETABLE_DATA
+        if row["course"] == "FYIT" and row["division"] == "B" and row["subject_name"] == "WP"
+    ]
+    assert rows
+    assert {row["teacher_names"] for row in rows} == {"Ashwini K."}

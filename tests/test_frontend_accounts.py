@@ -10,7 +10,7 @@ def test_student_page_has_account_and_feedback_controls():
 
     assert 'id="student-login-button"' in html
     assert '<span id="student-account-label">Guest student</span>' in html
-    assert 'href="polish.css?v=admin-overview-20261027"' in html
+    assert 'href="polish.css?v=timetable-layout-20261027"' in html
     assert 'id="student-account-label"' in html
     assert 'data-view="history"' in html
     assert 'id="history-view"' in html
@@ -66,7 +66,7 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'option value="F">F</option>' in html
     assert '<link rel="icon" href="favicon.svg"' in html
     assert (FRONTEND / "favicon.svg").exists()
-    assert 'script.js?v=student-auth-20261027' in html
+    assert 'script.js?v=timetable-render-20261027' in html
 
 
 def test_quick_prompts_are_actionable_and_context_aware():
