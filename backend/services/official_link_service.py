@@ -3,6 +3,7 @@
 import re
 
 from backend.data.official_links import OFFICIAL_LINKS
+from backend.data.official_vsit_data import OFFICIAL_KNOWLEDGE_DATA
 
 
 LINKS_BY_TITLE = {item["title"]: item for item in OFFICIAL_LINKS}
@@ -13,6 +14,7 @@ def answer_official_source_question(message: str) -> dict | None:
     compact = text.replace(" ", "")
     asks_for_link = bool(re.search(r"\b(where|find|link|download|website|page|open|show|access|browse)\b", text))
     title = None
+    verified_answer = None
 
     if re.search(r"\b(office|cell|student section)\b", text):
         return None
@@ -39,8 +41,19 @@ def answer_official_source_question(message: str) -> dict | None:
             title = "Winter 2026 regular examination commencement notice"
         else:
             title = "News Update and examination notices"
-    elif asks_for_link and "library" in text and not re.search(r"\bwhere\s+(?:is|can i find)\b", text):
+    elif asks_for_link and "library" in text:
         title = "Library hours and services"
+        wants_hours = bool(re.search(r"\b(?:when|what time|hours?|timings?|open|opening)\b", text))
+        target_question = "timings" if wants_hours else "where"
+        verified_answer = next(
+            (
+                item["answer"]
+                for item in OFFICIAL_KNOWLEDGE_DATA
+                if item["category"] == "LIBRARY"
+                and target_question in item["question"].lower()
+            ),
+            None,
+        )
     elif asks_for_link and re.search(r"\b(admission|admissions)\b", text):
         title = "Admissions"
     elif asks_for_link and re.search(r"\b(placement|placements)\b", text):
@@ -52,6 +65,6 @@ def answer_official_source_question(message: str) -> dict | None:
         return None
     source = LINKS_BY_TITLE[title]
     return {
-        "bot_response": f"{source['description']} Open the VSIT website for the full, current information.",
+        "bot_response": verified_answer or f"{source['description']} Open the VSIT website for the full, current information.",
         "resource_url": source["url"],
     }

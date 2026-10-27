@@ -2,6 +2,7 @@ from types import SimpleNamespace
 
 from backend.data.official_vsit_data import OFFICIAL_KNOWLEDGE_DATA
 from backend.services.classifier import search_knowledge
+from backend.services.official_link_service import answer_official_source_question
 
 
 def test_high_signal_questions_select_the_matching_verified_entry():
@@ -22,3 +23,11 @@ def test_high_signal_questions_select_the_matching_verified_entry():
     assert search_knowledge("what marks do I need for information technology?", rows).question == (
         "What are the B.Sc. IT admission requirements?"
     )
+
+
+def test_library_resource_questions_have_verified_hours_even_without_database_rows():
+    answer = answer_official_source_question("Where is the library and when is it open?")
+
+    assert answer["resource_url"] == "https://vsit.edu.in/library/"
+    assert "Monday to Saturday" in answer["bot_response"]
+    assert "X Block library" in answer["bot_response"]
