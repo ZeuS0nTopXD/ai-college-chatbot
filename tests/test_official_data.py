@@ -112,3 +112,15 @@ def test_fyit_has_no_overlapping_theory_periods():
             slots[(row["division"], row["day"], row["start_time"])].append(row)
 
     assert all(len(rows) == 1 for rows in slots.values())
+
+
+def test_every_fyit_division_keeps_practical_sessions():
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    fyit = [row for row in OFFICIAL_TIMETABLE_DATA if row["course"] == "FYIT"]
+    practical_by_division = {
+        row["division"]
+        for row in fyit
+        if row["session_type"] == "Practical"
+    }
+    assert practical_by_division == {"A", "B", "C", "D", "F"}
