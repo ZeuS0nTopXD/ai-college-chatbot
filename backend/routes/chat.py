@@ -1573,6 +1573,10 @@ def handle_timetable_question(
         "day"
     )
 
+    start_time = details.get(
+        "start_time"
+    )
+
     relative_day = detect_relative_day(
         user_message
     )
@@ -1762,6 +1766,13 @@ def handle_timetable_question(
         timetable = list(
             base_timetable
         )
+
+    if start_time:
+        timetable = [
+            item
+            for item in timetable
+            if getattr(item, "start_time", None) == start_time
+        ]
 
     # ========================================================
     # THEORY / PRACTICAL FILTER

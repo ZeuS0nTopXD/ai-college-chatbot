@@ -308,6 +308,7 @@ def extract_timetable_details(question: str):
         "course": None,
         "division": None,
         "day": None,
+        "start_time": None,
     }
 
     # Course.
@@ -328,10 +329,10 @@ def extract_timetable_details(question: str):
             result["course"] = normalize_course(match.group(0))
             break
 
-    # Division A-E.
+    # Division A-F.
     division_patterns = [
-        r"\bdivision\s*([a-e])\b",
-        r"\bdiv\s*([a-e])\b",
+        r"\bdivision\s*([a-f])\b",
+        r"\bdiv\s*([a-f])\b",
     ]
 
     for pattern in division_patterns:
@@ -354,6 +355,15 @@ def extract_timetable_details(question: str):
         if re.search(r"\b" + re.escape(key) + r"\b", q):
             result["day"] = display
             break
+
+    time_match = re.search(r"\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b", q)
+    if time_match:
+        hour = int(time_match.group(1))
+        minute = int(time_match.group(2) or "00")
+        meridiem = time_match.group(3).upper()
+        result["start_time"] = datetime.strptime(
+            f"{hour}:{minute:02d} {meridiem}", "%I:%M %p"
+        ).time()
 
     return result
 
