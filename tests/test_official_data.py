@@ -100,3 +100,15 @@ def test_practical_subjects_keep_their_own_bracket_rooms():
     rooms = {row["subject_name"]: row["room"] for row in rows}
     assert rooms["IP"] == "B6: X103"
     assert rooms["DM"] == "B7/B8: X122, X123"
+
+
+def test_fyit_has_no_overlapping_theory_periods():
+    from collections import defaultdict
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    slots = defaultdict(list)
+    for row in OFFICIAL_TIMETABLE_DATA:
+        if row["course"] == "FYIT" and row["session_type"] == "Theory":
+            slots[(row["division"], row["day"], row["start_time"])].append(row)
+
+    assert all(len(rows) == 1 for rows in slots.values())
