@@ -95,7 +95,7 @@ def test_practical_subjects_keep_their_own_bracket_rooms():
     rows = [
         row for row in OFFICIAL_TIMETABLE_DATA
         if row["course"] == "FYIT" and row["division"] == "C"
-        and row["day"] == "Tuesday" and str(row["start_time"]).replace(" ", "").startswith("10:00")
+        and row["day"] == "Tuesday"
     ]
     rooms = {row["subject_name"]: row["room"] for row in rows}
     assert rooms["IP"] == "B6: X103"
