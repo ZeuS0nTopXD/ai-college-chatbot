@@ -88,6 +88,40 @@ def test_division_specific_teacher_questions_use_timetable_scope():
     assert is_division_specific_teacher_question(
         "which subjects does the professor teach in division C?"
     )
+
+
+def test_explicit_fyit_question_overrides_saved_tyit_context(client):
+    seed(
+        Timetable(
+            academic_year="2026-27", semester="Odd Semester", course="FYIT",
+            division="A", day="Monday", start_time=time(10, 0), end_time=time(11, 0),
+            subject_code="IP", subject_name="IP", teacher_names="FYIT Teacher",
+            room="X103", session_type="Practical",
+        )
+    )
+    seed(
+        Timetable(
+            academic_year="2026-27", semester="Odd Semester",
+            course="B.Sc. Information Technology", division="A", day="Monday",
+            start_time=time(10, 0), end_time=time(11, 0), subject_code="IP",
+            subject_name="IP", teacher_names="TYIT Teacher", room="X103",
+            session_type="Practical",
+        )
+    )
+
+    response = client.post(
+        "/chat",
+        json={
+            "message": "Who teaches IP for FYIT division A on Monday?",
+            "course": "B.Sc. Information Technology",
+            "year": "TYIT",
+            "division": "A",
+        },
+    )
+
+    assert response.status_code == 200
+    assert "FYIT Teacher" in response.json()["bot_response"]
+    assert "TYIT Teacher" not in response.json()["bot_response"]
     assert not is_division_specific_teacher_question("Who teaches IOT?")
 
 

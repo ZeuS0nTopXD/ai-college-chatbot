@@ -2212,11 +2212,16 @@ def chat(
     # append them to ordinary questions, where a division token can falsely
     # trigger the timetable detector.
     if is_timetable_question(original_message):
-        if request.course:
+        # Explicit course/year/division details in the question always win over
+        # saved UI context. Appending a saved TYIT value to an explicit FYIT
+        # question makes the extractor see TYIT first and routes to the wrong
+        # timetable (including wrong teacher answers).
+        explicit_details = extract_timetable_details(original_message)
+        if request.course and not explicit_details.get("course"):
             user_message = f"{user_message} {request.course}"
-        if request.year:
+        if request.year and not explicit_details.get("course"):
             user_message = f"{user_message} {request.year}"
-        if request.division:
+        if request.division and not explicit_details.get("division"):
             user_message = f"{user_message} division {request.division}"
 
     # ========================================================
