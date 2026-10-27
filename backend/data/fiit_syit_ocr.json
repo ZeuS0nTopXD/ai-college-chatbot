@@ -568,7 +568,7 @@
     "end_time": "11:00 am",
     "subject": "IP",
     "teacher": "",
-    "room": "X103, X122, X123",
+    "room": "X103",
     "lecture_type": "Practical"
   },
   {
@@ -579,7 +579,7 @@
     "end_time": "11:00 am",
     "subject": "DM",
     "teacher": "",
-    "room": "X103, X122, X123",
+    "room": "X122, X123",
     "lecture_type": "Practical"
   },
   {
@@ -590,7 +590,7 @@
     "end_time": "11:00 am",
     "subject": "IP",
     "teacher": "",
-    "room": "X103, X119",
+    "room": "X103",
     "lecture_type": "Practical"
   },
   {
@@ -601,7 +601,7 @@
     "end_time": "11:00 am",
     "subject": "WP",
     "teacher": "",
-    "room": "X103, X119",
+    "room": "X119",
     "lecture_type": "Practical"
   },
   {
@@ -832,7 +832,7 @@
     "end_time": "11:00am",
     "subject": "WP",
     "teacher": "",
-    "room": "X121, Y101, X119",
+    "room": "X121, Y101",
     "lecture_type": "Practical"
   },
   {
@@ -843,7 +843,7 @@
     "end_time": "11:00am",
     "subject": "DM",
     "teacher": "",
-    "room": "X121, Y101, X119",
+    "room": "X119",
     "lecture_type": "Practical"
   },
   {
@@ -876,7 +876,7 @@
     "end_time": "11:00am",
     "subject": "WP",
     "teacher": "",
-    "room": "X119, X123",
+    "room": "X119",
     "lecture_type": "Practical"
   },
   {
@@ -887,7 +887,7 @@
     "end_time": "11:00am",
     "subject": "DM",
     "teacher": "",
-    "room": "X119, X123",
+    "room": "X123",
     "lecture_type": "Practical"
   },
   {
@@ -1745,7 +1745,7 @@
     "end_time": "1:30pm",
     "subject": "SM",
     "teacher": "",
-    "room": "X119, X103",
+    "room": "X119",
     "lecture_type": "Practical"
   },
   {
@@ -1756,7 +1756,7 @@
     "end_time": "1:30pm",
     "subject": "PP",
     "teacher": "",
-    "room": "X119, X103",
+    "room": "X103",
     "lecture_type": "Practical"
   },
   {

@@ -87,3 +87,16 @@ def test_fyit_syit_theory_rooms_follow_source_classroom_headings():
     for row in OFFICIAL_TIMETABLE_DATA:
         if row["course"] in {"FYIT", "SYIT"} and row["session_type"] == "Theory":
             assert row["room"] == expected[(row["course"], row["division"])]
+
+
+def test_practical_subjects_keep_their_own_bracket_rooms():
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    rows = [
+        row for row in OFFICIAL_TIMETABLE_DATA
+        if row["course"] == "FYIT" and row["division"] == "C"
+        and row["day"] == "Tuesday" and row["start_time"].strftime("%H:%M") == "10:00"
+    ]
+    rooms = {row["subject_name"]: row["room"] for row in rows}
+    assert rooms["IP"] == "X103"
+    assert rooms["DM"] == "X122, X123"
