@@ -1051,6 +1051,8 @@ def search_knowledge(user_message, knowledge_list):
     intent_patterns = (
         (r"(?=.*\b(?:when|what time|begin|start)\b)(?=.*\b(?:placements?|recruitment)\b)(?=.*\b(?:begin|start|timeline|semester|month)\b)",
          r"\b(?:placements?|recruitment).*\b(?:begin|start|timeline|semester|month)"),
+        (r"(?=.*\blibrary\b)(?=.*\b(?:when|what time|hours?|open|opening)\b)",
+         r"\b(?:library|reading room).*\b(?:timings?|hours?|open|opening)\b"),
         (r"\bwhere\b.*\blibrary\b", r"\bwhere\b.*\blibrary\b"),
         (r"\b(?:apply|get|request)\b.*\btranscript\b", r"\b(?:apply|get|request).*\btranscript\b"),
     )

@@ -232,6 +232,15 @@ def is_timetable_question(question: str) -> bool:
 
     q = normalize_message(question)
 
+    # Resource and campus-facility questions can contain a generic time phrase
+    # (for example, "when is the library open?").  They belong to the
+    # verified knowledge/resource flow, not to class timetable lookup.
+    if re.search(
+        r"\b(?:library|reading room|library card|borrow(?:ing)?|books?)\b",
+        q,
+    ):
+        return False
+
     # Placement questions are career/notice questions, not class schedules.
     # The generic “when is …” rule below must not hijack them.
     if re.search(r"\bplacements?\b|\bplacement drive\b|\bcampus recruitment\b", q):

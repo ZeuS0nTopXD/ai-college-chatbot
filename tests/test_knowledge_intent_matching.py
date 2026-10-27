@@ -10,6 +10,9 @@ def test_high_signal_questions_select_the_matching_verified_entry():
         "When do campus placements begin at VSIT?"
     )
     assert search_knowledge("where is the library?", rows).question == "Where is the VSIT library?"
+    assert search_knowledge("where is the library and when is it open?", rows).question == (
+        "What are the VSIT library timings?"
+    )
     assert search_knowledge("how do I apply for a transcript from VSIT?", rows).question == (
         "How do I apply for a transcript from VSIT?"
     )

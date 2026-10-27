@@ -1,6 +1,7 @@
 import pytest
 
 from backend.services.query_understanding import expand_query, normalize_query
+from backend.services.timetable_service import is_timetable_question
 
 
 @pytest.mark.parametrize(
@@ -29,3 +30,16 @@ def test_normalize_query_understands_common_hinglish_words():
     assert normalize_query("kaun hai computing ka hod") == "who hai computing ka hod"
     assert normalize_query("mere classes kab hain") == "my classes when hain"
     assert normalize_query("VSIT kuthe aahe") == "vsit where aahe"
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Where is the library and when is it open?",
+        "what are the library hours?",
+        "Can I borrow books from the reading room?",
+    ],
+)
+def test_library_and_resource_questions_are_not_timetable_questions(question):
+    """A generic 'when is' phrase must not route a resource question to timetable."""
+    assert is_timetable_question(question) is False

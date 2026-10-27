@@ -49,6 +49,15 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'value="M.Sc. Information Technology"' not in html
 
 
+def test_quick_prompts_are_actionable_and_context_aware():
+    html = (FRONTEND / "index.html").read_text(encoding="utf-8")
+
+    assert 'data-question="What classes do I have today?" data-use-context="true"' in html
+    assert 'data-question="Who teaches IOT for my class?" data-use-context="true"' in html
+    assert 'data-question="Where can I find the latest exam timetable?"' in html
+    assert 'data-question="Where is the library and what are its hours?"' in html
+
+
 def test_admin_page_has_feedback_review_controls():
     html = (FRONTEND / "admin.html").read_text(encoding="utf-8")
     script = (FRONTEND / "admin.js").read_text(encoding="utf-8")
