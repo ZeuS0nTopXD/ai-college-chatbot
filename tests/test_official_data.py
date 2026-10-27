@@ -135,3 +135,28 @@ def test_fyit_division_teacher_overrides_are_scoped():
     ]
     assert rows
     assert {row["teacher_names"] for row in rows} == {"Ashwini K."}
+
+
+def test_morning_practical_blocks_use_two_hour_single_or_split_periods():
+    from collections import defaultdict
+    from backend.data.official_timetable_data import OFFICIAL_TIMETABLE_DATA
+
+    blocks = defaultdict(list)
+    for row in OFFICIAL_TIMETABLE_DATA:
+        if row["course"] not in {"FYIT", "SYIT"} or row["session_type"] != "Practical":
+            continue
+        start = str(row["start_time"])
+        if start.startswith(("10:", "11:")):
+            blocks[(row["course"], row["division"], row["day"])].append(row)
+
+    for rows in blocks.values():
+        rows.sort(key=lambda row: str(row["start_time"]))
+        if len(rows) == 1:
+            assert str(rows[0]["start_time"]).startswith("10:")
+            assert str(rows[0]["end_time"]).startswith("12:")
+        else:
+            assert len(rows) == 2
+            assert str(rows[0]["start_time"]).startswith("10:")
+            assert str(rows[0]["end_time"]).startswith("11:")
+            assert str(rows[1]["start_time"]).startswith("11:")
+            assert str(rows[1]["end_time"]).startswith("12:")
