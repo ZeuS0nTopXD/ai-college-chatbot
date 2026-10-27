@@ -53,10 +53,11 @@ def test_student_page_has_account_and_feedback_controls():
     assert 'student-account-label' in script
     assert 'Browser storage is optional' in script
     assert 'data-use-context="true"' in html
-    assert 'state.profile.course + ", division " + state.profile.division' in script
+    assert 'state.profile.year || state.profile.course' in script
     assert 'value="M.Sc. Information Technology"' not in html
-    assert 'option value="FYIT"' in html
-    assert 'option value="SYIT"' in html
+    assert 'id="student-year"' in html
+    assert 'option value="FYIT">First year (FYIT)</option>' in html
+    assert 'option value="SYIT">Second year (SYIT)</option>' in html
     assert 'option value="F">F</option>' in html
     assert '<link rel="icon" href="favicon.svg"' in html
     assert (FRONTEND / "favicon.svg").exists()

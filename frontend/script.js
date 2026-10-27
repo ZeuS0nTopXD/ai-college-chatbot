@@ -330,8 +330,16 @@ document.getElementById("history-clear").addEventListener("click", () => {
 
 function syncStudentContextControls() {
     const course = document.getElementById("student-course");
+    const year = document.getElementById("student-year");
     const division = document.getElementById("student-division");
+    const legacyYear = /^(FYIT|SYIT|TYIT)$/i.test(state.profile.course || "") ? state.profile.course.toUpperCase() : "";
+    if (legacyYear) {
+        state.profile.year = legacyYear;
+        state.profile.course = "B.Sc. Information Technology";
+        persistStudentContext();
+    }
     if (course) course.value = state.profile.course || "";
+    if (year) year.value = state.profile.year || "";
     if (division) division.value = state.profile.division || "";
 }
 
@@ -380,13 +388,16 @@ document.getElementById("student-context-form").addEventListener("submit", (even
     event.preventDefault();
     const form = event.currentTarget;
     const course = form.elements.course.value.trim();
+    const year = form.elements.year.value.trim().toUpperCase();
     const division = form.elements.division.value.trim().toUpperCase();
     if (course) state.profile.course = course;
     else delete state.profile.course;
+    if (year) state.profile.year = year;
+    else delete state.profile.year;
     if (division) state.profile.division = division;
     else delete state.profile.division;
     persistStudentContext();
-    chatStatus.textContent = course || division ? "Context saved for more relevant answers." : "Context cleared; answers will use your question only.";
+    chatStatus.textContent = course || year || division ? "Context saved for more relevant answers." : "Context cleared; answers will use your question only.";
 });
 
 function startNewChat() {
@@ -441,8 +452,8 @@ chatForm.addEventListener("submit", async (event) => {
 document.querySelectorAll("[data-question]").forEach((button) => {
     button.addEventListener("click", () => {
         let question = button.dataset.question;
-        if (button.dataset.useContext === "true" && state.profile.course && state.profile.division) {
-            question += " for " + state.profile.course + ", division " + state.profile.division;
+        if (button.dataset.useContext === "true" && state.profile.year && state.profile.division) {
+            question += " for " + (state.profile.year || state.profile.course) + ", division " + state.profile.division;
         }
         sendMessage(question);
     });
@@ -466,6 +477,7 @@ async function sendMessage(message) {
     try {
         const payload = { message };
         if (state.profile.course) payload.course = state.profile.course;
+        if (state.profile.year) payload.year = state.profile.year;
         if (state.profile.division) payload.division = state.profile.division;
         const response = await fetch("/chat", {
             method: "POST",

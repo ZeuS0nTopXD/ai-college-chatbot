@@ -131,6 +131,7 @@ def _private_student_data_response(message: str):
 class ChatRequest(BaseModel):
     message: str = Field(max_length=4000)
     course: str | None = Field(default=None, max_length=120)
+    year: str | None = Field(default=None, pattern=r"^(FYIT|SYIT|TYIT)$", max_length=4)
     division: str | None = Field(default=None, pattern=r"^[A-Fa-f]$")
 
 
@@ -2193,6 +2194,8 @@ def chat(
     if is_timetable_question(original_message):
         if request.course:
             user_message = f"{user_message} {request.course}"
+        if request.year:
+            user_message = f"{user_message} {request.year}"
         if request.division:
             user_message = f"{user_message} division {request.division}"
 
