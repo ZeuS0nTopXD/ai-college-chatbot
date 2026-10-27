@@ -10,7 +10,7 @@ def test_student_page_has_account_and_feedback_controls():
 
     assert 'id="student-login-button"' in html
     assert '<span id="student-account-label">Guest student</span>' in html
-    assert 'href="polish.css?v=final-chat-inline-20261027"' in html
+    assert 'href="polish.css?v=admin-overview-20261027"' in html
     assert 'id="student-account-label"' in html
     assert 'data-view="history"' in html
     assert 'id="history-view"' in html
@@ -22,6 +22,8 @@ def test_student_page_has_account_and_feedback_controls():
     assert ".app-shell .context-intro .tool-label" in styles
     assert "font:600 14px/1.2 'Plus Jakarta Sans',sans-serif" in styles
     assert ".student-context-form label{display:flex;flex:1;align-items:center" in styles
+    assert ".admin-page .overview-counts{grid-template-columns:repeat(2,minmax(0,1fr))" in styles
+    assert ".admin-page .overview-count{display:flex;align-items:baseline" in styles
     assert 'id="student-register-button"' in html
     assert 'data-view="feedback"' in html
     assert 'id="feedback-form"' in html
