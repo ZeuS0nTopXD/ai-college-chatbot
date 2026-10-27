@@ -110,7 +110,7 @@ body:has(.app-shell){background:#fffefa;color:#171717}
 .admin-page .admin-dashboard-panel{grid-template-columns:minmax(320px,.78fr) minmax(420px,1.22fr);gap:18px}
 .admin-page .admin-dashboard-panel .admin-overview-card,.admin-page .admin-dashboard-panel>.admin-card:nth-child(2){grid-column:auto}
 .admin-page .overview-counts{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:20px}
-.admin-page .overview-count{display:flex;align-items:baseline;gap:9px;min-height:58px;padding:14px 15px;border:1px solid #dedbd3;border-radius:14px;background:#fffefa}
+.admin-page .overview-count{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:12px;min-height:58px;padding:14px 15px;border:1px solid #dedbd3;border-radius:14px;background:#fffefa}
 .admin-page .overview-count strong{color:#252521;font:700 24px/1 'Plus Jakarta Sans',sans-serif;letter-spacing:-.045em}
 .admin-page .overview-count span{color:#77736c;font:600 11px/1.35 'Plus Jakarta Sans',sans-serif;letter-spacing:0;text-transform:none}
 .admin-page .overview-heading{align-items:center}

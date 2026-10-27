@@ -23,7 +23,7 @@ def test_student_page_has_account_and_feedback_controls():
     assert "font:600 14px/1.2 'Plus Jakarta Sans',sans-serif" in styles
     assert ".student-context-form label{display:flex;flex:1;align-items:center" in styles
     assert ".admin-page .overview-counts{grid-template-columns:repeat(2,minmax(0,1fr))" in styles
-    assert ".admin-page .overview-count{display:flex;align-items:baseline" in styles
+    assert ".admin-page .overview-count{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:12px" in styles
     assert 'id="student-register-button"' in html
     assert 'data-view="feedback"' in html
     assert 'id="feedback-form"' in html
@@ -72,6 +72,7 @@ def test_quick_prompts_are_actionable_and_context_aware():
 def test_admin_page_has_feedback_review_controls():
     html = (FRONTEND / "admin.html").read_text(encoding="utf-8")
     script = (FRONTEND / "admin.js").read_text(encoding="utf-8")
+    styles = (FRONTEND / "polish.css").read_text(encoding="utf-8")
 
     assert '<link rel="icon" href="favicon.svg"' in html
     assert 'data-admin-view="feedback"' in html
@@ -81,6 +82,8 @@ def test_admin_page_has_feedback_review_controls():
     assert 'data-admin-panel="dashboard"' in html
     assert 'id="overview-counts"' in html
     assert 'adminFetch("/api/admin/overview")' in script
+    assert 'href="polish.css?v=admin-overview-20261027"' in html
+    assert ".admin-page .overview-count{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:12px" in styles
 
 
 def test_render_requires_explicit_durable_database_url():
