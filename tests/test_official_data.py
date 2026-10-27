@@ -192,3 +192,7 @@ def test_syit_practical_cells_preserve_single_and_double_periods():
         ("12:30 pm", "1:30 pm"),
         ("1:30 pm", "2:30 pm"),
     ]
+    for key in (("B", "Wednesday"), ("D", "Wednesday"), ("F", "Wednesday")):
+        assert [(row["start_time"], row["end_time"]) for row in blocks[key]] == [
+            ("12:30 pm", "1:30 pm"),
+        ]
